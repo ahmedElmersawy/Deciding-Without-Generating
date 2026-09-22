@@ -13,10 +13,10 @@ Exit code 0 = all reachable, 1 = at least one unreachable.
 import json, os, socket, sys, time, urllib.error, urllib.request
 
 TARGETS = {
-    "jev/typesafe": "https://api.typesafe.ai/v1/systemone",  # POST-only; GET -> 4xx still proves reachability
-    "openai": "https://api.openai.com/v1/models",
-    "anthropic": "https://api.anthropic.com/v1/models",
-    "google": "https://generativelanguage.googleapis.com/",
+    # Single gateway for Jev AND every frontier model (OpenAI/Anthropic/Gemini) —
+    # see DECISIONS.md 2026-09-22. This is now the single point of failure for all
+    # hosted-decider calls, so it matters more than the old per-provider checks did.
+    "openrouter": "https://openrouter.ai/api/v1/models",
     "huggingface": "https://huggingface.co/api/models/Qwen/Qwen3-8B",
     "pypi": "https://pypi.org/simple/pip/",
 }
