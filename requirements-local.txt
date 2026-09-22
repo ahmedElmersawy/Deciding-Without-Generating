@@ -1,0 +1,10 @@
+# Laptop / no-GPU / no-keys dev path. Installs the open-only core: Decider interface,
+# cache/metrics harness, classifier stub, API deciders (inert without keys — see .env.example),
+# and everything needed to run the unit tests. Deliberately excludes requirements-gpu.txt:
+# never installs vLLM/torch/CUDA, so this must succeed on a machine with no GPU at all.
+#
+#   pip install -r requirements-local.txt
+#
+# TODO: once the Phase-2 trained classifier lands, add its (CPU-only) deps here — e.g.
+# scikit-learn / joblib — pinned to whatever version it's actually built against.
+-r requirements-common.txt

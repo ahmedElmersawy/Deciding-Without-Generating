@@ -1,0 +1,19 @@
+# Conda-level env for Gilbreth. Only conda-managed system packages live here; everything
+# pip-installable is layered on top by setup.sh (constraints-gpu.txt / requirements-gpu.txt /
+# requirements-common.txt) so version pins live in one place (dwg-working-freeze.txt-derived).
+#
+# `name: dwg` is documentation only — setup.sh always creates this at an explicit -p prefix
+# (/scratch/gilbreth/$USER/conda_envs/dwg), since $USER can't be expanded inside this file.
+#
+# libstdcxx-ng / libgcc-ng are required, not optional: CentOS 7's system libstdc++ lacks
+# CXXABI_1.3.15, which vLLM's compiled extensions need (see the mandatory LD_LIBRARY_PATH
+# export in scripts/env.sh — it points at this conda env's newer libstdc++.so.6).
+name: dwg
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  - libstdcxx-ng
+  - libgcc-ng
+  - ca-certificates

@@ -1,0 +1,35 @@
+# Core, no-GPU dependencies needed everywhere: the Decider interface, the API deciders
+# (frontier via LiteLLM, Jev via a thin HTTP client), the agent-control wrapper, and the
+# metrics/cache harness. Installs on a laptop with no CUDA and no keys.
+#
+# Versions shared with the GPU stack (numpy, pydantic, requests, PyYAML, openai, anthropic,
+# huggingface_hub, python-dotenv) are pinned to match constraints-gpu.txt exactly, so
+# `pip install -r requirements-common.txt` on top of the GPU stack never reinstalls/conflicts.
+
+# --- LLM access ---------------------------------------------------------------
+# litellm==1.82.6 is a security-pinned version — 1.82.7/1.82.8 shipped a credential-stealing
+# .pth file (CHECKS.md #3). setup.sh verifies this exact artifact's sha256 before installing
+# it on the cluster; on a laptop, `pip install` alone only pins the version, not the hash —
+# TODO: VERIFY manually (see DECISIONS.md) if installing outside setup.sh.
+litellm==1.82.6
+openai==3.16.2       # LiteLLM's OpenAI-compatible backend; pin matches constraints-gpu.txt
+anthropic==1.7.0     # LiteLLM's Anthropic backend; pin matches constraints-gpu.txt
+
+# --- agent framework -----------------------------------------------------------
+# smolagents 1.26.0 was "latest" as of CHECKS.md #4 (2026-09-21); not in dwg-working-freeze.txt
+# (that freeze predates smolagents being added). Re-pin deliberately if bumping.
+smolagents==1.26.0
+
+# --- shared utilities (pins match constraints-gpu.txt) --------------------------
+python-dotenv==1.2.3
+PyYAML==6.0.3
+pydantic==2.13.5
+requests==2.34.2
+numpy==2.3.5
+huggingface_hub==1.32.0   # HF Hub API only here (dataset/model metadata); no torch pulled in
+tabulate==0.10.0          # results tables in reports/plots
+
+# --- testing (unpinned: no live-version check performed against this future date) ---
+# TODO: VERIFY / pin once CI is set up
+pytest
+pytest-cov

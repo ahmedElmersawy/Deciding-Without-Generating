@@ -1,0 +1,16 @@
+# GPU-only stack: the local decider (Qwen3 via vLLM) and its serving runtime.
+# Never import anything that pulls this on a laptop/no-GPU dev machine — keep it isolated
+# behind OpenLLMDecider so the rest of the package stays importable/testable without a GPU.
+#
+# Install with:
+#   pip install --extra-index-url https://download.pytorch.org/whl/cu130 \
+#       -c constraints-gpu.txt -r requirements-gpu.txt
+#
+# TODO: VERIFY — dwg-working-freeze.txt records a working torch 2.13.0+cu130 (CHECKS.md #6:
+# Gilbreth's driver 590 / CUDA 13.1), not the "+cu128" wheel the original brief mentioned.
+# Using the cu130 index here as the empirically verified choice; see DECISIONS.md. If
+# https://download.pytorch.org/whl/cu130 doesn't resolve, check the live index at
+# https://download.pytorch.org/whl for the current tag before falling back to cu128.
+torch==2.13.0
+vllm==0.29.0
+transformers==5.17.0  # CPU/GPU fallback path noted in CHECKS.md #6; same pin either way

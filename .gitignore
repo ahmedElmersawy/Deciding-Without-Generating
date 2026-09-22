@@ -1,0 +1,10 @@
+.env
+results/*
+!results/.gitkeep
+cache/
+.dwg_cache/
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+*.sif
