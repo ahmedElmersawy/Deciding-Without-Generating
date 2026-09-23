@@ -16,3 +16,6 @@ export LD_LIBRARY_PATH="$CONDA_PREFIX/lib:${LD_LIBRARY_PATH:-}"
 export HF_HOME="/scratch/gilbreth/$USER/hf_cache"
 export VLLM_CACHE_ROOT="/scratch/gilbreth/$USER/vllm_cache"
 export PYTHONNOUSERSITE=1
+
+TAU2_REPO_PREFIX="${TAU2_REPO_PREFIX:-/scratch/gilbreth/$USER/repos/tau2-bench}"
+export TAU2_DATA_DIR="$TAU2_REPO_PREFIX/data"

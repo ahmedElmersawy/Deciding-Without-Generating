@@ -70,5 +70,15 @@ pip install --extra-index-url https://download.pytorch.org/whl/cu130 \
 echo "==> installing the shared app-level deps (frontier/Jev deciders, agent framework, tests)"
 pip install -c constraints-gpu.txt -r requirements-common.txt
 
+echo "==> cloning + installing tau2-bench (agent-control decision point; not on PyPI)"
+echo "    pinned to the v1.0.1 release tag (DECISIONS.md 2026-09-22) — do not track main,"
+echo "    v1.0.1 changed banking_knowledge grading in a way that's not comparable to older runs"
+TAU2_REPO_PREFIX="${TAU2_REPO_PREFIX:-$USER_SCRATCH/repos/tau2-bench}"
+if [ ! -d "$TAU2_REPO_PREFIX" ]; then
+  mkdir -p "$(dirname "$TAU2_REPO_PREFIX")"
+  git clone --branch v1.0.1 --depth 1 https://github.com/sierra-research/tau2-bench.git "$TAU2_REPO_PREFIX"
+fi
+pip install --no-deps "$TAU2_REPO_PREFIX"
+
 echo "==> env ready at $DWG_ENV_PREFIX"
 echo "Next: sbatch scripts/verify_env.slurm   (then check results/logs/dwg-verify-env-*.out)"

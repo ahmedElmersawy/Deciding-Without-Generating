@@ -29,6 +29,17 @@ numpy==2.3.5
 huggingface_hub==1.32.0   # HF Hub API only here (dataset/model metadata); no torch pulled in
 tabulate==0.10.0          # results tables in reports/plots
 
+# --- tau2-bench (agent-control decision point) ----------------------------------
+# tau2 itself is NOT on PyPI (github.com/sierra-research/tau2-bench) — setup.sh clones
+# the v1.0.1 tag and `pip install --no-deps`s it. These are its declared dependencies
+# that weren't already covered above, pinned to what was verified working together
+# on 2026-09-22 (DECISIONS.md).
+pandas==3.0.6
+tenacity==9.1.4
+deepdiff==9.1.0
+addict==2.4.0
+toml==0.10.2
+
 # --- testing (unpinned: no live-version check performed against this future date) ---
 # TODO: VERIFY / pin once CI is set up
 pytest
