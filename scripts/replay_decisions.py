@@ -5,7 +5,9 @@ default (so the reference action is a known-good one), and asks each decider "re
 which tool?" on the identical rendered state. Nothing is executed — this measures the cost,
 latency, accuracy, consistency, and calibration of DECIDING only.
 
-Every call is one row in <out>/calls.jsonl (errors included, so error rate is reportable).
+Every call is one row in <out>/calls-<decider>.jsonl (errors included, so error rate is
+reportable); each decider also gets <out>/meta-<decider>.json. Per-decider files mean the laptop
+and Gilbreth can add different deciders to the same run without git conflicts (PLAN.md U0).
 Re-running with the same --out resumes: (decider, state, repeat) rows already present are
 skipped.
 
@@ -18,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import platform
 import random
 import sys
 import threading
@@ -38,6 +41,7 @@ from dwg.decisions import (  # noqa: E402
     render_transcript,
 )
 from dwg.energy import try_energy_meter  # noqa: E402
+from dwg.runfiles import calls_path, decider_meta_path, load_calls  # noqa: E402
 
 DEFAULT_LLM = "openrouter/openai/gpt-oss-20b"
 
@@ -112,14 +116,9 @@ def main() -> int:
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     out = args.out or Path("results/replay") / f"{'-'.join(sorted(domains))}-{stamp}"
     out.mkdir(parents=True, exist_ok=True)
-    calls_path = out / "calls.jsonl"
-    done = set()
-    if calls_path.exists():
-        with calls_path.open() as fh:
-            for line in fh:
-                row = json.loads(line)
-                if row.get("error") is None:
-                    done.add((row["decider"], row["state_id"], row["repeat"]))
+    done = {
+        (row["decider"], row["state_id"], row["repeat"]) for row in load_calls(out) if row.get("error") is None
+    }
 
     energy_meter, idle_w, kev_info, energy_unavailable = None, None, None, None
     if "kev" in args.deciders:
@@ -132,31 +131,46 @@ def main() -> int:
                 idle_w = energy_meter.idle_watts()
                 print(f"==> GPU {energy_meter.device_name}: idle {idle_w:.1f} W")
     deciders = build_deciders(args.deciders, args, energy_meter)
-    meta = {
-        "states": [str(p) for p in args.states],
-        "n_states": len(states),
-        "deciders": [d.name for d in deciders],
-        "llm_model": args.llm_model,
-        "repeats": args.repeats,
-        "workers": args.workers,
-        "include_failed": args.include_failed,
-        "started": stamp,
-        "kev_url": args.kev_url if kev_info else None,
-        "kev_models": kev_info,
-        "gpu": energy_meter.device_name if energy_meter else None,
-        "gpu_idle_watts": idle_w,
-        "energy_unavailable": energy_unavailable,
-    }
-    # Adding a decider to an existing run (e.g. Kev later, on a GPU node) keeps the earlier
-    # deciders' record: merge, don't overwrite.
-    meta_path = out / "meta.json"
-    if meta_path.exists():
-        previous = json.loads(meta_path.read_text())
-        meta["deciders"] = sorted(set(previous.get("deciders", [])) | set(meta["deciders"]))
-        for key in ("kev_url", "kev_models", "gpu", "gpu_idle_watts", "energy_unavailable", "energy_blocks"):
-            if meta.get(key) is None:
-                meta[key] = previous.get(key)
-    meta_path.write_text(json.dumps(meta, indent=2))
+
+    # Run-level record: written once by whoever creates the run, never rewritten.
+    run_meta_path = out / "meta.json"
+    if not run_meta_path.exists():
+        run_meta_path.write_text(json.dumps(
+            {
+                "states": [str(p) for p in args.states],
+                "n_states": len(states),
+                "include_failed": args.include_failed,
+                "created": stamp,
+            },
+            indent=2,
+        ))
+
+    def write_decider_meta(decider, energy_block=None) -> None:
+        local = getattr(decider, "energy_meter", None) is not None or decider.name == args.kev_name
+        meta = {
+            "decider": decider.name,
+            "model": args.llm_model if isinstance(decider, LLMChoiceDecider) else None,
+            "repeats": args.repeats,
+            "workers": args.workers,
+            "started": stamp,
+            "host": platform.node(),
+            "kev_url": args.kev_url if local else None,
+            "kev_models": kev_info if local else None,
+            "gpu": energy_meter.device_name if (local and energy_meter) else None,
+            "gpu_idle_watts": idle_w if local else None,
+            "energy_unavailable": energy_unavailable if local else None,
+            "energy_block": energy_block,
+        }
+        # Resuming or extending a decider keeps its earlier records instead of overwriting them.
+        path = decider_meta_path(out, decider.name)
+        if path.exists():
+            previous = json.loads(path.read_text())
+            history = previous.pop("previous_runs", [])
+            if previous.get("started") != stamp:  # not just this run updating its own energy block
+                history.append(previous)
+            if history:
+                meta["previous_runs"] = history
+        path.write_text(json.dumps(meta, indent=2))
 
     jobs = [
         (decider, state, rep)
@@ -168,6 +182,10 @@ def main() -> int:
     # Interleave deciders/states so transient network or rate-limit conditions hit every
     # decider equally instead of landing on whichever ran during a bad minute.
     random.Random(0).shuffle(jobs)
+    # Only deciders with work to do get a new run record; a no-op resume leaves files untouched.
+    for decider in deciders:
+        if any(job[0] is decider for job in jobs):
+            write_decider_meta(decider)
     print(f"==> {len(states)} states x {len(deciders)} deciders x {args.repeats} repeats; {len(jobs)} calls to make")
 
     rendered = {s["state_id"]: render_transcript(rebuild_messages(s)) for s in states}
@@ -214,16 +232,21 @@ def main() -> int:
     block_e0, block_t0 = (energy_meter.read_mj(), time.perf_counter()) if metered_only else (None, None)
 
     n_err = 0
-    with calls_path.open("a") as fh, ThreadPoolExecutor(max_workers=args.workers) as pool:
-        futures = [pool.submit(one_call, *job) for job in jobs]
-        for i, future in enumerate(as_completed(futures), 1):
-            row = future.result()
-            n_err += row["error"] is not None
-            with lock:
-                fh.write(json.dumps(row) + "\n")
-                fh.flush()
-            if i % 25 == 0 or i == len(futures):
-                print(f"   {i}/{len(futures)} calls ({n_err} errors)")
+    handles = {d.name: calls_path(out, d.name).open("a") for d in deciders}
+    try:
+        with ThreadPoolExecutor(max_workers=args.workers) as pool:
+            futures = [pool.submit(one_call, *job) for job in jobs]
+            for i, future in enumerate(as_completed(futures), 1):
+                row = future.result()
+                n_err += row["error"] is not None
+                with lock:
+                    handles[row["decider"]].write(json.dumps(row) + "\n")
+                    handles[row["decider"]].flush()
+                if i % 25 == 0 or i == len(futures):
+                    print(f"   {i}/{len(futures)} calls ({n_err} errors)")
+    finally:
+        for fh in handles.values():
+            fh.close()
 
     if metered_only:
         n_metered = len(futures) - n_err
@@ -233,12 +256,11 @@ def main() -> int:
             "seconds": time.perf_counter() - block_t0,
             "calls": n_metered,
         }
-        meta = json.loads(meta_path.read_text())
-        meta.setdefault("energy_blocks", {})[args.kev_name] = block
-        meta_path.write_text(json.dumps(meta, indent=2))
+        for decider in deciders:
+            write_decider_meta(decider, energy_block=block)
         print(f"==> block energy {block['joules']:.1f} J over {block['calls']} calls in {block['seconds']:.1f}s")
 
-    print(f"==> wrote {calls_path}")
+    print(f"==> wrote {', '.join(calls_path(out, d.name).name for d in deciders)} in {out}")
     return 0
 
 

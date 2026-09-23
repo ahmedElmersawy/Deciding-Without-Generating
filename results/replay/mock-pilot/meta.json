@@ -3,61 +3,6 @@
     "results/states/mock-pilot.jsonl"
   ],
   "n_states": 65,
-  "deciders": [
-    "jev",
-    "kev-0.8b",
-    "llm:openrouter/openai/gpt-oss-20b"
-  ],
-  "llm_model": "openrouter/openai/gpt-oss-20b",
-  "repeats": 5,
-  "workers": 1,
   "include_failed": false,
-  "started": "20260923T182313Z",
-  "kev_url": "http://127.0.0.1:8009",
-  "kev_models": {
-    "models": [
-      {
-        "name": "kev-latest",
-        "description": "Kev pointer head on Qwen/Qwen3.5-0.8B-Base, serving jaredpalmer/kev-0.8b at temperature 2.41",
-        "release_date": "2026-09-21",
-        "run": "jaredpalmer/kev-0.8b",
-        "base": "Qwen/Qwen3.5-0.8B-Base",
-        "lora": 16,
-        "device": "cuda",
-        "backend": "torch",
-        "dtype": "bfloat16",
-        "temperature": 2.406050072164233,
-        "prefix_cache": {
-          "size": 0,
-          "min_state_tokens": 0,
-          "hits": 0,
-          "misses": 0,
-          "cached_states": 0
-        }
-      },
-      {
-        "name": "jev-latest",
-        "description": "Kev pointer head on Qwen/Qwen3.5-0.8B-Base, serving jaredpalmer/kev-0.8b at temperature 2.41",
-        "release_date": "2026-09-21",
-        "run": "jaredpalmer/kev-0.8b",
-        "base": "Qwen/Qwen3.5-0.8B-Base",
-        "lora": 16,
-        "device": "cuda",
-        "backend": "torch",
-        "dtype": "bfloat16",
-        "temperature": 2.406050072164233,
-        "prefix_cache": {
-          "size": 0,
-          "min_state_tokens": 0,
-          "hits": 0,
-          "misses": 0,
-          "cached_states": 0
-        }
-      }
-    ]
-  },
-  "gpu": null,
-  "gpu_idle_watts": null,
-  "energy_unavailable": "energy counter implausible on NVIDIA GeForce RTX 3050 Ti Laptop GPU: 718 W implied under polling vs 9.3 W reported by NVML power usage",
-  "energy_blocks": null
+  "created": "20260923T133420Z"
 }

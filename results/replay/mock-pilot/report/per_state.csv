@@ -152,7 +152,7 @@ llm:openrouter/openai/gpt-oss-20b,impossible_task_1/t0/turn3,impossible_task_1,r
 llm:openrouter/openai/gpt-oss-20b,impossible_task_1/t0/turn4,impossible_task_1,respond_to_user,5,1.0,respond_to_user,1.0,1
 llm:openrouter/openai/gpt-oss-20b,impossible_task_1/t0/turn5,impossible_task_1,respond_to_user,5,1.0,respond_to_user,1.0,1
 llm:openrouter/openai/gpt-oss-20b,impossible_task_1/t1/turn0,impossible_task_1,transfer_to_human_agents,5,1.0,transfer_to_human_agents,1.0,1
-llm:openrouter/openai/gpt-oss-20b,impossible_task_1/t1/turn1,impossible_task_1,respond_to_user,4,0.75,respond_to_user,0.75,2
+llm:openrouter/openai/gpt-oss-20b,impossible_task_1/t1/turn1,impossible_task_1,respond_to_user,5,0.6,respond_to_user,0.6,2
 llm:openrouter/openai/gpt-oss-20b,impossible_task_1/t2/turn0,impossible_task_1,transfer_to_human_agents,5,1.0,transfer_to_human_agents,1.0,1
 llm:openrouter/openai/gpt-oss-20b,impossible_task_1/t2/turn1,impossible_task_1,respond_to_user,5,0.6,respond_to_user,0.6,2
 llm:openrouter/openai/gpt-oss-20b,update_task_1/t0/turn0,update_task_1,update_task_status,5,1.0,update_task_status,1.0,1

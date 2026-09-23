@@ -1,4 +1,4 @@
-"""Analyze a decision-replay run (arm 0, step 3): tables + figures from <run>/calls.jsonl.
+"""Analyze a decision-replay run (arm 0, step 3): tables + figures from <run>/calls-*.jsonl.
 
 Writes into <run>/report/:
   summary.md             per-decider table: accuracy [95% CI], latency distribution, cost,
@@ -25,6 +25,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
+from dwg.runfiles import load_calls, load_decider_metas  # noqa: E402
 from dwg.stats import (  # noqa: E402
     bootstrap_ci,
     brier_score,
@@ -56,11 +57,6 @@ def display_name(decider: str) -> str:
     return decider
 
 
-def load_rows(run: Path) -> list[dict]:
-    with (run / "calls.jsonl").open() as fh:
-        return [json.loads(line) for line in fh if line.strip()]
-
-
 def per_state(rows: list[dict]) -> list[dict]:
     groups = defaultdict(list)
     for r in rows:
@@ -86,7 +82,7 @@ def per_state(rows: list[dict]) -> list[dict]:
     return out
 
 
-def summarize(rows: list[dict], states: list[dict], idle_watts=None) -> dict[str, dict]:
+def summarize(rows: list[dict], states: list[dict], dmetas: dict[str, dict]) -> dict[str, dict]:
     summary = {}
     for decider in sorted({r["decider"] for r in rows}):
         all_rows = [r for r in rows if r["decider"] == decider]
@@ -112,37 +108,65 @@ def summarize(rows: list[dict], states: list[dict], idle_watts=None) -> dict[str
             "consistency": bootstrap_ci([s["consistency"] for s in states if s["decider"] == decider]),
             "all_repeats_agree": float(np.mean([s["n_distinct_choices"] == 1 for s in states if s["decider"] == decider])),
             "server_latency": describe([r["server_latency_s"] for r in ok if r.get("server_latency_s") is not None]),
-            "energy": _energy(ok, idle_watts),
+            "energy": _energy(ok, dmetas.get(decider, {})),
         }
     return summary
 
 
-def _energy(ok: list[dict], idle_watts) -> dict:
-    """Gross J/decision and, given the idle baseline, net = gross - idle_W * call latency."""
+def _energy(ok: list[dict], dmeta: dict) -> dict:
+    """J/decision, gross and net of the idle baseline. The block measure (counter delta over the
+    whole metered run / calls) is the headline when present; per-call values are noisy because
+    the counter steps every ~100 ms (see dwg.energy)."""
+    idle_watts = dmeta.get("gpu_idle_watts")
+    block = dmeta.get("energy_block")
+    if block and block.get("calls"):
+        gross = block["joules"] / block["calls"]
+        out = {"gross": (gross, gross, gross), "method": "block"}
+        if idle_watts is not None:
+            net = (block["joules"] - idle_watts * block["seconds"]) / block["calls"]
+            out["net"] = (net, net, net)
+        return out
     metered = [r for r in ok if r.get("energy_j") is not None]
     if not metered:
         return {}
     clusters = [r["state_id"] for r in metered]
-    out = {"gross": bootstrap_ci([r["energy_j"] for r in metered], clusters)}
+    out = {"gross": bootstrap_ci([r["energy_j"] for r in metered], clusters), "method": "per-call"}
     if idle_watts is not None:
         net = [r["energy_j"] - idle_watts * r["latency_s"] for r in metered]
         out["net"] = bootstrap_ci(net, clusters)
     return out
 
 
-def write_summary_md(run: Path, meta: dict, summary: dict, report: Path) -> None:
+def write_summary_md(run: Path, meta: dict, dmetas: dict[str, dict], summary: dict, report: Path) -> None:
     def ci(t, fmt="{:.3f}"):
         return f"{fmt.format(t[0])} [{fmt.format(t[1])}, {fmt.format(t[2])}]"
 
     lines = [
         f"# Decision replay — {run.name}",
         "",
-        f"- states: {meta['n_states']} ({'all episodes' if meta['include_failed'] else 'reward=1 episodes only'}), "
-        f"repeats per state: {meta['repeats']}, concurrency: {meta['workers']}",
-        f"- LLM decider model: `{meta['llm_model']}`",
+        f"- states: {meta['n_states']} ({'all episodes' if meta['include_failed'] else 'reward=1 episodes only'})",
         "- accuracy = agreement with the reference action from a successful trajectory (a lower bound: "
         "other actions may also be acceptable)",
         "- 95% CIs: cluster bootstrap over states. Latency = client wall clock per call, network included.",
+        "",
+        "## Deciders",
+        "",
+        "| decider | model | repeats | concurrency | host | GPU energy |",
+        "|---|---|---|---|---|---|",
+    ]
+    for d in summary:
+        dm = dmetas.get(d, {})
+        if dm.get("gpu"):
+            energy = f"{dm['gpu']}, idle {dm['gpu_idle_watts']:.1f} W"
+        elif dm.get("energy_unavailable"):
+            energy = f"not measured: {dm['energy_unavailable']}"
+        else:
+            energy = "n/a (hosted)"
+        lines.append(
+            f"| {d} | {dm.get('model') or '—'} | {dm.get('repeats', '?')} | {dm.get('workers', '?')} | "
+            f"{dm.get('host', '?')} | {energy} |"
+        )
+    lines += [
         "",
         "## Decision quality",
         "",
@@ -172,14 +196,12 @@ def write_summary_md(run: Path, meta: dict, summary: dict, report: Path) -> None
         )
     local = {d: s for d, s in summary.items() if s["server_latency"].get("n") or s["energy"]}
     if local:
-        gpu = meta.get("gpu") or f"energy not measured ({meta.get('energy_unavailable') or 'no GPU meter'})"
-        idle = meta.get("gpu_idle_watts")
         lines += [
             "",
             "## Local deciders: model time vs. overhead, and energy",
             "",
-            f"GPU: {gpu}" + (f", idle baseline {idle:.1f} W" if idle is not None else "")
-            + ". Energy is whole-GPU over each (serialized) call; net subtracts the idle baseline.",
+            "Energy is whole-GPU (GPU per decider in the Deciders table). Block = counter delta over the whole "
+            "metered run / calls (headline); net subtracts the idle baseline.",
             "",
             "| decider | server (model) latency p50 | client latency p50 | HTTP/client overhead p50 | "
             "J / decision gross [95% CI] | J / decision net [95% CI] |",
@@ -188,14 +210,7 @@ def write_summary_md(run: Path, meta: dict, summary: dict, report: Path) -> None
         for d, s in local.items():
             srv, cli = s["server_latency"], s["latency"]
             overhead = cli["p50"] - srv["p50"] if srv.get("n") else float("nan")
-            e = dict(s["energy"])
-            block = (meta.get("energy_blocks") or {}).get(d)
-            if block and block["calls"]:
-                gross = block["joules"] / block["calls"]
-                e["gross"] = (gross, gross, gross)  # block measure: exact, no per-call CI
-                if idle is not None:
-                    net = (block["joules"] - idle * block["seconds"]) / block["calls"]
-                    e["net"] = (net, net, net)
+            e = s["energy"]
             lines.append(
                 f"| {d} | {srv.get('p50', float('nan')):.3f}s | {cli['p50']:.3f}s | {overhead:.3f}s | "
                 f"{ci(e['gross'], '{:.2f}') if 'gross' in e else 'n/a'} | {ci(e['net'], '{:.2f}') if 'net' in e else 'n/a'} |"
@@ -233,8 +248,10 @@ def _style(ax, xlabel=None, ylabel=None):
 
 def _save(fig, report: Path, name: str) -> None:
     fig.tight_layout()
-    fig.savefig(report / f"{name}.png", dpi=200, facecolor="#fcfcfb")
-    fig.savefig(report / f"{name}.pdf", facecolor="#fcfcfb")
+    # No embedded timestamps: the same data must give byte-identical files, so two machines
+    # regenerating a shared run's report don't produce git conflicts.
+    fig.savefig(report / f"{name}.png", dpi=200, facecolor="#fcfcfb", metadata={"Software": None})
+    fig.savefig(report / f"{name}.pdf", facecolor="#fcfcfb", metadata={"CreationDate": None, "Producer": None})
 
 
 def _plain_log_ticks(ax):
@@ -373,14 +390,17 @@ def main() -> int:
     parser.add_argument("run", type=Path)
     args = parser.parse_args()
 
-    rows = load_rows(args.run)
+    rows = load_calls(args.run)
+    if not rows:
+        raise SystemExit(f"no calls-*.jsonl in {args.run}")
     meta = json.loads((args.run / "meta.json").read_text())
+    dmetas = load_decider_metas(args.run)
     report = args.run / "report"
     report.mkdir(exist_ok=True)
 
     states = per_state(rows)
-    summary = summarize(rows, states, meta.get("gpu_idle_watts"))
-    write_summary_md(args.run, meta, summary, report)
+    summary = summarize(rows, states, dmetas)
+    write_summary_md(args.run, meta, dmetas, summary, report)
     with (report / "per_state.csv").open("w") as fh:
         cols = list(states[0])
         fh.write(",".join(cols) + "\n")
