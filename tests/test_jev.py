@@ -76,6 +76,8 @@ def test_non_200_raises_jev_error():
         decider.choice(state="x", name="q", instructions="i", criteria={"a": "a"})
 
 
-def test_missing_api_key_raises_before_any_request():
+def test_missing_api_key_raises_before_any_request(monkeypatch):
+    # tau2 calls load_dotenv() on import, so a real .env key can leak in from other tests.
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
     with pytest.raises(JevError, match="OPENROUTER_API_KEY"):
         JevDecider(api_key=None, session=_FakeSession(_FakeResponse(200, {})))
