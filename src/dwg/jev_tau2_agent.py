@@ -30,9 +30,10 @@ from tau2.data_model.message import (
 from tau2.environment.tool import Tool
 from tau2.utils.llm_utils import generate
 
+from dwg.decisions import DECISION_QUESTION, RESPOND_TO_USER, decision_options, render_transcript
 from dwg.jev import JevDecider
 
-RESPOND_TO_USER = "respond_to_user"
+__all__ = ["JevTau2Agent", "JevTau2AgentState", "RESPOND_TO_USER"]
 
 AGENT_INSTRUCTION = """
 You are a customer service agent that helps the user according to the <policy> provided below.
@@ -106,17 +107,11 @@ class JevTau2Agent(HalfDuplexAgent[JevTau2AgentState]):
         messages = state.system_messages + state.messages
 
         tools_by_name = {tool.name: tool for tool in self.tools}
-        criteria = {name: tool.openai_schema["function"]["description"] for name, tool in tools_by_name.items()}
-        criteria[RESPOND_TO_USER] = "Send a text message directly to the user instead of calling a tool."
-
         answer = self.jev.choice(
-            state=_render_transcript(messages),
+            state=render_transcript(messages),
             name="tool_choice",
-            instructions=(
-                "Given the conversation so far and the domain policy, should the agent respond "
-                "directly to the user, or call one of the tools?"
-            ),
-            criteria=criteria,
+            instructions=DECISION_QUESTION,
+            criteria=decision_options(self.tools),
         )
 
         if answer.choice == RESPOND_TO_USER:
@@ -145,14 +140,6 @@ class JevTau2Agent(HalfDuplexAgent[JevTau2AgentState]):
         _fold_in_jev_cost(assistant_message, self.jev.last_response["usage"])
         state.messages.append(assistant_message)
         return assistant_message, state
-
-
-def _render_transcript(messages: list[Message]) -> str:
-    lines = []
-    for message in messages:
-        role = message.role.value if hasattr(message.role, "value") else message.role
-        lines.append(f"{role}: {message.content}")
-    return "\n".join(lines)
 
 
 def _fold_in_jev_cost(message: AssistantMessage, jev_usage: dict) -> None:
