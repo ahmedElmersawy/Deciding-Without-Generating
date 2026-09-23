@@ -30,7 +30,14 @@ from dotenv import load_dotenv
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from dwg.decisions import JevChoiceDecider, LLMChoiceDecider, decision_options, render_transcript  # noqa: E402
+from dwg.decisions import (  # noqa: E402
+    JevChoiceDecider,
+    LLMChoiceDecider,
+    decision_options,
+    make_kev_decider,
+    render_transcript,
+)
+from dwg.energy import try_energy_meter  # noqa: E402
 
 DEFAULT_LLM = "openrouter/openai/gpt-oss-20b"
 
@@ -54,16 +61,28 @@ def rebuild_messages(state: dict):
     return messages
 
 
-def build_deciders(names: list[str], llm_model: str) -> list:
+def build_deciders(names: list[str], args, energy_meter) -> list:
     deciders = []
     for name in names:
         if name == "jev":
             deciders.append(JevChoiceDecider())
         elif name == "llm":
-            deciders.append(LLMChoiceDecider(model=llm_model))
+            deciders.append(LLMChoiceDecider(model=args.llm_model))
+        elif name == "kev":
+            deciders.append(make_kev_decider(base_url=args.kev_url, name=args.kev_name, energy_meter=energy_meter))
         else:
-            raise SystemExit(f"unknown decider {name!r} (known: jev, llm)")
+            raise SystemExit(f"unknown decider {name!r} (known: jev, llm, kev)")
     return deciders
+
+
+def local_model_info(base_url: str) -> dict:
+    """What the local System One server says it has loaded (GET /v1/models), for the run record."""
+    import requests
+
+    try:
+        return requests.get(f"{base_url.rstrip('/')}/v1/models", timeout=10).json()
+    except Exception as exc:
+        raise SystemExit(f"local decider server at {base_url} is not reachable: {exc!r}")
 
 
 def main() -> int:
@@ -71,6 +90,10 @@ def main() -> int:
     parser.add_argument("--states", type=Path, nargs="+", required=True)
     parser.add_argument("--deciders", nargs="+", default=["jev", "llm"])
     parser.add_argument("--llm-model", default=DEFAULT_LLM)
+    parser.add_argument("--kev-url", default="http://127.0.0.1:8009", help="local Kev server (scripts/serve_kev.sh)")
+    parser.add_argument("--kev-name", default="kev", help="label for this Kev run, e.g. kev-4b")
+    parser.add_argument("--no-energy", action="store_true", help="skip GPU energy for local deciders")
+    parser.add_argument("--warmup", type=int, default=5, help="discarded warmup calls per local decider")
     parser.add_argument("--repeats", type=int, default=5, help="calls per (decider, state)")
     parser.add_argument("--workers", type=int, default=4, help="concurrent calls (same for every decider)")
     parser.add_argument("--include-failed", action="store_true", help="also replay states from reward<1 episodes")
@@ -98,22 +121,42 @@ def main() -> int:
                 if row.get("error") is None:
                     done.add((row["decider"], row["state_id"], row["repeat"]))
 
-    deciders = build_deciders(args.deciders, args.llm_model)
-    (out / "meta.json").write_text(
-        json.dumps(
-            {
-                "states": [str(p) for p in args.states],
-                "n_states": len(states),
-                "deciders": [d.name for d in deciders],
-                "llm_model": args.llm_model,
-                "repeats": args.repeats,
-                "workers": args.workers,
-                "include_failed": args.include_failed,
-                "started": stamp,
-            },
-            indent=2,
-        )
-    )
+    energy_meter, idle_w, kev_info, energy_unavailable = None, None, None, None
+    if "kev" in args.deciders:
+        kev_info = local_model_info(args.kev_url)
+        if args.no_energy:
+            energy_unavailable = "disabled with --no-energy"
+        else:
+            energy_meter, energy_unavailable = try_energy_meter()
+            if energy_meter:
+                idle_w = energy_meter.idle_watts()
+                print(f"==> GPU {energy_meter.device_name}: idle {idle_w:.1f} W")
+    deciders = build_deciders(args.deciders, args, energy_meter)
+    meta = {
+        "states": [str(p) for p in args.states],
+        "n_states": len(states),
+        "deciders": [d.name for d in deciders],
+        "llm_model": args.llm_model,
+        "repeats": args.repeats,
+        "workers": args.workers,
+        "include_failed": args.include_failed,
+        "started": stamp,
+        "kev_url": args.kev_url if kev_info else None,
+        "kev_models": kev_info,
+        "gpu": energy_meter.device_name if energy_meter else None,
+        "gpu_idle_watts": idle_w,
+        "energy_unavailable": energy_unavailable,
+    }
+    # Adding a decider to an existing run (e.g. Kev later, on a GPU node) keeps the earlier
+    # deciders' record: merge, don't overwrite.
+    meta_path = out / "meta.json"
+    if meta_path.exists():
+        previous = json.loads(meta_path.read_text())
+        meta["deciders"] = sorted(set(previous.get("deciders", [])) | set(meta["deciders"]))
+        for key in ("kev_url", "kev_models", "gpu", "gpu_idle_watts", "energy_unavailable", "energy_blocks"):
+            if meta.get(key) is None:
+                meta[key] = previous.get(key)
+    meta_path.write_text(json.dumps(meta, indent=2))
 
     jobs = [
         (decider, state, rep)
@@ -129,6 +172,9 @@ def main() -> int:
 
     rendered = {s["state_id"]: render_transcript(rebuild_messages(s)) for s in states}
     lock = threading.Lock()
+    # Energy is whole-GPU: calls to a metered decider must not overlap each other. Hosted
+    # deciders still run concurrently alongside, since they don't touch the local GPU.
+    gpu_lock = threading.Lock()
 
     def one_call(decider, state, rep) -> dict:
         row = {
@@ -142,12 +188,30 @@ def main() -> int:
             "error": None,
         }
         try:
-            decision = decider.decide(rendered[state["state_id"]], options_by_domain[state["domain"]])
+            if getattr(decider, "energy_meter", None) is not None:
+                with gpu_lock:
+                    decision = decider.decide(rendered[state["state_id"]], options_by_domain[state["domain"]])
+            else:
+                decision = decider.decide(rendered[state["state_id"]], options_by_domain[state["domain"]])
             row.update(decision.to_dict())
             row["correct"] = decision.choice == state["label"]
         except Exception as exc:
             row["error"] = repr(exc)[:500]
         return row
+
+    # Local deciders: discard warmup calls (the first CUDA call pays one-off kernel/allocator
+    # setup — 0.65 s vs 0.11 s steady-state for Kev-0.8B on the pilot laptop).
+    for decider in deciders:
+        if decider.name == args.kev_name and args.warmup:
+            s0 = states[0]
+            for _ in range(args.warmup):
+                decider.decide(rendered[s0["state_id"]], options_by_domain[s0["domain"]])
+            print(f"==> {decider.name}: {args.warmup} warmup calls discarded")
+
+    # Block energy: counter delta over the whole run / metered calls. Only meaningful when the
+    # metered decider runs alone and back to back (no gaps while hosted calls are in flight).
+    metered_only = energy_meter is not None and all(getattr(d, "energy_meter", None) for d in deciders)
+    block_e0, block_t0 = (energy_meter.read_mj(), time.perf_counter()) if metered_only else (None, None)
 
     n_err = 0
     with calls_path.open("a") as fh, ThreadPoolExecutor(max_workers=args.workers) as pool:
@@ -160,6 +224,19 @@ def main() -> int:
                 fh.flush()
             if i % 25 == 0 or i == len(futures):
                 print(f"   {i}/{len(futures)} calls ({n_err} errors)")
+
+    if metered_only:
+        n_metered = len(futures) - n_err
+        block = {
+            "decider": args.kev_name,
+            "joules": (energy_meter.read_mj() - block_e0) / 1000.0,
+            "seconds": time.perf_counter() - block_t0,
+            "calls": n_metered,
+        }
+        meta = json.loads(meta_path.read_text())
+        meta.setdefault("energy_blocks", {})[args.kev_name] = block
+        meta_path.write_text(json.dumps(meta, indent=2))
+        print(f"==> block energy {block['joules']:.1f} J over {block['calls']} calls in {block['seconds']:.1f}s")
 
     print(f"==> wrote {calls_path}")
     return 0

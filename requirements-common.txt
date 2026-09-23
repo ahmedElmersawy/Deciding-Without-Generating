@@ -29,6 +29,7 @@ numpy==2.3.5
 huggingface_hub==1.32.0   # HF Hub API only here (dataset/model metadata); no torch pulled in
 tabulate==0.10.0          # results tables in reports/plots
 matplotlib==3.11.2        # benchmark figures (scripts/analyze_decisions.py)
+nvidia-ml-py==13.610.43   # GPU energy counter for local deciders (src/dwg/energy.py); inert without a GPU
 
 # --- tau2-bench (agent-control decision point) ----------------------------------
 # tau2 itself is NOT on PyPI (github.com/sierra-research/tau2-bench) — setup.sh clones

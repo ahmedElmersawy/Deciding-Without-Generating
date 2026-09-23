@@ -13,7 +13,9 @@ Fairness choices (logged in DECISIONS.md):
   in the constrained decision call). Verbalized confidence is the standard LLM baseline and is
   known to be overconfident — the calibration comparison should say so.
 - Latency is client-side wall clock around one HTTP round trip (network included, identical
-  for both since both go through OpenRouter).
+  for both since both go through OpenRouter). Local System One servers (Kev) also report
+  server-side compute time, so API/network overhead can be separated from model time.
+- Energy (J) is measured only for local deciders, via `dwg.energy` (whole-GPU, serialized).
 """
 
 from __future__ import annotations
@@ -44,6 +46,8 @@ class Decision:
     input_tokens: Optional[int]
     output_tokens: Optional[int]
     model: str
+    server_latency_s: Optional[float] = None  # model-side time, when the server reports it
+    energy_j: Optional[float] = None  # gross GPU energy over the call; local deciders only
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -84,16 +88,25 @@ def action_label(message) -> str:
 
 
 class JevChoiceDecider:
-    """Jev answers one typed `choice` question over the rendered state."""
+    """A System One model answers one typed `choice` question over the rendered state.
 
-    def __init__(self, jev: Optional[JevDecider] = None) -> None:
+    Jev through OpenRouter by default; any System One-compatible server (e.g. local Kev, see
+    `make_kev_decider`) via a configured `JevDecider`. With `energy_meter`, each call's GPU
+    energy is read off NVML's counter — the caller must serialize calls (see `dwg.energy`).
+    """
+
+    def __init__(self, jev: Optional[JevDecider] = None, name: str = "jev", energy_meter=None) -> None:
         self.jev = jev or JevDecider()
-        self.name = "jev"
+        self.name = name
+        self.energy_meter = energy_meter
 
     def decide(self, state: str, options: dict[str, str]) -> Decision:
+        e0 = self.energy_meter.read_mj() if self.energy_meter else None
         t0 = time.perf_counter()
         answer = self.jev.choice(state=state, name="next_action", instructions=DECISION_QUESTION, criteria=options)
         latency = time.perf_counter() - t0
+        energy_j = (self.energy_meter.read_mj() - e0) / 1000.0 if self.energy_meter else None
+        server_ms = (self.jev.last_response or {}).get("latency_ms")
         return Decision(
             choice=answer.choice,
             confidence=answer.confidence,
@@ -103,7 +116,25 @@ class JevChoiceDecider:
             input_tokens=answer.usage.get("input_tokens"),
             output_tokens=answer.usage.get("output_tokens"),
             model=answer.model,
+            server_latency_s=None if server_ms is None else server_ms / 1000.0,
+            energy_j=energy_j,
         )
+
+
+def make_kev_decider(
+    base_url: str = "http://127.0.0.1:8009",
+    name: str = "kev",
+    energy_meter=None,
+    timeout: float = 120.0,
+) -> JevChoiceDecider:
+    """Kev (github.com/jaredpalmer/kev), an open-weights System One reproduction served locally.
+
+    Same wire format as Jev, so the same client and the same question — only the endpoint
+    differs. No API cost; latency and (with `energy_meter`) GPU energy are the cost.
+    """
+    client = JevDecider(base_url=base_url, path="/v1/systemone", model="kev-latest",
+                        require_api_key=False, api_key="", timeout=timeout)
+    return JevChoiceDecider(jev=client, name=name, energy_meter=energy_meter)
 
 
 LLM_DECIDER_SYSTEM = (

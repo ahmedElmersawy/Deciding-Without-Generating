@@ -39,6 +39,16 @@ SERIES = ["#2a78d6", "#eb6834", "#1baf7a"]
 INK, INK_2, GRID = "#0b0b0b", "#52514e", "#e4e3df"
 
 
+def decider_color(decider: str) -> str:
+    """Color follows the decider family, never its position, so adding a decider never
+    repaints the others: jev = slot 1, LLMs = slot 2, local System One models (Kev) = slot 3."""
+    if decider.startswith("llm:"):
+        return SERIES[1]
+    if decider.startswith("kev"):
+        return SERIES[2]
+    return SERIES[0]
+
+
 def display_name(decider: str) -> str:
     """Figure label: `llm:openrouter/openai/gpt-oss-20b` -> `gpt-oss-20b (LLM)`."""
     if decider.startswith("llm:"):
@@ -76,7 +86,7 @@ def per_state(rows: list[dict]) -> list[dict]:
     return out
 
 
-def summarize(rows: list[dict], states: list[dict]) -> dict[str, dict]:
+def summarize(rows: list[dict], states: list[dict], idle_watts=None) -> dict[str, dict]:
     summary = {}
     for decider in sorted({r["decider"] for r in rows}):
         all_rows = [r for r in rows if r["decider"] == decider]
@@ -101,8 +111,23 @@ def summarize(rows: list[dict], states: list[dict]) -> dict[str, dict]:
             "brier": brier_score(conf, corr) if conf else float("nan"),
             "consistency": bootstrap_ci([s["consistency"] for s in states if s["decider"] == decider]),
             "all_repeats_agree": float(np.mean([s["n_distinct_choices"] == 1 for s in states if s["decider"] == decider])),
+            "server_latency": describe([r["server_latency_s"] for r in ok if r.get("server_latency_s") is not None]),
+            "energy": _energy(ok, idle_watts),
         }
     return summary
+
+
+def _energy(ok: list[dict], idle_watts) -> dict:
+    """Gross J/decision and, given the idle baseline, net = gross - idle_W * call latency."""
+    metered = [r for r in ok if r.get("energy_j") is not None]
+    if not metered:
+        return {}
+    clusters = [r["state_id"] for r in metered]
+    out = {"gross": bootstrap_ci([r["energy_j"] for r in metered], clusters)}
+    if idle_watts is not None:
+        net = [r["energy_j"] - idle_watts * r["latency_s"] for r in metered]
+        out["net"] = bootstrap_ci(net, clusters)
+    return out
 
 
 def write_summary_md(run: Path, meta: dict, summary: dict, report: Path) -> None:
@@ -142,8 +167,39 @@ def write_summary_md(run: Path, meta: dict, summary: dict, report: Path) -> None
             f"| {d} | {lat.get('mean', float('nan')):.3f}s | {lat.get('p50', float('nan')):.3f}s | "
             f"{lat.get('p95', float('nan')):.3f}s | {lat.get('min', float('nan')):.3f}s | "
             f"{lat.get('max', float('nan')):.3f}s | {lat.get('n_outliers', 0)} | "
-            f"{ci(s['cost'], '{:.2e}')} | {s['cost_total']:.4f} | {s['input_tokens'].get('p50', float('nan')):.0f} |"
+            f"{ci(s['cost'], '{:.2e}') if not np.isnan(s['cost'][0]) else 'n/a (local)'} | "
+            f"{s['cost_total']:.4f} | {s['input_tokens'].get('p50', float('nan')):.0f} |".replace("| nan |", "| n/a |")
         )
+    local = {d: s for d, s in summary.items() if s["server_latency"].get("n") or s["energy"]}
+    if local:
+        gpu = meta.get("gpu") or f"energy not measured ({meta.get('energy_unavailable') or 'no GPU meter'})"
+        idle = meta.get("gpu_idle_watts")
+        lines += [
+            "",
+            "## Local deciders: model time vs. overhead, and energy",
+            "",
+            f"GPU: {gpu}" + (f", idle baseline {idle:.1f} W" if idle is not None else "")
+            + ". Energy is whole-GPU over each (serialized) call; net subtracts the idle baseline.",
+            "",
+            "| decider | server (model) latency p50 | client latency p50 | HTTP/client overhead p50 | "
+            "J / decision gross [95% CI] | J / decision net [95% CI] |",
+            "|---|---|---|---|---|---|",
+        ]
+        for d, s in local.items():
+            srv, cli = s["server_latency"], s["latency"]
+            overhead = cli["p50"] - srv["p50"] if srv.get("n") else float("nan")
+            e = dict(s["energy"])
+            block = (meta.get("energy_blocks") or {}).get(d)
+            if block and block["calls"]:
+                gross = block["joules"] / block["calls"]
+                e["gross"] = (gross, gross, gross)  # block measure: exact, no per-call CI
+                if idle is not None:
+                    net = (block["joules"] - idle * block["seconds"]) / block["calls"]
+                    e["net"] = (net, net, net)
+            lines.append(
+                f"| {d} | {srv.get('p50', float('nan')):.3f}s | {cli['p50']:.3f}s | {overhead:.3f}s | "
+                f"{ci(e['gross'], '{:.2f}') if 'gross' in e else 'n/a'} | {ci(e['net'], '{:.2f}') if 'net' in e else 'n/a'} |"
+            )
     names = list(summary)
     if "jev" in summary and len(names) > 1:
         lines += ["", "## Jev relative to each other decider", ""]
@@ -152,9 +208,10 @@ def write_summary_md(run: Path, meta: dict, summary: dict, report: Path) -> None
             if d == "jev":
                 continue
             o = summary[d]
+            cost = (f"mean $/decision {o['cost'][0] / j['cost'][0]:.2f}x" if not np.isnan(o["cost"][0])
+                    else "no $ cost (local)")
             lines.append(
-                f"- vs `{d}`: median latency {o['latency']['p50'] / j['latency']['p50']:.2f}x, "
-                f"mean $/decision {o['cost'][0] / j['cost'][0]:.2f}x "
+                f"- vs `{d}`: median latency {o['latency']['p50'] / j['latency']['p50']:.2f}x, {cost} "
                 f"(>1 means Jev is faster/cheaper); accuracy difference {j['accuracy'][0] - o['accuracy'][0]:+.3f}"
             )
     (report / "summary.md").write_text("\n".join(lines) + "\n")
@@ -210,7 +267,7 @@ def plot_all(summary: dict, rows: list[dict], states: list[dict], report: Path) 
 
     names = list(summary)
     labels = [display_name(d) for d in names]
-    colors = {d: SERIES[i % len(SERIES)] for i, d in enumerate(names)}
+    colors = {d: decider_color(d) for d in names}
     ok = [r for r in rows if r["error"] is None]
     height = 0.7 * len(names) + 1.2
 
@@ -248,12 +305,14 @@ def plot_all(summary: dict, rows: list[dict], states: list[dict], report: Path) 
 
     # 3. cost per decision
     fig, ax = plt.subplots(figsize=(6.5, height))
-    _dot_ci(ax, labels, [summary[d]["cost"] for d in names], [colors[d] for d in names], lambda t: f"${t[0]:.2e}")
+    priced = [d for d in names if not np.isnan(summary[d]["cost"][0])]
+    _dot_ci(ax, [display_name(d) for d in priced], [summary[d]["cost"] for d in priced], [colors[d] for d in priced],
+            lambda t: f"${t[0]:.2e}")
     ax.set_xscale("log")
     ax.margins(x=0.3)
     ax.xaxis.set_major_formatter(lambda x, _: f"${x:.0e}".replace("e-0", "e-"))
     ax.xaxis.set_minor_formatter(lambda x, _: "")
-    _style(ax, xlabel="$ per decision (95% CI, log scale)")
+    _style(ax, xlabel=r"\$ per decision (95% CI, log scale; local deciders have no \$ cost)")
     ax.set_title("Decision cost", loc="left", fontsize=11, color=INK)
     _save(fig, report, "fig_cost")
     plt.close(fig)
@@ -320,7 +379,7 @@ def main() -> int:
     report.mkdir(exist_ok=True)
 
     states = per_state(rows)
-    summary = summarize(rows, states)
+    summary = summarize(rows, states, meta.get("gpu_idle_watts"))
     write_summary_md(args.run, meta, summary, report)
     with (report / "per_state.csv").open("w") as fh:
         cols = list(states[0])

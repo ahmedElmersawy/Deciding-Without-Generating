@@ -66,6 +66,10 @@ class JevDecider:
     Credentials come from `OPENROUTER_API_KEY` (required) and optionally
     `OPENROUTER_API_BASE` (defaults to https://openrouter.ai/api), unless passed
     explicitly.
+
+    Any server speaking TypeSafe's System One wire format works too — e.g. a local Kev
+    server (see `dwg.decisions.make_kev_decider`): pass its `base_url`, `path="/v1/systemone"`
+    and `require_api_key=False`.
     """
 
     def __init__(
@@ -75,13 +79,18 @@ class JevDecider:
         model: str = DEFAULT_MODEL,
         timeout: float = 30.0,
         session: requests.Session | None = None,
+        path: str = DECISIONS_PATH,
+        require_api_key: bool = True,
     ) -> None:
-        self.api_key = api_key or os.environ.get("OPENROUTER_API_KEY")
-        if not self.api_key:
+        # Only None falls back to the env key: api_key="" means "send no key" (local servers),
+        # so the OpenRouter key never leaks to a non-OpenRouter endpoint.
+        self.api_key = os.environ.get("OPENROUTER_API_KEY") if api_key is None else api_key
+        if require_api_key and not self.api_key:
             raise JevError(
                 "OPENROUTER_API_KEY is not set. Copy .env.example to .env and fill it in."
             )
         self.base_url = (base_url or os.environ.get("OPENROUTER_API_BASE") or DEFAULT_BASE_URL).rstrip("/")
+        self.path = path
         self.model = model
         self.timeout = timeout
         self.session = session or requests.Session()
@@ -89,9 +98,9 @@ class JevDecider:
 
     def ask(self, state: Any, questions: dict[str, dict[str, Any]]) -> dict[str, Any]:
         """Send one or more typed questions about `state`. Returns the raw parsed JSON body."""
-        url = f"{self.base_url}{DECISIONS_PATH}"
+        url = f"{self.base_url}{self.path}"
         payload = {"state": state, "model": self.model, "questions": questions}
-        headers = {"Authorization": f"Bearer {self.api_key}"}
+        headers = {"Authorization": f"Bearer {self.api_key}"} if self.api_key else {}
         try:
             resp = self.session.post(url, json=payload, headers=headers, timeout=self.timeout)
         except requests.RequestException as exc:

@@ -79,3 +79,39 @@ def test_llm_choice_decider_rejects_out_of_set_answer():
             assert "delete_everything" in str(exc)
         else:
             raise AssertionError("expected ValueError")
+
+
+class _FakeMeter:
+    def __init__(self):
+        self.readings = iter([1_000, 3_500])  # mJ before / after -> 2.5 J
+
+    def read_mj(self):
+        return next(self.readings)
+
+
+def test_kev_decider_hits_local_systemone_without_leaking_the_openrouter_key(monkeypatch):
+    from dwg.decisions import make_kev_decider
+
+    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-secret")
+    session = MagicMock()
+    session.post.return_value = SimpleNamespace(
+        status_code=200,
+        json=lambda: {
+            "model": "kev-latest",
+            "answers": {"next_action": {"type": "choice", "choice": "create_task", "confidence": 0.6,
+                                        "probabilities": {"create_task": 0.8, RESPOND_TO_USER: 0.2}}},
+            "usage": {"input_tokens": 300, "output_tokens": 40},
+            "latency_ms": 120,
+        },
+    )
+    decider = make_kev_decider(base_url="http://127.0.0.1:8009", name="kev-4b", energy_meter=_FakeMeter())
+    decider.jev.session = session
+    d = decider.decide("state", OPTIONS)
+
+    url = session.post.call_args.args[0]
+    assert url == "http://127.0.0.1:8009/v1/systemone"
+    assert "Authorization" not in session.post.call_args.kwargs["headers"]
+    assert session.post.call_args.kwargs["json"]["model"] == "kev-latest"
+    assert (d.choice, d.confidence, d.cost_usd) == ("create_task", 0.8, None)
+    assert d.server_latency_s == 0.12
+    assert d.energy_j == 2.5
