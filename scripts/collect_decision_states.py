@@ -35,6 +35,64 @@ from dwg.decisions import action_label  # noqa: E402
 DEFAULT_MODEL = "openrouter/openai/gpt-oss-20b"
 
 
+def rate_limit_tau2_llm_calls(max_calls_per_minute: float) -> None:
+    """Throttle every LLM call tau2 makes (agent + user simulator both go through
+    tau2.utils.llm_utils.generate -> the `completion` name bound there) to at most
+    `max_calls_per_minute`, spaced evenly.
+
+    Needed because tau2's own retry (DEFAULT_MAX_RETRIES=3) assumes transient errors,
+    not a hard per-minute account quota: found live 2026-09-23 collecting airline states
+    with a fresh OpenRouter account — every one of 15 episodes was rate-limited to death
+    (litellm.RateLimitError, "new accounts are limited to 20 requests per minute") because
+    3 retries can't outlast a 60s window that 4 concurrent workers were all hammering at
+    once. Must patch the NAME `tau2.utils.llm_utils.completion`, not `litellm.completion`:
+    that module did `from litellm import completion`, which copies the reference at import
+    time, so reassigning litellm.completion afterward would not affect it.
+    """
+    import threading
+    import time as time_module
+
+    import tau2.utils.llm_utils as llm_utils
+
+    original = llm_utils.completion
+    min_interval = 60.0 / max_calls_per_minute
+    lock = threading.Lock()
+    last_call = [0.0]
+
+    def throttled(*args, **kwargs):
+        with lock:
+            wait = min_interval - (time_module.monotonic() - last_call[0])
+            if wait > 0:
+                time_module.sleep(wait)
+            last_call[0] = time_module.monotonic()
+        return original(*args, **kwargs)
+
+    llm_utils.completion = throttled
+
+
+def cap_max_tokens(max_tokens: int) -> None:
+    """Cap every tau2 LLM call's max_tokens (default: uncapped -> the model's own ceiling,
+    e.g. 65536 for gpt-5.6).
+
+    Found live 2026-09-23 collecting airline states: OpenRouter pre-authorizes credits
+    against the WORST CASE max_tokens on every call, before any tokens are generated or
+    billed -- "you requested up to 65536 tokens, but can only afford 32405" (HTTP 402). A
+    single conversational turn or tool call realistically needs a few hundred tokens, not
+    65536; leaving it uncapped means the account's remaining balance gates far below what
+    it can actually afford in real usage. Same monkeypatch target as
+    rate_limit_tau2_llm_calls, for the same reason (the bound name, not the module).
+    """
+    import tau2.utils.llm_utils as llm_utils
+
+    original = llm_utils.completion
+
+    def capped(*args, **kwargs):
+        kwargs.setdefault("max_tokens", max_tokens)
+        return original(*args, **kwargs)
+
+    llm_utils.completion = capped
+
+
 def make_recording_agent_class():
     from tau2.agent.llm_agent import LLMAgent
 
@@ -96,11 +154,24 @@ def main() -> int:
     parser.add_argument("--model", default=DEFAULT_MODEL, help="reference agent + user simulator model")
     parser.add_argument("--task-ids", nargs="*", default=None)
     parser.add_argument("--workers", type=int, default=4)
+    parser.add_argument("--max-rpm", type=float, default=None,
+                         help="throttle tau2's own LLM calls (agent+user) to at most this many per minute "
+                              "(set below the provider's account-level rate limit, e.g. an OpenRouter "
+                              "'new account' cap; see rate_limit_tau2_llm_calls)")
+    parser.add_argument("--max-tokens", type=int, default=None,
+                         help="cap max_tokens on every tau2 LLM call (default: model's own ceiling, e.g. "
+                              "65536 for gpt-5.6 -- OpenRouter pre-authorizes credits against that worst "
+                              "case, not real usage; see cap_max_tokens)")
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args()
 
     load_dotenv()
     from tau2.runner import get_tasks
+
+    if args.max_rpm:
+        rate_limit_tau2_llm_calls(args.max_rpm)
+    if args.max_tokens:
+        cap_max_tokens(args.max_tokens)
 
     tasks = get_tasks(args.domain, task_ids=args.task_ids)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")

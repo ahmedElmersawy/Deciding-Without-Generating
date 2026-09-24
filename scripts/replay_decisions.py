@@ -34,6 +34,7 @@ from dotenv import load_dotenv
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from dwg.decisions import (  # noqa: E402
+    CascadeDecider,
     JevChoiceDecider,
     LLMChoiceDecider,
     decision_options,
@@ -74,8 +75,17 @@ def build_deciders(names: list[str], args, energy_meter) -> list:
             deciders.append(LLMChoiceDecider(model=args.llm_model))
         elif name == "kev":
             deciders.append(make_kev_decider(base_url=args.kev_url, name=args.kev_name, energy_meter=energy_meter))
+        elif name == "cascade":
+            # No energy meter on the fast stage here: see CascadeDecider's docstring for why
+            # a live NVML window around a call that may block on a network escalation would
+            # misattribute GPU idle power as decision energy. Kev's own energy figure from a
+            # standalone replay is reused post-hoc instead.
+            fast = make_kev_decider(base_url=args.kev_url, name=args.kev_name, energy_meter=None)
+            escalate = LLMChoiceDecider(model=args.llm_model)
+            deciders.append(CascadeDecider(fast=fast, escalate=escalate, threshold=args.cascade_threshold,
+                                            name=f"cascade-{args.kev_name}-t{args.cascade_threshold:g}"))
         else:
-            raise SystemExit(f"unknown decider {name!r} (known: jev, llm, kev)")
+            raise SystemExit(f"unknown decider {name!r} (known: jev, llm, kev, cascade)")
     return deciders
 
 
@@ -96,6 +106,8 @@ def main() -> int:
     parser.add_argument("--llm-model", default=DEFAULT_LLM)
     parser.add_argument("--kev-url", default="http://127.0.0.1:8009", help="local Kev server (scripts/serve_kev.sh)")
     parser.add_argument("--kev-name", default="kev", help="label for this Kev run, e.g. kev-4b")
+    parser.add_argument("--cascade-threshold", type=float, default=0.9,
+                         help="cascade decider: escalate to --llm-model when Kev's confidence is below this")
     parser.add_argument("--no-energy", action="store_true", help="skip GPU energy for local deciders")
     parser.add_argument("--warmup", type=int, default=5, help="discarded warmup calls per local decider")
     parser.add_argument("--repeats", type=int, default=5, help="calls per (decider, state)")
@@ -130,6 +142,12 @@ def main() -> int:
             if energy_meter:
                 idle_w = energy_meter.idle_watts()
                 print(f"==> GPU {energy_meter.device_name}: idle {idle_w:.1f} W")
+    elif "cascade" in args.deciders:
+        # Provenance only: record which Kev checkpoint backs the fast stage. No energy meter
+        # is created here on purpose (CascadeDecider's docstring explains why).
+        kev_info = local_model_info(args.kev_url)
+        energy_unavailable = ("not measured live for the cascade run: the fast stage's GPU energy is "
+                               "reused post-hoc from that decider's own standalone replay, not re-metered here")
     deciders = build_deciders(args.deciders, args, energy_meter)
 
     # Run-level record: written once by whoever creates the run, never rewritten.
@@ -146,19 +164,22 @@ def main() -> int:
         ))
 
     def write_decider_meta(decider, energy_block=None) -> None:
+        is_cascade = hasattr(decider, "fast")
         local = getattr(decider, "energy_meter", None) is not None or decider.name == args.kev_name
+        provenance = local or is_cascade  # cascade: record which Kev checkpoint, even with no energy meter
         meta = {
             "decider": decider.name,
-            "model": args.llm_model if isinstance(decider, LLMChoiceDecider) else None,
+            "model": args.llm_model if isinstance(decider, (LLMChoiceDecider, CascadeDecider)) else None,
+            "cascade_threshold": args.cascade_threshold if is_cascade else None,
             "repeats": args.repeats,
             "workers": args.workers,
             "started": stamp,
             "host": platform.node(),
-            "kev_url": args.kev_url if local else None,
-            "kev_models": kev_info if local else None,
+            "kev_url": args.kev_url if provenance else None,
+            "kev_models": kev_info if provenance else None,
             "gpu": energy_meter.device_name if (local and energy_meter) else None,
             "gpu_idle_watts": idle_w if local else None,
-            "energy_unavailable": energy_unavailable if local else None,
+            "energy_unavailable": energy_unavailable if provenance else None,
             "energy_block": energy_block,
         }
         # Resuming or extending a decider keeps its earlier records instead of overwriting them.
@@ -220,10 +241,11 @@ def main() -> int:
     # Local deciders: discard warmup calls (the first CUDA call pays one-off kernel/allocator
     # setup — 0.65 s vs 0.11 s steady-state for Kev-0.8B on the pilot laptop).
     for decider in deciders:
-        if decider.name == args.kev_name and args.warmup:
+        warm_target = decider.fast if hasattr(decider, "fast") else decider  # cascade: warm only Kev, no $ cost
+        if (decider.name == args.kev_name or hasattr(decider, "fast")) and args.warmup:
             s0 = states[0]
             for _ in range(args.warmup):
-                decider.decide(rendered[s0["state_id"]], options_by_domain[s0["domain"]])
+                warm_target.decide(rendered[s0["state_id"]], options_by_domain[s0["domain"]])
             print(f"==> {decider.name}: {args.warmup} warmup calls discarded")
 
     # Block energy: counter delta over the whole run / metered calls. Only meaningful when the

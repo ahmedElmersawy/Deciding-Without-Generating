@@ -1,0 +1,736 @@
+{
+  "phase_a_significance": {
+    "Kev-4B vs Kev-9B": {
+      "mean_diff": -0.015384615384615385,
+      "ci_lo": -0.046153846153846156,
+      "ci_hi": 0.0,
+      "n_states": 65,
+      "std_diff": 0.12403473458920845,
+      "significant": false,
+      "needed": {
+        "0.05": {
+          "n_states": 24,
+          "multiple_of_current": 0.4
+        },
+        "0.03": {
+          "n_states": 66,
+          "multiple_of_current": 1.0
+        }
+      }
+    },
+    "Jev vs Kev-9B": {
+      "mean_diff": 0.14153846153846156,
+      "ci_lo": -0.015384615384615372,
+      "ci_hi": 0.2953846153846154,
+      "n_states": 65,
+      "std_diff": 0.6478069513009613,
+      "significant": false,
+      "needed": {
+        "0.05": {
+          "n_states": 645,
+          "multiple_of_current": 9.9
+        },
+        "0.03": {
+          "n_states": 1792,
+          "multiple_of_current": 27.6
+        }
+      }
+    },
+    "Jev vs GPT-OSS-20B": {
+      "mean_diff": -0.08000000000000002,
+      "ci_lo": -0.1476923076923077,
+      "ci_hi": -0.01846153846153846,
+      "n_states": 65,
+      "std_diff": 0.27340446228984633,
+      "significant": true,
+      "needed": {
+        "0.05": {
+          "n_states": 115,
+          "multiple_of_current": 1.8
+        },
+        "0.03": {
+          "n_states": 320,
+          "multiple_of_current": 4.9
+        }
+      }
+    },
+    "Cascade (Kev-4B\u2192GPT-OSS, t=0.9) vs Kev-4B": {
+      "mean_diff": 0.08307692307692308,
+      "ci_lo": -0.015384615384615379,
+      "ci_hi": 0.18461538461538463,
+      "n_states": 65,
+      "std_diff": 0.41214728510010185,
+      "significant": false,
+      "needed": {
+        "0.05": {
+          "n_states": 262,
+          "multiple_of_current": 4.0
+        },
+        "0.03": {
+          "n_states": 726,
+          "multiple_of_current": 11.2
+        }
+      }
+    },
+    "Cascade (Kev-4B\u2192GPT-OSS, t=0.9) vs Kev-9B": {
+      "mean_diff": 0.0676923076923077,
+      "ci_lo": -0.02769230769230769,
+      "ci_hi": 0.16923076923076924,
+      "n_states": 65,
+      "std_diff": 0.4112130273303046,
+      "significant": false,
+      "needed": {
+        "0.05": {
+          "n_states": 260,
+          "multiple_of_current": 4.0
+        },
+        "0.03": {
+          "n_states": 722,
+          "multiple_of_current": 11.1
+        }
+      }
+    },
+    "Cascade (Kev-4B\u2192GPT-OSS, t=0.9) vs Jev": {
+      "mean_diff": -0.07384615384615385,
+      "ci_lo": -0.19384615384615383,
+      "ci_hi": 0.046153846153846156,
+      "n_states": 65,
+      "std_diff": 0.49569298811011886,
+      "significant": false,
+      "needed": {
+        "0.05": {
+          "n_states": 378,
+          "multiple_of_current": 5.8
+        },
+        "0.03": {
+          "n_states": 1049,
+          "multiple_of_current": 16.1
+        }
+      }
+    },
+    "Cascade (Kev-4B\u2192GPT-OSS, t=0.9) vs GPT-OSS-20B": {
+      "mean_diff": -0.15384615384615385,
+      "ci_lo": -0.2584615384615384,
+      "ci_hi": -0.04923076923076923,
+      "n_states": 65,
+      "std_diff": 0.4283241044600904,
+      "significant": true,
+      "needed": {
+        "0.05": {
+          "n_states": 282,
+          "multiple_of_current": 4.3
+        },
+        "0.03": {
+          "n_states": 784,
+          "multiple_of_current": 12.0
+        }
+      }
+    }
+  },
+  "phase_b_validation": {
+    "cascade-kev-4b-t0.9": {
+      "total_rows": 327,
+      "ok_rows": 325,
+      "error_rows": 2,
+      "distinct_states_seen": 65,
+      "expected_states": 65,
+      "missing_states": [],
+      "extra_states": [],
+      "calls_per_state_histogram": {
+        "5": 65
+      },
+      "any_state_over_5_calls": "clean (no state exceeds 5 logged calls)",
+      "prefix_cache": {
+        "size": 0,
+        "min_state_tokens": 0,
+        "hits": 0,
+        "misses": 0,
+        "cached_states": 0
+      },
+      "cache_clean": true
+    },
+    "jev": {
+      "total_rows": 325,
+      "ok_rows": 325,
+      "error_rows": 0,
+      "distinct_states_seen": 65,
+      "expected_states": 65,
+      "missing_states": [],
+      "extra_states": [],
+      "calls_per_state_histogram": {
+        "5": 65
+      },
+      "any_state_over_5_calls": "clean (no state exceeds 5 logged calls)"
+    },
+    "kev-0.8b": {
+      "total_rows": 325,
+      "ok_rows": 325,
+      "error_rows": 0,
+      "distinct_states_seen": 65,
+      "expected_states": 65,
+      "missing_states": [],
+      "extra_states": [],
+      "calls_per_state_histogram": {
+        "5": 65
+      },
+      "any_state_over_5_calls": "clean (no state exceeds 5 logged calls)",
+      "prefix_cache": {
+        "size": 0,
+        "min_state_tokens": 0,
+        "hits": 0,
+        "misses": 0,
+        "cached_states": 0
+      },
+      "cache_clean": true
+    },
+    "kev-4b": {
+      "total_rows": 325,
+      "ok_rows": 325,
+      "error_rows": 0,
+      "distinct_states_seen": 65,
+      "expected_states": 65,
+      "missing_states": [],
+      "extra_states": [],
+      "calls_per_state_histogram": {
+        "5": 65
+      },
+      "any_state_over_5_calls": "clean (no state exceeds 5 logged calls)",
+      "prefix_cache": {
+        "size": 0,
+        "min_state_tokens": 0,
+        "hits": 0,
+        "misses": 0,
+        "cached_states": 0
+      },
+      "cache_clean": true
+    },
+    "kev-9b": {
+      "total_rows": 325,
+      "ok_rows": 325,
+      "error_rows": 0,
+      "distinct_states_seen": 65,
+      "expected_states": 65,
+      "missing_states": [],
+      "extra_states": [],
+      "calls_per_state_histogram": {
+        "5": 65
+      },
+      "any_state_over_5_calls": "clean (no state exceeds 5 logged calls)",
+      "prefix_cache": {
+        "size": 0,
+        "min_state_tokens": 0,
+        "hits": 0,
+        "misses": 0,
+        "cached_states": 0
+      },
+      "cache_clean": true
+    },
+    "llm:openrouter/openai/gpt-oss-20b": {
+      "total_rows": 326,
+      "ok_rows": 325,
+      "error_rows": 1,
+      "distinct_states_seen": 65,
+      "expected_states": 65,
+      "missing_states": [],
+      "extra_states": [],
+      "calls_per_state_histogram": {
+        "5": 65
+      },
+      "any_state_over_5_calls": "clean (no state exceeds 5 logged calls)"
+    }
+  },
+  "phase_c_error_analysis": {
+    "n_common_states": 65,
+    "hardest_states": [
+      {
+        "state_id": "create_task_1/t2/turn2",
+        "task_id": "create_task_1",
+        "reference": "transfer_to_human_agents",
+        "n_failing": 4,
+        "Jev": "respond_to_user",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "respond_to_user",
+        "Kev-9B": "respond_to_user"
+      },
+      {
+        "state_id": "impossible_task_1/t2/turn1",
+        "task_id": "impossible_task_1",
+        "reference": "respond_to_user",
+        "n_failing": 3,
+        "Jev": "transfer_to_human_agents",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "transfer_to_human_agents",
+        "Kev-9B": "transfer_to_human_agents"
+      },
+      {
+        "state_id": "impossible_task_1/t1/turn1",
+        "task_id": "impossible_task_1",
+        "reference": "respond_to_user",
+        "n_failing": 3,
+        "Jev": "transfer_to_human_agents",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "transfer_to_human_agents",
+        "Kev-9B": "transfer_to_human_agents"
+      },
+      {
+        "state_id": "impossible_task_1/t0/turn3",
+        "task_id": "impossible_task_1",
+        "reference": "respond_to_user",
+        "n_failing": 3,
+        "Jev": "respond_to_user",
+        "GPT-OSS-20B": "transfer_to_human_agents",
+        "Kev-4B": "transfer_to_human_agents",
+        "Kev-9B": "transfer_to_human_agents"
+      },
+      {
+        "state_id": "create_task_1/t2/turn3",
+        "task_id": "create_task_1",
+        "reference": "respond_to_user",
+        "n_failing": 3,
+        "Jev": "transfer_to_human_agents",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "transfer_to_human_agents",
+        "Kev-9B": "transfer_to_human_agents"
+      },
+      {
+        "state_id": "impossible_task_1/t0/turn1",
+        "task_id": "impossible_task_1",
+        "reference": "respond_to_user",
+        "n_failing": 3,
+        "Jev": "transfer_to_human_agents",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "transfer_to_human_agents",
+        "Kev-9B": "transfer_to_human_agents"
+      },
+      {
+        "state_id": "create_task_1_nl_eval/t1/turn0",
+        "task_id": "create_task_1_nl_eval",
+        "reference": "create_task",
+        "n_failing": 2,
+        "Jev": "get_users",
+        "GPT-OSS-20B": "get_users",
+        "Kev-4B": "create_task",
+        "Kev-9B": "create_task"
+      },
+      {
+        "state_id": "update_task_1/t2/turn1",
+        "task_id": "update_task_1",
+        "reference": "respond_to_user",
+        "n_failing": 2,
+        "Jev": "respond_to_user",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "update_task_status",
+        "Kev-9B": "update_task_status"
+      },
+      {
+        "state_id": "create_task_1/t2/turn1",
+        "task_id": "create_task_1",
+        "reference": "respond_to_user",
+        "n_failing": 2,
+        "Jev": "respond_to_user",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "create_task",
+        "Kev-9B": "create_task"
+      },
+      {
+        "state_id": "create_task_1_with_env_assertions/t0/turn1",
+        "task_id": "create_task_1_with_env_assertions",
+        "reference": "respond_to_user",
+        "n_failing": 2,
+        "Jev": "respond_to_user",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "create_task",
+        "Kev-9B": "create_task"
+      },
+      {
+        "state_id": "update_task_1/t0/turn1",
+        "task_id": "update_task_1",
+        "reference": "respond_to_user",
+        "n_failing": 2,
+        "Jev": "respond_to_user",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "update_task_status",
+        "Kev-9B": "update_task_status"
+      },
+      {
+        "state_id": "update_task_with_history_and_env_assertions/t0/turn1",
+        "task_id": "update_task_with_history_and_env_assertions",
+        "reference": "respond_to_user",
+        "n_failing": 2,
+        "Jev": "respond_to_user",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "update_task_status",
+        "Kev-9B": "update_task_status"
+      }
+    ],
+    "kev4_wins_kev9_loses": {
+      "count": 0,
+      "by_task": {},
+      "examples": []
+    },
+    "kev9_wins_kev4_loses": {
+      "count": 1,
+      "by_task": {
+        "impossible_task_1": 1
+      },
+      "examples": [
+        {
+          "state_id": "impossible_task_1/t0/turn2",
+          "task_id": "impossible_task_1",
+          "reference": "transfer_to_human_agents",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "transfer_to_human_agents",
+          "Kev-4B": "respond_to_user",
+          "Kev-9B": "transfer_to_human_agents"
+        }
+      ]
+    },
+    "jev_beats_both_kev": {
+      "count": 19,
+      "by_task": {
+        "update_task_1": 3,
+        "update_task_with_history_and_env_assertions": 3,
+        "update_task_with_initialization_actions": 3,
+        "create_task_1_nl_eval": 3,
+        "create_task_1": 2,
+        "create_task_1_with_env_assertions": 2,
+        "update_task_with_message_history": 2,
+        "impossible_task_1": 1
+      },
+      "examples": [
+        {
+          "state_id": "update_task_1/t2/turn1",
+          "task_id": "update_task_1",
+          "reference": "respond_to_user",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "update_task_status",
+          "Kev-9B": "update_task_status"
+        },
+        {
+          "state_id": "create_task_1/t2/turn1",
+          "task_id": "create_task_1",
+          "reference": "respond_to_user",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "create_task",
+          "Kev-9B": "create_task"
+        },
+        {
+          "state_id": "create_task_1_with_env_assertions/t0/turn1",
+          "task_id": "create_task_1_with_env_assertions",
+          "reference": "respond_to_user",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "create_task",
+          "Kev-9B": "create_task"
+        },
+        {
+          "state_id": "update_task_1/t0/turn1",
+          "task_id": "update_task_1",
+          "reference": "respond_to_user",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "update_task_status",
+          "Kev-9B": "update_task_status"
+        },
+        {
+          "state_id": "update_task_with_history_and_env_assertions/t0/turn1",
+          "task_id": "update_task_with_history_and_env_assertions",
+          "reference": "respond_to_user",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "update_task_status",
+          "Kev-9B": "update_task_status"
+        },
+        {
+          "state_id": "update_task_with_initialization_actions/t1/turn1",
+          "task_id": "update_task_with_initialization_actions",
+          "reference": "respond_to_user",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "update_task_status",
+          "Kev-9B": "update_task_status"
+        }
+      ]
+    },
+    "gptoss_beats_everyone": {
+      "count": 4,
+      "by_task": {
+        "impossible_task_1": 3,
+        "create_task_1": 1
+      },
+      "examples": [
+        {
+          "state_id": "impossible_task_1/t2/turn1",
+          "task_id": "impossible_task_1",
+          "reference": "respond_to_user",
+          "Jev": "transfer_to_human_agents",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "transfer_to_human_agents",
+          "Kev-9B": "transfer_to_human_agents"
+        },
+        {
+          "state_id": "impossible_task_1/t1/turn1",
+          "task_id": "impossible_task_1",
+          "reference": "respond_to_user",
+          "Jev": "transfer_to_human_agents",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "transfer_to_human_agents",
+          "Kev-9B": "transfer_to_human_agents"
+        },
+        {
+          "state_id": "create_task_1/t2/turn3",
+          "task_id": "create_task_1",
+          "reference": "respond_to_user",
+          "Jev": "transfer_to_human_agents",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "transfer_to_human_agents",
+          "Kev-9B": "transfer_to_human_agents"
+        },
+        {
+          "state_id": "impossible_task_1/t0/turn1",
+          "task_id": "impossible_task_1",
+          "reference": "respond_to_user",
+          "Jev": "transfer_to_human_agents",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "transfer_to_human_agents",
+          "Kev-9B": "transfer_to_human_agents"
+        }
+      ]
+    }
+  },
+  "phase_d_calibration": {
+    "temperature_scaling": {
+      "Jev": {
+        "folds": [
+          {
+            "T": 1.6,
+            "ece_before": 0.0949090909090909,
+            "ece_after": 0.14035026643951917,
+            "n_test": 165
+          },
+          {
+            "T": 0.7,
+            "ece_before": 0.12325000000000003,
+            "ece_after": 0.15622268995771954,
+            "n_test": 160
+          }
+        ],
+        "mean_ece_before": 0.10907954545454546,
+        "mean_ece_after": 0.14828647819861934
+      },
+      "GPT-OSS-20B": {
+        "folds": [
+          {
+            "T": 2.2,
+            "ece_before": 0.09642424242424244,
+            "ece_after": 0.061797536109290105,
+            "n_test": 165
+          },
+          {
+            "T": 1.8000000000000003,
+            "ece_before": 0.12543749999999973,
+            "ece_after": 0.05311378920226406,
+            "n_test": 160
+          }
+        ],
+        "mean_ece_before": 0.11093087121212108,
+        "mean_ece_after": 0.05745566265577708
+      },
+      "Kev-4B": {
+        "folds": [
+          {
+            "T": 6.0,
+            "ece_before": 0.26007272727272723,
+            "ece_after": 0.057484713175240724,
+            "n_test": 165
+          },
+          {
+            "T": 5.5,
+            "ece_before": 0.35478125,
+            "ece_after": 0.06127113907776806,
+            "n_test": 160
+          }
+        ],
+        "mean_ece_before": 0.30742698863636364,
+        "mean_ece_after": 0.05937792612650439
+      },
+      "Kev-9B": {
+        "folds": [
+          {
+            "T": 5.0,
+            "ece_before": 0.30459090909090913,
+            "ece_after": 0.09842818929434716,
+            "n_test": 165
+          },
+          {
+            "T": 5.200000000000001,
+            "ece_before": 0.3380500000000001,
+            "ece_after": 0.061288534053636344,
+            "n_test": 160
+          }
+        ],
+        "mean_ece_before": 0.3213204545454546,
+        "mean_ece_after": 0.07985836167399175
+      },
+      "Kev-0.8B": {
+        "folds": [
+          {
+            "T": 6.0,
+            "ece_before": 0.26245454545454544,
+            "ece_after": 0.10765142740001137,
+            "n_test": 165
+          },
+          {
+            "T": 6.0,
+            "ece_before": 0.49931250000000005,
+            "ece_after": 0.3122104197354396,
+            "n_test": 160
+          }
+        ],
+        "mean_ece_before": 0.38088352272727277,
+        "mean_ece_after": 0.2099309235677255
+      }
+    },
+    "cascade_kev4b_to_gptoss": [
+      {
+        "threshold": 0.0,
+        "accept_rate": 1.0,
+        "escalate_rate": 0.0,
+        "unmatched_escalations": 0,
+        "blended_accuracy": 0.6153846153846154,
+        "blended_latency_ms": 89.24839667931127,
+        "blended_cost_usd_per_decision": 0.0
+      },
+      {
+        "threshold": 0.3,
+        "accept_rate": 1.0,
+        "escalate_rate": 0.0,
+        "unmatched_escalations": 0,
+        "blended_accuracy": 0.6153846153846154,
+        "blended_latency_ms": 89.24839667931127,
+        "blended_cost_usd_per_decision": 0.0
+      },
+      {
+        "threshold": 0.5,
+        "accept_rate": 0.9846153846153847,
+        "escalate_rate": 0.015384615384615385,
+        "unmatched_escalations": 0,
+        "blended_accuracy": 0.6307692307692307,
+        "blended_latency_ms": 106.98300766078037,
+        "blended_cost_usd_per_decision": 1.4486153846153848e-06
+      },
+      {
+        "threshold": 0.6,
+        "accept_rate": 0.9692307692307692,
+        "escalate_rate": 0.03076923076923077,
+        "unmatched_escalations": 0,
+        "blended_accuracy": 0.6338461538461538,
+        "blended_latency_ms": 126.58670190085941,
+        "blended_cost_usd_per_decision": 2.8810769230769234e-06
+      },
+      {
+        "threshold": 0.7,
+        "accept_rate": 0.9230769230769231,
+        "escalate_rate": 0.07692307692307693,
+        "unmatched_escalations": 0,
+        "blended_accuracy": 0.6030769230769231,
+        "blended_latency_ms": 195.0263437407557,
+        "blended_cost_usd_per_decision": 7.825538461538462e-06
+      },
+      {
+        "threshold": 0.8,
+        "accept_rate": 0.8153846153846154,
+        "escalate_rate": 0.18461538461538463,
+        "unmatched_escalations": 0,
+        "blended_accuracy": 0.6307692307692306,
+        "blended_latency_ms": 302.9776965874212,
+        "blended_cost_usd_per_decision": 1.6877384615384627e-05
+      },
+      {
+        "threshold": 0.9,
+        "accept_rate": 0.6,
+        "escalate_rate": 0.4,
+        "unmatched_escalations": 0,
+        "blended_accuracy": 0.68,
+        "blended_latency_ms": 508.2395616608958,
+        "blended_cost_usd_per_decision": 3.322753846153845e-05
+      },
+      {
+        "threshold": 0.95,
+        "accept_rate": 0.4307692307692308,
+        "escalate_rate": 0.5692307692307692,
+        "unmatched_escalations": 0,
+        "blended_accuracy": 0.7230769230769232,
+        "blended_latency_ms": 652.4998125316614,
+        "blended_cost_usd_per_decision": 4.614261538461539e-05
+      },
+      {
+        "threshold": 1.01,
+        "accept_rate": 0.0,
+        "escalate_rate": 1.0,
+        "unmatched_escalations": 0,
+        "blended_accuracy": 0.8523076923076924,
+        "blended_latency_ms": 1092.9866399439586,
+        "blended_cost_usd_per_decision": 8.085313846153845e-05
+      }
+    ]
+  },
+  "phase_e_efficiency": {
+    "Cascade (Kev-4B\u2192GPT-OSS, t=0.9)": {
+      "accuracy_pct": 69.84615384615384,
+      "median_latency_ms": 249.24336897674948,
+      "accuracy_per_ms": 0.28023274654367797,
+      "energy_j": 18.333289230769232,
+      "accuracy_per_joule": 3.8097993746222714,
+      "mean_cost_usd": 8.818130769230768e-05,
+      "note": "energy reused from Kev-4B's own standalone run (fast stage always runs); not re-metered live"
+    },
+    "Jev": {
+      "accuracy_pct": 77.23076923076924,
+      "median_latency_ms": 373.8051020191051,
+      "accuracy_per_ms": 0.20660704953893858,
+      "energy_j": null,
+      "accuracy_per_joule": null,
+      "mean_cost_usd": 3.131067692307692e-05,
+      "note": null
+    },
+    "Kev-0.8B": {
+      "accuracy_pct": 35.38461538461539,
+      "median_latency_ms": 130.68613299401477,
+      "accuracy_per_ms": 0.2707602908889802,
+      "energy_j": null,
+      "accuracy_per_joule": null,
+      "mean_cost_usd": null,
+      "note": null
+    },
+    "Kev-4B": {
+      "accuracy_pct": 61.53846153846154,
+      "median_latency_ms": 86.04241200373508,
+      "accuracy_per_ms": 0.7152107908805505,
+      "energy_j": 18.333289230769232,
+      "accuracy_per_joule": 3.3566514313852616,
+      "mean_cost_usd": null,
+      "note": null
+    },
+    "Kev-9B": {
+      "accuracy_pct": 63.07692307692307,
+      "median_latency_ms": 92.79058699030429,
+      "accuracy_per_ms": 0.6797771748497937,
+      "energy_j": 24.444963076923077,
+      "accuracy_per_joule": 2.5803648333782903,
+      "mean_cost_usd": null,
+      "note": null
+    },
+    "GPT-OSS-20B": {
+      "accuracy_pct": 85.23076923076923,
+      "median_latency_ms": 872.7637080010027,
+      "accuracy_per_ms": 0.09765617938672504,
+      "energy_j": null,
+      "accuracy_per_joule": null,
+      "mean_cost_usd": 8.085313846153845e-05,
+      "note": null
+    }
+  }
+}

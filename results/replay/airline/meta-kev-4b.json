@@ -1,0 +1,61 @@
+{
+  "decider": "kev-4b",
+  "model": null,
+  "cascade_threshold": null,
+  "repeats": 5,
+  "workers": 1,
+  "started": "20260924T035508Z",
+  "host": "gilbreth-k019.rcac.purdue.edu",
+  "kev_url": "http://127.0.0.1:8009",
+  "kev_models": {
+    "models": [
+      {
+        "name": "kev-latest",
+        "description": "Kev pointer head on Qwen/Qwen3.5-4B-Base, serving jaredpalmer/kev-4b at temperature 2.96",
+        "release_date": "2026-09-24",
+        "run": "jaredpalmer/kev-4b",
+        "base": "Qwen/Qwen3.5-4B-Base",
+        "lora": 16,
+        "device": "cuda",
+        "backend": "torch",
+        "dtype": "bfloat16",
+        "temperature": 2.962195104573128,
+        "prefix_cache": {
+          "size": 0,
+          "min_state_tokens": 0,
+          "hits": 0,
+          "misses": 0,
+          "cached_states": 0
+        }
+      },
+      {
+        "name": "jev-latest",
+        "description": "Kev pointer head on Qwen/Qwen3.5-4B-Base, serving jaredpalmer/kev-4b at temperature 2.96",
+        "release_date": "2026-09-24",
+        "run": "jaredpalmer/kev-4b",
+        "base": "Qwen/Qwen3.5-4B-Base",
+        "lora": 16,
+        "device": "cuda",
+        "backend": "torch",
+        "dtype": "bfloat16",
+        "temperature": 2.962195104573128,
+        "prefix_cache": {
+          "size": 0,
+          "min_state_tokens": 0,
+          "hits": 0,
+          "misses": 0,
+          "cached_states": 0
+        }
+      }
+    ]
+  },
+  "gpu": "NVIDIA A100 80GB PCIe",
+  "gpu_idle_watts": 63.95315492999868,
+  "energy_unavailable": null,
+  "energy_block": {
+    "decider": "kev-4b",
+    "joules": 436276.111,
+    "seconds": 1647.6977004969958,
+    "calls": 3310
+  }
+}

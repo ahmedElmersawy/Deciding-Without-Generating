@@ -48,6 +48,7 @@ class Decision:
     model: str
     server_latency_s: Optional[float] = None  # model-side time, when the server reports it
     energy_j: Optional[float] = None  # gross GPU energy over the call; local deciders only
+    escalated: bool = False  # CascadeDecider only: whether the second stage was called
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -213,6 +214,60 @@ class LLMChoiceDecider:
             input_tokens=getattr(usage, "prompt_tokens", None),
             output_tokens=getattr(usage, "completion_tokens", None),
             model=response.model or self.model,
+        )
+
+
+class CascadeDecider:
+    """Confidence-gated cascade: `fast` answers first; `escalate` is only called when
+    `fast`'s own confidence falls below `threshold` (Phase D/2, DECISIONS.md 2026-09-23).
+
+    Reuses the plain `Decider` interface (`.decide(state, options) -> Decision`) for both
+    stages, so any combination works — not just Kev-4B -> GPT-OSS-20B. `fast` always runs,
+    so its cost/latency/energy are paid on every call; `escalate`'s are added only when it
+    runs. Deliberately does NOT attach an NVML energy meter to `fast` here: wrapping a live
+    GPU-energy window around a call that may include a slow network round trip to `escalate`
+    would count the GPU's idle power during that wait as "decision energy," silently
+    inflating the number. The fast stage's per-decision GPU energy is instead the SAME
+    already-validated figure from that decider's own standalone replay run (e.g. Kev-4B's
+    18.33 J/decision from results/replay/mock-pilot) — attached post-hoc in analysis, not
+    re-measured here.
+    """
+
+    def __init__(self, fast, escalate, threshold: float, name: Optional[str] = None) -> None:
+        self.fast = fast
+        self.escalate = escalate
+        self.threshold = threshold
+        fast_name = getattr(fast, "name", "fast")
+        escalate_name = getattr(escalate, "name", "escalate")
+        self.name = name or f"cascade-{fast_name}-to-{escalate_name}-t{threshold:g}"
+
+    def decide(self, state: str, options: dict[str, str]) -> Decision:
+        d1 = self.fast.decide(state, options)
+        if d1.confidence is not None and d1.confidence >= self.threshold:
+            d1.escalated = False
+            return d1
+        d2 = self.escalate.decide(state, options)
+        cost = None
+        if d1.cost_usd is not None or d2.cost_usd is not None:
+            cost = (d1.cost_usd or 0.0) + (d2.cost_usd or 0.0)
+        tokens_in = None
+        if d1.input_tokens is not None or d2.input_tokens is not None:
+            tokens_in = (d1.input_tokens or 0) + (d2.input_tokens or 0)
+        tokens_out = None
+        if d1.output_tokens is not None or d2.output_tokens is not None:
+            tokens_out = (d1.output_tokens or 0) + (d2.output_tokens or 0)
+        return Decision(
+            choice=d2.choice,
+            confidence=d2.confidence,
+            probabilities=d2.probabilities,
+            latency_s=d1.latency_s + d2.latency_s,  # both stages run, back to back
+            cost_usd=cost,
+            input_tokens=tokens_in,
+            output_tokens=tokens_out,
+            model=f"{d1.model}->{d2.model}",
+            server_latency_s=None,
+            energy_j=None,  # attached post-hoc from the fast decider's own standalone run
+            escalated=True,
         )
 
 

@@ -1,0 +1,114 @@
+{
+  "decider": "cascade-kev-4b-t0.9",
+  "model": "openrouter/openai/gpt-oss-20b",
+  "cascade_threshold": 0.9,
+  "repeats": 5,
+  "workers": 4,
+  "started": "20260923T225238Z",
+  "host": "gilbreth-k043.rcac.purdue.edu",
+  "kev_url": "http://127.0.0.1:8009",
+  "kev_models": {
+    "models": [
+      {
+        "name": "kev-latest",
+        "description": "Kev pointer head on Qwen/Qwen3.5-4B-Base, serving jaredpalmer/kev-4b at temperature 2.14",
+        "release_date": "2026-09-21",
+        "run": "jaredpalmer/kev-4b",
+        "base": "Qwen/Qwen3.5-4B-Base",
+        "lora": 16,
+        "device": "cuda",
+        "backend": "torch",
+        "dtype": "bfloat16",
+        "temperature": 2.1435469250725863,
+        "prefix_cache": {
+          "size": 0,
+          "min_state_tokens": 0,
+          "hits": 0,
+          "misses": 0,
+          "cached_states": 0
+        }
+      },
+      {
+        "name": "jev-latest",
+        "description": "Kev pointer head on Qwen/Qwen3.5-4B-Base, serving jaredpalmer/kev-4b at temperature 2.14",
+        "release_date": "2026-09-21",
+        "run": "jaredpalmer/kev-4b",
+        "base": "Qwen/Qwen3.5-4B-Base",
+        "lora": 16,
+        "device": "cuda",
+        "backend": "torch",
+        "dtype": "bfloat16",
+        "temperature": 2.1435469250725863,
+        "prefix_cache": {
+          "size": 0,
+          "min_state_tokens": 0,
+          "hits": 0,
+          "misses": 0,
+          "cached_states": 0
+        }
+      }
+    ]
+  },
+  "gpu": null,
+  "gpu_idle_watts": null,
+  "energy_unavailable": "not measured live for the cascade run: the fast stage's GPU energy is reused post-hoc from that decider's own standalone replay, not re-metered here",
+  "energy_block": null,
+  "previous_runs": [
+    {
+      "decider": "cascade-kev-4b-t0.9",
+      "model": "openrouter/openai/gpt-oss-20b",
+      "cascade_threshold": 0.9,
+      "repeats": 5,
+      "workers": 4,
+      "started": "20260923T224814Z",
+      "host": "gilbreth-k043.rcac.purdue.edu",
+      "kev_url": "http://127.0.0.1:8009",
+      "kev_models": {
+        "models": [
+          {
+            "name": "kev-latest",
+            "description": "Kev pointer head on Qwen/Qwen3.5-4B-Base, serving jaredpalmer/kev-4b at temperature 2.14",
+            "release_date": "2026-09-21",
+            "run": "jaredpalmer/kev-4b",
+            "base": "Qwen/Qwen3.5-4B-Base",
+            "lora": 16,
+            "device": "cuda",
+            "backend": "torch",
+            "dtype": "bfloat16",
+            "temperature": 2.1435469250725863,
+            "prefix_cache": {
+              "size": 0,
+              "min_state_tokens": 0,
+              "hits": 0,
+              "misses": 0,
+              "cached_states": 0
+            }
+          },
+          {
+            "name": "jev-latest",
+            "description": "Kev pointer head on Qwen/Qwen3.5-4B-Base, serving jaredpalmer/kev-4b at temperature 2.14",
+            "release_date": "2026-09-21",
+            "run": "jaredpalmer/kev-4b",
+            "base": "Qwen/Qwen3.5-4B-Base",
+            "lora": 16,
+            "device": "cuda",
+            "backend": "torch",
+            "dtype": "bfloat16",
+            "temperature": 2.1435469250725863,
+            "prefix_cache": {
+              "size": 0,
+              "min_state_tokens": 0,
+              "hits": 0,
+              "misses": 0,
+              "cached_states": 0
+            }
+          }
+        ]
+      },
+      "gpu": null,
+      "gpu_idle_watts": null,
+      "energy_unavailable": "not measured live for the cascade run: the fast stage's GPU energy is reused post-hoc from that decider's own standalone replay, not re-metered here",
+      "energy_block": null
+    }
+  ]
+}

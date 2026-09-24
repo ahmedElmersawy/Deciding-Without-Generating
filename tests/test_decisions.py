@@ -6,6 +6,8 @@ from tau2.data_model.message import AssistantMessage, ToolCall, UserMessage
 
 from dwg.decisions import (
     RESPOND_TO_USER,
+    CascadeDecider,
+    Decision,
     JevChoiceDecider,
     LLMChoiceDecider,
     action_label,
@@ -115,3 +117,43 @@ def test_kev_decider_hits_local_systemone_without_leaking_the_openrouter_key(mon
     assert (d.choice, d.confidence, d.cost_usd) == ("create_task", 0.8, None)
     assert d.server_latency_s == 0.12
     assert d.energy_j == 2.5
+
+
+def _fake_decider(choice, confidence, latency_s=0.1, cost_usd=None, name="fake"):
+    d = MagicMock()
+    d.name = name
+    d.decide.return_value = Decision(
+        choice=choice, confidence=confidence, probabilities=None, latency_s=latency_s,
+        cost_usd=cost_usd, input_tokens=10, output_tokens=2, model=name,
+    )
+    return d
+
+
+def test_cascade_accepts_fast_answer_above_threshold():
+    fast = _fake_decider("create_task", confidence=0.95, latency_s=0.09, name="kev-4b")
+    escalate = _fake_decider(RESPOND_TO_USER, confidence=0.99, latency_s=0.9, cost_usd=8e-5, name="gpt-oss-20b")
+    d = CascadeDecider(fast=fast, escalate=escalate, threshold=0.9).decide("state", OPTIONS)
+    assert d.choice == "create_task"
+    assert d.escalated is False
+    assert d.latency_s == 0.09  # escalate never called
+    escalate.decide.assert_not_called()
+
+
+def test_cascade_escalates_below_threshold_and_sums_cost_and_latency():
+    fast = _fake_decider("create_task", confidence=0.4, latency_s=0.09, name="kev-4b")
+    escalate = _fake_decider(RESPOND_TO_USER, confidence=0.99, latency_s=0.9, cost_usd=8e-5, name="gpt-oss-20b")
+    d = CascadeDecider(fast=fast, escalate=escalate, threshold=0.9).decide("state", OPTIONS)
+    assert d.choice == RESPOND_TO_USER  # escalate's answer wins
+    assert d.escalated is True
+    assert d.latency_s == 0.09 + 0.9  # both stages counted
+    assert d.cost_usd == 8e-5  # fast has no $ cost (local); only escalate's counted
+    assert d.energy_j is None  # not re-metered live; attached post-hoc in analysis
+    escalate.decide.assert_called_once()
+
+
+def test_cascade_null_confidence_always_escalates():
+    fast = _fake_decider("create_task", confidence=None, latency_s=0.09, name="kev-4b")
+    escalate = _fake_decider(RESPOND_TO_USER, confidence=0.5, latency_s=0.9, name="gpt-oss-20b")
+    d = CascadeDecider(fast=fast, escalate=escalate, threshold=0.9).decide("state", OPTIONS)
+    assert d.escalated is True
+    escalate.decide.assert_called_once()

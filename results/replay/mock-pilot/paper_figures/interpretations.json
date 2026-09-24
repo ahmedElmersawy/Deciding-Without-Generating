@@ -1,0 +1,58 @@
+{
+  "fig1": "Pareto-optimal: Kev-4B, Kev-9B, Cascade (t=0.9), Jev, GPT-OSS-20B. Dominated (another decider is both faster and more accurate): Kev-0.8B. Qwen3: not yet benchmarked (PLAN.md G3 not started \u2014 no local Qwen3 decider run exists).",
+  "fig4": "Accuracy-per-joule: Kev-4B 3.357 %/J, Kev-9B 2.580 %/J. Only Kev-4B and Kev-9B have a valid energy measurement in this run (Kev-0.8B's laptop GPU counter failed validation; Jev/GPT-OSS-20B are hosted, no local GPU).",
+  "fig8": {
+    "Jev": {
+      "total_incorrect": 74,
+      "dominant": "Wrong tool selected",
+      "counts": {
+        "Called tool instead of replying": 20,
+        "Reply instead of tool call": 20,
+        "Wrong tool selected": 34
+      }
+    },
+    "GPT-OSS-20B": {
+      "total_incorrect": 48,
+      "dominant": "Wrong tool selected",
+      "counts": {
+        "Wrong tool selected": 26,
+        "Reply instead of tool call": 6,
+        "Called tool instead of replying": 16
+      }
+    },
+    "Kev-0.8B": {
+      "total_incorrect": 210,
+      "dominant": "Called tool instead of replying",
+      "counts": {
+        "Called tool instead of replying": 190,
+        "Reply instead of tool call": 15,
+        "Repeated tool call": 5
+      }
+    },
+    "Kev-4B": {
+      "total_incorrect": 125,
+      "dominant": "Called tool instead of replying",
+      "counts": {
+        "Called tool instead of replying": 115,
+        "Reply instead of tool call": 10
+      }
+    },
+    "Kev-9B": {
+      "total_incorrect": 120,
+      "dominant": "Called tool instead of replying",
+      "counts": {
+        "Called tool instead of replying": 115,
+        "Reply instead of tool call": 5
+      }
+    },
+    "Cascade (t=0.9)": {
+      "total_incorrect": 98,
+      "dominant": "Called tool instead of replying",
+      "counts": {
+        "Called tool instead of replying": 79,
+        "Wrong tool selected": 16,
+        "Reply instead of tool call": 3
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "fig1": "Pareto-optimal: Kev-4B, Kev-9B. Dominated (another decider is both faster and more accurate): none. Qwen3: not yet benchmarked (PLAN.md G3 not started \u2014 no local Qwen3 decider run exists).",
+  "fig4": "Accuracy-per-joule: Kev-4B 0.219 %/J, Kev-9B 0.247 %/J. Only Kev-4B and Kev-9B have a valid energy measurement in this run (Kev-0.8B's laptop GPU counter failed validation; Jev/GPT-OSS-20B are hosted, no local GPU).",
+  "fig8": {
+    "Kev-4B": {
+      "total_incorrect": 2355,
+      "dominant": "Called tool instead of replying",
+      "counts": {
+        "Wrong tool selected": 360,
+        "Called tool instead of replying": 1105,
+        "Repeated tool call": 740,
+        "Reply instead of tool call": 150
+      }
+    },
+    "Kev-9B": {
+      "total_incorrect": 1950,
+      "dominant": "Called tool instead of replying",
+      "counts": {
+        "Reply instead of tool call": 340,
+        "Called tool instead of replying": 800,
+        "Repeated tool call": 710,
+        "Wrong tool selected": 100
+      }
+    }
+  }
+}

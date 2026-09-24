@@ -1,0 +1,8 @@
+{
+  "states": [
+    "results/states/airline.jsonl"
+  ],
+  "n_states": 689,
+  "include_failed": false,
+  "created": "20260924T035508Z"
+}

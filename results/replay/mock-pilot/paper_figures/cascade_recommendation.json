@@ -1,0 +1,25 @@
+{
+  "pareto_optimal_thresholds": [
+    0.0,
+    0.5,
+    0.6,
+    0.9,
+    0.95,
+    1.01
+  ],
+  "dominated_thresholds": [
+    0.3,
+    0.7,
+    0.8
+  ],
+  "recommended_threshold": 0.6,
+  "recommended_point": {
+    "threshold": 0.6,
+    "accept_rate": 0.9692307692307692,
+    "escalate_rate": 0.03076923076923077,
+    "unmatched_escalations": 0,
+    "blended_accuracy": 0.6338461538461538,
+    "blended_latency_ms": 126.58670190085941,
+    "blended_cost_usd_per_decision": 2.8810769230769234e-06
+  }
+}
