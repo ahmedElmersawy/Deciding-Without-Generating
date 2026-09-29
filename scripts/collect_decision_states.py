@@ -31,66 +31,9 @@ from dotenv import load_dotenv
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from dwg.decisions import action_label  # noqa: E402
+from dwg.tau2_llm import cap_max_tokens, rate_limit_tau2_llm_calls  # noqa: E402
 
 DEFAULT_MODEL = "openrouter/openai/gpt-oss-20b"
-
-
-def rate_limit_tau2_llm_calls(max_calls_per_minute: float) -> None:
-    """Throttle every LLM call tau2 makes (agent + user simulator both go through
-    tau2.utils.llm_utils.generate -> the `completion` name bound there) to at most
-    `max_calls_per_minute`, spaced evenly.
-
-    Needed because tau2's own retry (DEFAULT_MAX_RETRIES=3) assumes transient errors,
-    not a hard per-minute account quota: found live 2026-09-23 collecting airline states
-    with a fresh OpenRouter account — every one of 15 episodes was rate-limited to death
-    (litellm.RateLimitError, "new accounts are limited to 20 requests per minute") because
-    3 retries can't outlast a 60s window that 4 concurrent workers were all hammering at
-    once. Must patch the NAME `tau2.utils.llm_utils.completion`, not `litellm.completion`:
-    that module did `from litellm import completion`, which copies the reference at import
-    time, so reassigning litellm.completion afterward would not affect it.
-    """
-    import threading
-    import time as time_module
-
-    import tau2.utils.llm_utils as llm_utils
-
-    original = llm_utils.completion
-    min_interval = 60.0 / max_calls_per_minute
-    lock = threading.Lock()
-    last_call = [0.0]
-
-    def throttled(*args, **kwargs):
-        with lock:
-            wait = min_interval - (time_module.monotonic() - last_call[0])
-            if wait > 0:
-                time_module.sleep(wait)
-            last_call[0] = time_module.monotonic()
-        return original(*args, **kwargs)
-
-    llm_utils.completion = throttled
-
-
-def cap_max_tokens(max_tokens: int) -> None:
-    """Cap every tau2 LLM call's max_tokens (default: uncapped -> the model's own ceiling,
-    e.g. 65536 for gpt-5.6).
-
-    Found live 2026-09-23 collecting airline states: OpenRouter pre-authorizes credits
-    against the WORST CASE max_tokens on every call, before any tokens are generated or
-    billed -- "you requested up to 65536 tokens, but can only afford 32405" (HTTP 402). A
-    single conversational turn or tool call realistically needs a few hundred tokens, not
-    65536; leaving it uncapped means the account's remaining balance gates far below what
-    it can actually afford in real usage. Same monkeypatch target as
-    rate_limit_tau2_llm_calls, for the same reason (the bound name, not the module).
-    """
-    import tau2.utils.llm_utils as llm_utils
-
-    original = llm_utils.completion
-
-    def capped(*args, **kwargs):
-        kwargs.setdefault("max_tokens", max_tokens)
-        return original(*args, **kwargs)
-
-    llm_utils.completion = capped
 
 
 def make_recording_agent_class():
@@ -162,6 +105,11 @@ def main() -> int:
                          help="cap max_tokens on every tau2 LLM call (default: model's own ceiling, e.g. "
                               "65536 for gpt-5.6 -- OpenRouter pre-authorizes credits against that worst "
                               "case, not real usage; see cap_max_tokens)")
+    parser.add_argument("--skip-existing", type=Path, nargs="*", default=[],
+                         help="states files whose (task, trial) episodes are already collected; those "
+                              "episodes are skipped, so a top-up run only pays for what's missing "
+                              "(each episode's rows are written together, so a present episode is complete)")
+    parser.add_argument("--dry-run", action="store_true", help="print which episodes would run, then exit")
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args()
 
@@ -180,7 +128,16 @@ def main() -> int:
     out.parent.mkdir(parents=True, exist_ok=True)
 
     lock = threading.Lock()
-    jobs = [(task, trial) for task in tasks for trial in range(args.trials)]
+    have = set()
+    for path in args.skip_existing:
+        with path.open() as fh:
+            have |= {(str(r["task_id"]), int(r["trial"])) for r in map(json.loads, filter(str.strip, fh))}
+    jobs = [(task, trial) for task in tasks for trial in range(args.trials) if (str(task.id), trial) not in have]
+    print(f"==> {len(jobs)} episodes to run ({len(tasks) * args.trials - len(jobs)} already collected, skipped)")
+    if args.dry_run:
+        for task, trial in jobs:
+            print(f"   {task.id} trial {trial}")
+        return 0
     n_states = 0
     with out.open("w") as fh, ThreadPoolExecutor(max_workers=args.workers) as pool:
         futures = {

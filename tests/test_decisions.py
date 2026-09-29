@@ -157,3 +157,41 @@ def test_cascade_null_confidence_always_escalates():
     d = CascadeDecider(fast=fast, escalate=escalate, threshold=0.9).decide("state", OPTIONS)
     assert d.escalated is True
     escalate.decide.assert_called_once()
+
+
+def test_llm_choice_decider_names_a_missing_tool_call_instead_of_a_typeerror():
+    from dwg.decisions import NoDecisionError
+
+    response = SimpleNamespace(
+        choices=[SimpleNamespace(message=SimpleNamespace(tool_calls=None, content="I think respond."))],
+        usage=SimpleNamespace(prompt_tokens=1, completion_tokens=1, cost=1e-5),
+        model="m",
+    )
+    with patch("litellm.completion", return_value=response):
+        try:
+            LLMChoiceDecider(model="openrouter/m").decide("state", OPTIONS)
+        except NoDecisionError as exc:
+            assert "I think respond." in str(exc)
+        else:
+            raise AssertionError("expected NoDecisionError")
+
+
+def test_llm_choice_decider_price_routing_and_provider_are_recorded():
+    fake = _fake_completion(RESPOND_TO_USER, 0.9)
+    fake.provider = "DeepInfra"
+    with patch("litellm.completion", return_value=fake) as completion:
+        d = LLMChoiceDecider(model="openrouter/openai/gpt-oss-20b", provider_sort="price").decide("state", OPTIONS)
+    body = completion.call_args.kwargs["extra_body"]
+    assert body["provider"] == {"sort": "price"} and body["usage"] == {"include": True}
+    assert d.provider == "DeepInfra"
+
+
+def test_local_llm_decider_has_no_dollar_cost_and_reads_energy():
+    with patch("litellm.completion", return_value=_fake_completion(RESPOND_TO_USER, 0.9)) as completion:
+        d = LLMChoiceDecider(model="hosted_vllm/Qwen/Qwen3-8B", api_base="http://127.0.0.1:8000/v1",
+                             extra_body={"chat_template_kwargs": {"enable_thinking": False}},
+                             energy_meter=_FakeMeter()).decide("state", OPTIONS)
+    kwargs = completion.call_args.kwargs
+    assert kwargs["api_base"] == "http://127.0.0.1:8000/v1"
+    assert kwargs["extra_body"] == {"chat_template_kwargs": {"enable_thinking": False}}  # no OpenRouter fields
+    assert d.cost_usd is None and d.energy_j == 2.5

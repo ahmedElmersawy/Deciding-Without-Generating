@@ -30,22 +30,23 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from dwg.runfiles import load_calls, load_decider_metas  # noqa: E402
+from dwg.runfiles import load_decider_metas, load_outcomes, pooled_energy  # noqa: E402
 from dwg.stats import bootstrap_ci, expected_calibration_error  # noqa: E402
 
 DISPLAY = {
     "jev": "Jev",
     "llm:openrouter/openai/gpt-oss-20b": "GPT-OSS-20B",
+    "llm:local/qwen3-8b": "Qwen3-8B (local)",
     "kev-0.8b": "Kev-0.8B",
     "kev-4b": "Kev-4B",
     "kev-9b": "Kev-9B",
     "cascade-kev-4b-t0.9": "Cascade (Kev-4B→GPT-OSS, t=0.9)",
 }
-# Kev-4B's own already-validated gross J/decision from its standalone replay in this same
-# run (results/replay/mock-pilot/meta-kev-4b.json: energy_block.joules / .calls). The cascade
-# always calls Kev-4B first, so it always pays this; see CascadeDecider's docstring for why
-# the cascade run itself doesn't re-meter energy live.
-CASCADE_REUSED_ENERGY_J = 18.333289230769232
+
+
+def cascade_fast_stage(cascade: str) -> str:
+    """`cascade-kev-4b-t0.9` -> `kev-4b`: the fast decider the cascade always calls first."""
+    return cascade.removeprefix("cascade-").rsplit("-t", 1)[0]
 
 
 def load_states(run: Path) -> dict[str, dict]:
@@ -337,12 +338,18 @@ def phase_e(rows_by_decider: dict, dmetas: dict) -> dict:
         acc = float(np.mean([r["correct"] for r in ok])) * 100
         lat_ms = float(np.median([r["latency_s"] for r in ok])) * 1000
         dm = dmetas.get(d, {})
-        block = dm.get("energy_block")
-        energy = (block["joules"] / block["calls"]) if block and block.get("calls") else None
+        pooled = pooled_energy(dm)
+        energy = pooled["gross_j"] if pooled else None
         note = None
         if d.startswith("cascade") and energy is None:
-            energy = CASCADE_REUSED_ENERGY_J
-            note = "energy reused from Kev-4B's own standalone run (fast stage always runs); not re-metered live"
+            # The cascade always calls its fast stage first, so it pays that decider's own
+            # validated J/decision from its standalone replay in THIS run (same states and GPU);
+            # see CascadeDecider's docstring for why the cascade itself isn't re-metered live.
+            # (Was a hard-coded 18.33 J, mock Kev-4B's figure, which is ~7x too low on airline.)
+            fast = cascade_fast_stage(d)
+            pooled = pooled_energy(dmetas.get(fast, {}))
+            energy = pooled["gross_j"] if pooled else None
+            note = f"energy reused from {fast}'s own standalone run in this run (fast stage always runs); not re-metered live"
         cost_usd = [r["cost_usd"] for r in ok if r["cost_usd"] is not None]
         out[DISPLAY[d]] = dict(
             accuracy_pct=acc,
@@ -361,7 +368,7 @@ def main() -> int:
     parser.add_argument("run", type=Path)
     args = parser.parse_args()
 
-    rows_all = load_calls(args.run)
+    rows_all = load_outcomes(args.run)
     dmetas = load_decider_metas(args.run)
     states = load_states(args.run)
     rows_by_decider = defaultdict(list)

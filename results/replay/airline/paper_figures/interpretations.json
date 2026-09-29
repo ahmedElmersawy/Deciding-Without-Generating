@@ -1,25 +1,75 @@
 {
-  "fig1": "Pareto-optimal: Kev-4B, Kev-9B. Dominated (another decider is both faster and more accurate): none. Qwen3: not yet benchmarked (PLAN.md G3 not started \u2014 no local Qwen3 decider run exists).",
-  "fig4": "Accuracy-per-joule: Kev-4B 0.219 %/J, Kev-9B 0.247 %/J. Only Kev-4B and Kev-9B have a valid energy measurement in this run (Kev-0.8B's laptop GPU counter failed validation; Jev/GPT-OSS-20B are hosted, no local GPU).",
+  "fig1": "Pareto-optimal: Jev. Dominated (another decider is both faster and more accurate): GPT-OSS-20B, Qwen3-8B, Kev-0.8B, Kev-4B, Kev-9B, Cascade (t=0.9).",
+  "fig4": "Accuracy-per-joule: Qwen3-8B 0.188 %/J, Kev-0.8B 0.578 %/J, Kev-4B 0.243 %/J, Kev-9B 0.235 %/J. No energy measurement: Jev, GPT-OSS-20B, Cascade (t=0.9) (hosted deciders have no local GPU; the cascade isn't re-metered live; a laptop GPU counter that failed validation is not reported).",
   "fig8": {
-    "Kev-4B": {
-      "total_incorrect": 2355,
+    "Jev": {
+      "total_incorrect": 1002,
+      "dominant": "Reply instead of tool call",
+      "counts": {
+        "Wrong tool selected": 153,
+        "Reply instead of tool call": 695,
+        "Called tool instead of replying": 105,
+        "Repeated tool call": 49
+      }
+    },
+    "GPT-OSS-20B": {
+      "total_incorrect": 1368,
+      "dominant": "Reply instead of tool call",
+      "counts": {
+        "Reply instead of tool call": 879,
+        "Wrong tool selected": 287,
+        "Called tool instead of replying": 176,
+        "Repeated tool call": 26
+      }
+    },
+    "Qwen3-8B": {
+      "total_incorrect": 3247,
+      "dominant": "Reply instead of tool call",
+      "counts": {
+        "Called tool instead of replying": 944,
+        "Wrong tool selected": 986,
+        "Reply instead of tool call": 1311,
+        "Repeated tool call": 6
+      }
+    },
+    "Kev-0.8B": {
+      "total_incorrect": 3785,
       "dominant": "Called tool instead of replying",
       "counts": {
-        "Wrong tool selected": 360,
-        "Called tool instead of replying": 1105,
-        "Repeated tool call": 740,
+        "Called tool instead of replying": 1935,
+        "Wrong tool selected": 970,
+        "Repeated tool call": 730,
         "Reply instead of tool call": 150
       }
     },
-    "Kev-9B": {
-      "total_incorrect": 1950,
+    "Kev-4B": {
+      "total_incorrect": 3535,
       "dominant": "Called tool instead of replying",
       "counts": {
-        "Reply instead of tool call": 340,
-        "Called tool instead of replying": 800,
-        "Repeated tool call": 710,
-        "Wrong tool selected": 100
+        "Wrong tool selected": 635,
+        "Called tool instead of replying": 1615,
+        "Repeated tool call": 855,
+        "Reply instead of tool call": 430
+      }
+    },
+    "Kev-9B": {
+      "total_incorrect": 3120,
+      "dominant": "Called tool instead of replying",
+      "counts": {
+        "Reply instead of tool call": 610,
+        "Called tool instead of replying": 1285,
+        "Repeated tool call": 1075,
+        "Wrong tool selected": 150
+      }
+    },
+    "Cascade (t=0.9)": {
+      "total_incorrect": 380,
+      "dominant": "Reply instead of tool call",
+      "counts": {
+        "Reply instead of tool call": 250,
+        "Wrong tool selected": 84,
+        "Called tool instead of replying": 40,
+        "Repeated tool call": 6
       }
     }
   }

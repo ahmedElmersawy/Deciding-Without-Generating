@@ -36,30 +36,30 @@ Setup (once): `git pull`; the `dwg` env from `setup.sh` already exists.
 Clone Kev to `/scratch/gilbreth/$USER/repos/kev`, `git checkout 557598f`, then `uv sync --frozen --extra serve`
 (Kev needs its own env: it pins `torch<2.9`).
 
-- [ ] **G1. Kev-4B and Kev-9B on the mock pilot** (arm 0 / E). One job per size:
+- [x] **G1. Kev-4B and Kev-9B on the mock pilot** (arm 0 / E; done 2026-09-23: 325 calls each on the A100, `validate()` passed, 18.3 / 24.4 J per decision). One job per size:
   ```
   sbatch --export=ALL,KEV_MODEL=kev-4b,STATES=results/states/mock-pilot.jsonl,RUN=results/replay/mock-pilot scripts/kev_replay.slurm
   ```
   Check in the job log that `validate()` **passed** on the A100 (no `!! GPU energy not measured`). If it failed, stop and report:
   the laptop GPU's counter was unusable (DECISIONS.md, 2026-09-23). Push the new calls/meta files.
   *Answers:* is any Kev size accurate enough to stand in for Jev? The laptop's 0.8B scored 0.35 vs Jev's 0.77.
-- [ ] **G2. Compute-node network check** (CHECKS.md #1, still open): `srun ... python3 scripts/check_connectivity.py` on a GPU node.
+- [x] **G2. Compute-node network check** (done 2026-09-25 from existing evidence: the mock cascade job made 325 OpenRouter calls from compute node `gilbreth-k043`; DECISIONS.md) (CHECKS.md #1).
   *Why:* arm E inside a real agent loop needs the API filler model G to be reachable from the compute node.
   If it's blocked, arm E stays decision-only (arm 0), or G has to be local too (G3).
-- [ ] **G3. A local LLM decider on the same A100** (arm D-local): serve Qwen3-8B with vLLM (`scripts/serve_qwen3.slurm`, needs a small
+- [x] **G3. A local LLM decider on the same A100** (arm D-local; mock pilot done 2026-09-25 with `scripts/llm_local_replay.slurm`): serve Qwen3-8B with vLLM (`scripts/serve_qwen3.slurm`, needs a small
   `LLMChoiceDecider` hook for a local `api_base`, which the laptop track adds in U4). Replay the same states with energy.
   *Answers the core energy claim:* a System-One-style decider (Kev) vs. a generative LLM decider, **same GPU, both local, no API**.
-- [ ] **G4. Repeat G1 + G3 on the airline states** once U2 has pushed them.
+- [x] **G4. Repeat G1 + G3 on the airline states** (done 2026-09-25: Kev-4B, Kev-9B, Qwen3-8B, all 5,380 calls each, with energy; Kev-0.8B added 2026-09-26).
 
 ## Track L: laptop (API, via OpenRouter)
 
-- [ ] **U1. Fix the accuracy labels.** Report two accuracies. **Strict:** matches the reference action.
+- [x] **U1. Fix the accuracy labels.** (done 2026-09-25: `src/dwg/labels.py`; lenient also accepts a READ lookup before a WRITE reference, since mock gold actions list only writes; DECISIONS.md) Report two accuracies. **Strict:** matches the reference action.
   **Lenient:** reference, or a read-only lookup (`get_*`/`find_*`) that the task's gold actions allow.
   *Why:* the pilot's largest "error" for both Jev and the LLM was a valid `get_users` before `create_task`.
-- [ ] **U2. Airline states** (50 tasks × 3 episodes) with the real ceiling model as the reference agent. **Needs your decision:** which frontier model.
+- [x] **U2. Airline states** (done 2026-09-25: 50 tasks × 3 episodes, reference agent `openrouter/openai/gpt-5.6`, 1,076 reward=1 states in `results/states/airline.jsonl`) with the real ceiling model as the reference agent.
   Estimate $ with a 5-task dry run first. Push `results/states/airline-*.jsonl` for G4.
 - [ ] **U3. Arm 0 on airline:** Jev, the frontier LLM and a small API LLM (arm D-API), 5 repeats each.
-- [ ] **U4. In-loop harness, arms A–D.** Generalize `JevTau2Agent` into a `DeciderTau2Agent` that works with any decider;
+- [ ] **U4. In-loop harness, arms A–D.** (harness built 2026-09-26: `src/dwg/decider_tau2_agent.py`, `scripts/run_inloop.py`, `scripts/analyze_inloop.py`; free local run `scripts/inloop_local.slurm` with G = user = Qwen3-8B; airline B/C/E × 5 trials done 2026-09-26: reward B 0.308, C 0.196, E 0.048, see DECISIONS.md; paid frontier-G runs and arms A/D wait on credit) Generalize `JevTau2Agent` into a `DeciderTau2Agent` that works with any decider;
   arm C is tau2's own `LLMAgent`. Script `run_inloop.py`: arms × tasks × ≥5 trials. For each episode, log reward plus decision vs. execution
   latency, $ and tokens. Report pass^k (tau2's metric), reward with 95% CI, $ per successful task, and the decision share of cost.
 - [ ] **U5. Paper tables and figures** from arms 0 and A–E. State the framing plainly: Kev is not Jev, and the laptop runs have no energy data.

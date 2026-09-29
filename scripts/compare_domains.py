@@ -24,12 +24,13 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from dwg.runfiles import load_calls, load_decider_metas  # noqa: E402
+from dwg.runfiles import load_decider_metas, load_outcomes, pooled_energy  # noqa: E402
 from dwg.stats import bootstrap_ci, brier_score, describe, expected_calibration_error  # noqa: E402
 
 DISPLAY = {
     "jev": "Jev",
     "llm:openrouter/openai/gpt-oss-20b": "GPT-OSS-20B",
+    "llm:local/qwen3-8b": "Qwen3-8B (local)",
     "kev-0.8b": "Kev-0.8B",
     "kev-4b": "Kev-4B",
     "kev-9b": "Kev-9B",
@@ -37,14 +38,14 @@ DISPLAY = {
 }
 INK, INK_2, GRID, BG = "#0b0b0b", "#52514e", "#e4e3df", "#fcfcfb"
 COLOR = {
-    "jev": "#2a78d6", "llm:openrouter/openai/gpt-oss-20b": "#eb6834",
+    "jev": "#2a78d6", "llm:openrouter/openai/gpt-oss-20b": "#eb6834", "llm:local/qwen3-8b": "#a8431c",
     "kev-0.8b": "#8fd9c4", "kev-4b": "#1baf7a", "kev-9b": "#0b7d54",
     "cascade-kev-4b-t0.9": "#7d5fd6",
 }
 
 
 def decider_metrics(run: Path) -> dict[str, dict]:
-    rows = load_calls(run)
+    rows = load_outcomes(run)
     dmetas = load_decider_metas(run)
     out = {}
     for d in sorted({r["decider"] for r in rows}):
@@ -67,8 +68,8 @@ def decider_metrics(run: Path) -> dict[str, dict]:
         cons_vals = [Counter(c).most_common(1)[0][1] / len(c) for c in by_state.values()]
         consistency = bootstrap_ci(cons_vals, list(by_state))
         dm = dmetas.get(d, {})
-        block = dm.get("energy_block")
-        energy = (block["joules"] / block["calls"]) if block and block.get("calls") else None
+        pooled = pooled_energy(dm)
+        energy = pooled["gross_j"] if pooled else None
         out[d] = dict(n=len(ok), n_states=len(by_state), accuracy=acc, latency_ms=lat, ece=ece,
                       brier=brier, consistency=consistency, energy_j=energy)
     return out
@@ -79,7 +80,7 @@ def unpaired_diff_ci(run_a: Path, run_b: Path, decider: str, n_boot=10000, seed=
     state universes (mock vs airline), unlike the paired cluster bootstrap used within one
     run's own states (post_experiment_analysis.py's Phase A)."""
     def per_state_acc(run):
-        rows = [r for r in load_calls(run) if r["decider"] == decider and r["error"] is None]
+        rows = [r for r in load_outcomes(run) if r["decider"] == decider and r["error"] is None]
         from collections import defaultdict
         by_state = defaultdict(list)
         for r in rows:

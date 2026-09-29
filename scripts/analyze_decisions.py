@@ -25,7 +25,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from dwg.runfiles import load_calls, load_decider_metas  # noqa: E402
+from dwg.runfiles import load_calls, load_decider_metas, pooled_energy, resolve_attempts  # noqa: E402
 from dwg.stats import (  # noqa: E402
     bootstrap_ci,
     brier_score,
@@ -42,11 +42,17 @@ INK, INK_2, GRID = "#0b0b0b", "#52514e", "#e4e3df"
 
 def decider_color(decider: str) -> str:
     """Color follows the decider family, never its position, so adding a decider never
-    repaints the others: jev = slot 1, LLMs = slot 2, local System One models (Kev) = slot 3."""
+    repaints the others: jev = slot 1, LLMs = slot 2, local System One models (Kev) = slot 3.
+    A local LLM gets a darker orange and the cascade its own purple (same as the paper
+    figures), so neither shares a color with GPT-OSS or Jev in the same chart."""
+    if decider.startswith("llm:local/"):
+        return "#a8431c"
     if decider.startswith("llm:"):
         return SERIES[1]
     if decider.startswith("kev"):
         return SERIES[2]
+    if decider.startswith("cascade"):
+        return "#7d5fd6"
     return SERIES[0]
 
 
@@ -55,6 +61,15 @@ def display_name(decider: str) -> str:
     if decider.startswith("llm:"):
         return f"{decider.rsplit('/', 1)[-1]} (LLM)"
     return decider
+
+
+def add_lenient(rows: list[dict]) -> None:
+    """PLAN.md U1: strict = matches the reference; lenient rules are in dwg.labels."""
+    from dwg.labels import lenient_correct
+
+    for r in rows:
+        if r["error"] is None:
+            r["correct_lenient"] = lenient_correct(r["choice"], r["reference"], r["domain"], r["task_id"])
 
 
 def per_state(rows: list[dict]) -> list[dict]:
@@ -74,6 +89,7 @@ def per_state(rows: list[dict]) -> list[dict]:
                 "reference": rs[0]["reference"],
                 "n": len(rs),
                 "accuracy": float(np.mean([r["correct"] for r in rs])),
+                "accuracy_lenient": float(np.mean([r["correct_lenient"] for r in rs])),
                 "modal_choice": modal,
                 "consistency": modal_n / len(rs),
                 "n_distinct_choices": len(counts),
@@ -82,7 +98,8 @@ def per_state(rows: list[dict]) -> list[dict]:
     return out
 
 
-def summarize(rows: list[dict], states: list[dict], dmetas: dict[str, dict]) -> dict[str, dict]:
+def summarize(rows: list[dict], states: list[dict], dmetas: dict[str, dict],
+              attempts: dict[str, Counter]) -> dict[str, dict]:
     summary = {}
     for decider in sorted({r["decider"] for r in rows}):
         all_rows = [r for r in rows if r["decider"] == decider]
@@ -97,8 +114,12 @@ def summarize(rows: list[dict], states: list[dict], dmetas: dict[str, dict]) -> 
         summary[decider] = {
             "model": ok[0]["model"] if ok else None,
             "calls": len(all_rows),
-            "errors": len(all_rows) - len(ok),
+            "attempts": attempts[decider]["attempts"],
+            "infra_errors": attempts[decider]["infra_errors"],
+            "unresolved_infra": attempts[decider]["unresolved_infra"],
+            "decider_failures": attempts[decider]["decider_failures"],
             "accuracy": acc,
+            "accuracy_lenient": bootstrap_ci([r["correct_lenient"] for r in ok], clusters),
             "latency": describe([r["latency_s"] for r in ok]),
             "cost": bootstrap_ci(costs, cost_clusters) if costs else (float("nan"),) * 3,
             "cost_total": float(np.sum(costs)) if costs else float("nan"),
@@ -118,13 +139,12 @@ def _energy(ok: list[dict], dmeta: dict) -> dict:
     whole metered run / calls) is the headline when present; per-call values are noisy because
     the counter steps every ~100 ms (see dwg.energy)."""
     idle_watts = dmeta.get("gpu_idle_watts")
-    block = dmeta.get("energy_block")
-    if block and block.get("calls"):
-        gross = block["joules"] / block["calls"]
-        out = {"gross": (gross, gross, gross), "method": "block"}
-        if idle_watts is not None:
-            net = (block["joules"] - idle_watts * block["seconds"]) / block["calls"]
-            out["net"] = (net, net, net)
+    pooled = pooled_energy(dmeta)  # all runs' blocks, not just the latest resume's
+    if pooled:
+        g = pooled["gross_j"]
+        out = {"gross": (g, g, g), "method": "block"}
+        if pooled["net_j"] is not None:
+            out["net"] = (pooled["net_j"],) * 3
         return out
     metered = [r for r in ok if r.get("energy_j") is not None]
     if not metered:
@@ -170,14 +190,33 @@ def write_summary_md(run: Path, meta: dict, dmetas: dict[str, dict], summary: di
         "",
         "## Decision quality",
         "",
-        "| decider | calls | errors | accuracy [95% CI] | consistency [95% CI] | all repeats agree | ECE | Brier |",
-        "|---|---|---|---|---|---|---|---|",
+        "- calls = (state, repeat) pairs attempted; each counts once, as its first attempt that was not an "
+        "infra error. Decider failures = calls that did not produce a valid decision (no tool call, malformed "
+        "output, input too long for the model); they are final, never retried (`dwg.errors`). Infra errors = "
+        "billing/rate-limit/network errors, retried on resume and not counted against the decider. "
+        "Still missing = states x repeats not yet completed (infra-failed, or never attempted).",
+        "- strict accuracy = matches the reference action; lenient also accepts a read-only lookup "
+        "(tau2 `ToolType.READ`) that is in the task's gold actions, or that comes where the reference is a "
+        "state-changing (`WRITE`) tool, i.e. checking before acting (`dwg.labels`, PLAN.md U1).",
+        "",
+        "| decider | calls | decider failures | still missing (infra) | strict accuracy [95% CI] | "
+        "lenient accuracy [95% CI] | consistency [95% CI] | all repeats agree | ECE | Brier |",
+        "|---|---|---|---|---|---|---|---|---|---|",
     ]
+    def missing(d, s):
+        expected = meta["n_states"] * dmetas.get(d, {}).get("repeats", 0)
+        return max(expected - (s["calls"] - s["unresolved_infra"]), s["unresolved_infra"])
+
     for d, s in summary.items():
         lines.append(
-            f"| {d} | {s['calls']} | {s['errors']} | {ci(s['accuracy'])} | {ci(s['consistency'])} | "
+            f"| {d} | {s['calls']} | {s['decider_failures']} ({s['decider_failures'] / max(s['calls'], 1):.1%}) | "
+            f"{missing(d, s)} | {ci(s['accuracy'])} | {ci(s['accuracy_lenient'])} | {ci(s['consistency'])} | "
             f"{s['all_repeats_agree']:.2f} | {s['ece']:.3f} | {s['brier']:.3f} |"
         )
+    retried = {d: s for d, s in summary.items() if s["infra_errors"]}
+    if retried:
+        lines += ["", "Infra errors retried (raw attempts in the calls files, not decider failures): "
+                  + ", ".join(f"`{d}` {s['infra_errors']} of {s['attempts']} attempts" for d, s in retried.items())]
     lines += [
         "",
         "## Decision cost",
@@ -212,7 +251,7 @@ def write_summary_md(run: Path, meta: dict, dmetas: dict[str, dict], summary: di
             overhead = cli["p50"] - srv["p50"] if srv.get("n") else float("nan")
             e = s["energy"]
             lines.append(
-                f"| {d} | {srv.get('p50', float('nan')):.3f}s | {cli['p50']:.3f}s | {overhead:.3f}s | "
+                (f"| {d} | {srv.get('p50', float('nan')):.3f}s | {cli['p50']:.3f}s | {overhead:.3f}s | ").replace("nans", "n/a") +
                 f"{ci(e['gross'], '{:.2f}') if 'gross' in e else 'n/a'} | {ci(e['net'], '{:.2f}') if 'net' in e else 'n/a'} |"
             )
     names = list(summary)
@@ -296,6 +335,15 @@ def plot_all(summary: dict, rows: list[dict], states: list[dict], report: Path) 
     _style(ax, xlabel="Agreement with reference action (95% CI)")
     ax.set_title("Decision accuracy", loc="left", fontsize=11, color=INK)
     _save(fig, report, "fig_accuracy")
+    plt.close(fig)
+
+    fig, ax = plt.subplots(figsize=(6.5, height))
+    _dot_ci(ax, labels, [summary[d]["accuracy_lenient"] for d in names], [colors[d] for d in names],
+            lambda t: f"{t[0]:.3f} [{t[1]:.3f}, {t[2]:.3f}]")
+    ax.set_xlim(0, 1.02)
+    _style(ax, xlabel="Reference action, or a read-only lookup (gold, or before a write) (95% CI)")
+    ax.set_title("Decision accuracy, lenient", loc="left", fontsize=11, color=INK)
+    _save(fig, report, "fig_accuracy_lenient")
     plt.close(fig)
 
     # 2. latency distribution, outliers visible
@@ -398,8 +446,10 @@ def main() -> int:
     report = args.run / "report"
     report.mkdir(exist_ok=True)
 
+    rows, attempts = resolve_attempts(rows)
+    add_lenient(rows)
     states = per_state(rows)
-    summary = summarize(rows, states, dmetas)
+    summary = summarize(rows, states, dmetas, attempts)
     write_summary_md(args.run, meta, dmetas, summary, report)
     with (report / "per_state.csv").open("w") as fh:
         cols = list(states[0])

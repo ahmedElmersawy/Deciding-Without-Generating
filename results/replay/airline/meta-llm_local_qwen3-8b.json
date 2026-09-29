@@ -1,0 +1,52 @@
+{
+  "decider": "llm:local/qwen3-8b",
+  "model": "hosted_vllm/Qwen/Qwen3-8B",
+  "cascade_threshold": null,
+  "provider_sort": null,
+  "llm_api_base": "http://127.0.0.1:8000/v1",
+  "llm_extra_body": "{\"chat_template_kwargs\": {\"enable_thinking\": false}}",
+  "repeats": 5,
+  "workers": 1,
+  "started": "20260926T015159Z",
+  "host": "gilbreth-k002.rcac.purdue.edu",
+  "kev_url": null,
+  "llm_models": {
+    "object": "list",
+    "data": [
+      {
+        "id": "Qwen/Qwen3-8B",
+        "object": "model",
+        "created": 1790387519,
+        "owned_by": "vllm",
+        "root": "Qwen/Qwen3-8B",
+        "parent": null,
+        "max_model_len": 32768,
+        "permission": [
+          {
+            "id": "modelperm-8f1bf1f23e7433b0",
+            "object": "model_permission",
+            "created": 1790387519,
+            "allow_create_engine": false,
+            "allow_sampling": true,
+            "allow_logprobs": true,
+            "allow_search_indices": false,
+            "allow_view": true,
+            "allow_fine_tuning": false,
+            "organization": "*",
+            "group": null,
+            "is_blocking": false
+          }
+        ]
+      }
+    ]
+  },
+  "gpu": "NVIDIA A100 80GB PCIe",
+  "gpu_idle_watts": 60.97759022634958,
+  "energy_unavailable": null,
+  "energy_block": {
+    "decider": "llm:local/qwen3-8b",
+    "joules": 1136279.192,
+    "seconds": 3888.363437674998,
+    "calls": 5380
+  }
+}

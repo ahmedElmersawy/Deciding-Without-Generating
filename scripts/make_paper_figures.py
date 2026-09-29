@@ -28,33 +28,34 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from dwg.runfiles import load_calls, load_decider_metas  # noqa: E402
+from dwg.runfiles import load_decider_metas, load_outcomes, pooled_energy  # noqa: E402
 from dwg.stats import bootstrap_ci, brier_score, describe, expected_calibration_error, reliability_bins  # noqa: E402
 
 RESPOND = "respond_to_user"
 
 # Fixed order and display names, used identically across every figure and the table.
-ORDER = ["jev", "llm:openrouter/openai/gpt-oss-20b", "kev-0.8b", "kev-4b", "kev-9b", "cascade-kev-4b-t0.9"]
+ORDER = ["jev", "llm:openrouter/openai/gpt-oss-20b", "llm:local/qwen3-8b", "kev-0.8b", "kev-4b", "kev-9b", "cascade-kev-4b-t0.9"]
 DISPLAY = {
     "jev": "Jev",
     "llm:openrouter/openai/gpt-oss-20b": "GPT-OSS-20B",
+    "llm:local/qwen3-8b": "Qwen3-8B",  # local on the A100; short so tick labels don't collide
     "kev-0.8b": "Kev-0.8B",
     "kev-4b": "Kev-4B",
     "kev-9b": "Kev-9B",
     "cascade-kev-4b-t0.9": "Cascade (t=0.9)",
 }
 # Family color rule carried over from analyze_decisions.py (hue = family, never position):
-# blue = Jev, orange = hosted LLM, green shades = local Kev sizes (light->dark = small->large),
+# blue = Jev, orange = generative LLM (dark orange = the local one on the A100), green shades = local Kev sizes (light->dark = small->large),
 # purple = the hybrid cascade (its own family: neither pure-local nor pure-hosted).
 COLOR = {
     "jev": "#2a78d6",
     "llm:openrouter/openai/gpt-oss-20b": "#eb6834",
+    "llm:local/qwen3-8b": "#a8431c",
     "kev-0.8b": "#8fd9c4",
     "kev-4b": "#1baf7a",
     "kev-9b": "#0b7d54",
     "cascade-kev-4b-t0.9": "#7d5fd6",
 }
-QWEN3_NOTE = "Qwen3: not yet benchmarked (PLAN.md G3 not started — no local Qwen3 decider run exists)"
 
 INK, INK_2, GRID, BG = "#0b0b0b", "#52514e", "#e4e3df", "#fcfcfb"
 
@@ -81,7 +82,7 @@ def already_called_tools(state: dict) -> set[str]:
 
 
 def compute_metrics(run: Path) -> dict[str, dict]:
-    rows = load_calls(run)
+    rows = load_outcomes(run)
     dmetas = load_decider_metas(run)
     states = load_states(run)
     already = {sid: already_called_tools(s) for sid, s in states.items()}
@@ -115,12 +116,9 @@ def compute_metrics(run: Path) -> dict[str, dict]:
 
         dm = dmetas.get(d, {})
         energy_gross = energy_net = None
-        block = dm.get("energy_block")
-        if block and block.get("calls"):
-            energy_gross = block["joules"] / block["calls"]
-            idle_w = dm.get("gpu_idle_watts")
-            if idle_w is not None:
-                energy_net = (block["joules"] - idle_w * block["seconds"]) / block["calls"]
+        pooled = pooled_energy(dm)  # every run's block, not just the latest resume's
+        if pooled:
+            energy_gross, energy_net = pooled["gross_j"], pooled["net_j"]
 
         err_counts = Counter()
         for r in ok:
@@ -192,15 +190,15 @@ def fig1_pareto(metrics, out, plt) -> dict:
     ax.plot(fx, fy, color=INK_2, linewidth=1.2, linestyle="--", zorder=1, label="Pareto frontier")
     # Kev-4B and Kev-9B sit close together in both axes: alternate label offsets so the two
     # text boxes don't collide (a fixed (9, 7) offset for both overlapped in the first draft).
-    label_offset = {"kev-4b": (9, -14), "kev-9b": (9, 9)}
+    label_offset = {"kev-4b": (9, -14), "kev-9b": (-9, 9), "llm:local/qwen3-8b": (9, -14)}
     for d, (x, y) in pts.items():
         on = d in frontier_set
         ax.scatter([x], [y], s=170 if on else 100, color=COLOR[d],
                    edgecolor=INK if on else "none", linewidth=1.6, zorder=3)
         tag = DISPLAY[d] + (" ★" if on else "")
-        ax.annotate(tag, (x, y), xytext=label_offset.get(d, (9, 7)), textcoords="offset points",
-                    fontsize=9.5, color=INK)
-    ax.annotate(QWEN3_NOTE, (0.02, 0.03), xycoords="axes fraction", fontsize=7.5, color=INK_2, style="italic")
+        off = label_offset.get(d, (9, 7))
+        ax.annotate(tag, (x, y), xytext=off, textcoords="offset points",
+                    ha="right" if off[0] < 0 else "left", fontsize=9.5, color=INK)
     ax.set_xscale("log")
     _style(ax, xlabel="Median latency (ms, log scale)", ylabel="Accuracy (%)")
     ax.set_title("Figure 1. Accuracy vs. latency: the decision-cost Pareto frontier", loc="left", fontsize=12, color=INK)
@@ -233,25 +231,29 @@ def fig2_accuracy_ci(metrics, out, plt) -> None:
 
 
 def fig3_energy(metrics, out, plt) -> None:
-    labels = ["Kev-0.8B", "Kev-4B", "Kev-9B", "Qwen3"]
-    keys = ["kev-0.8b", "kev-4b", "kev-9b", None]
+    # Every locally run decider present in this run (Kev sizes, the local LLM); a hosted one has
+    # no local GPU, so it isn't a slot at all rather than an empty one.
+    keys = [k for k in ["kev-0.8b", "kev-4b", "kev-9b", "llm:local/qwen3-8b"] if k in metrics]
+    labels = [DISPLAY[k] for k in keys]
     fig, ax = plt.subplots(figsize=(7.5, 4.8))
     xs = np.arange(len(labels))
     width = 0.35
-    for i, (lab, k) in enumerate(zip(labels, keys)):
-        if k is None or metrics.get(k, {}).get("energy_gross") is None:
-            reason = "not available" if k is None else "not measured (invalid GPU energy counter)"
-            ax.annotate(reason, (xs[i], 1.5), ha="center", fontsize=8, color=INK_2, rotation=90, va="bottom")
+    first = True
+    for i, k in enumerate(keys):
+        if metrics[k].get("energy_gross") is None:
+            ax.annotate("not measured (invalid GPU energy counter)", (xs[i], 1.5), ha="center", fontsize=8,
+                        color=INK_2, rotation=90, va="bottom")
             continue
         m = metrics[k]
-        ax.bar(xs[i] - width / 2, m["energy_gross"], width, color=COLOR[k], zorder=2, label="gross" if i == 1 else None)
+        ax.bar(xs[i] - width / 2, m["energy_gross"], width, color=COLOR[k], zorder=2, label="gross" if first else None)
         ax.annotate(f"{m['energy_gross']:.2f} J", (xs[i] - width / 2, m["energy_gross"]), xytext=(0, 3),
                     textcoords="offset points", ha="center", fontsize=8, color=INK)
         if m["energy_net"] is not None:
             ax.bar(xs[i] + width / 2, m["energy_net"], width, color=COLOR[k], alpha=0.55, zorder=2,
-                   label="net (idle-subtracted)" if i == 1 else None)
+                   label="net (idle-subtracted)" if first else None)
             ax.annotate(f"{m['energy_net']:.2f} J", (xs[i] + width / 2, m["energy_net"]), xytext=(0, 3),
                         textcoords="offset points", ha="center", fontsize=8, color=INK)
+        first = False
     ax.set_xticks(xs, labels)
     _style(ax, ylabel="Joules per decision")
     ax.legend(frameon=False, fontsize=9, loc="upper left")
@@ -270,22 +272,24 @@ def fig4_accuracy_vs_energy(metrics, out, plt) -> dict:
     # collide with each other or with the axis frame (autoscale alone was too tight here).
     y_pad = max(3.0, (max(accs) - min(accs)) * 0.6) if len(accs) > 1 else 5.0
     x_pad = max(2.0, (max(energies) - min(energies)) * 0.6) if len(energies) > 1 else 2.0
-    ax.set_ylim(min(accs) - y_pad, max(accs) + y_pad * 1.8)
+    ax.set_ylim(max(0, min(accs) - y_pad), min(105, max(accs) + y_pad * 1.8))  # accuracy never exceeds 100%
     ax.set_xlim(max(0, min(energies) - x_pad), max(energies) + x_pad)
     for d, m in have.items():
         acc = m["accuracy"][0] * 100
         e = m["energy_gross"]
         eff[d] = acc / e
         ax.scatter([e], [acc], s=170, color=COLOR[d], zorder=3)
-        ax.annotate(f"{DISPLAY[d]}: {acc/e:.3f} %/J", (e, acc), xytext=(0, 14), textcoords="offset points",
-                    ha="center", fontsize=9.5, color=INK)
+        # Kev-4B and Kev-9B sit close together: put one label above, the other beside.
+        ax.annotate(f"{DISPLAY[d]}: {acc/e:.3f} %/J", (e, acc),
+                    xytext=(12, -4) if d == "kev-9b" else (0, 14), textcoords="offset points",
+                    ha="left" if d == "kev-9b" else "center", fontsize=9.5, color=INK)
     if eff:
         best = max(eff, key=eff.get)
         bx, by = have[best]["energy_gross"], have[best]["accuracy"][0] * 100
         ax.scatter([bx], [by], s=380, facecolors="none", edgecolors=INK, linewidth=1.6, zorder=4)
         ax.annotate("best accuracy/J", (bx, by), xytext=(0, -22), textcoords="offset points",
                     ha="center", fontsize=8.5, color=INK_2, style="italic")
-    excluded = [DISPLAY.get(d, d) for d in metrics if d not in have] + ["Qwen3 (not available)"]
+    excluded = [DISPLAY.get(d, d) for d in metrics if d not in have]
     ax.annotate("no valid energy measurement: " + ", ".join(excluded), (0.5, -0.16), xycoords="axes fraction",
                 ha="center", fontsize=8, color=INK_2, style="italic")
     _style(ax, xlabel="Energy per decision (J, gross)", ylabel="Accuracy (%)")
@@ -454,8 +458,6 @@ def write_table(metrics, out: Path, run_name: str) -> str:
             f"| {DISPLAY[d]} | {a[0]*100:.1f}% | [{a[1]*100:.1f}%, {a[2]*100:.1f}%] | "
             f"{m['latency_ms']['p50']:.1f} | {m['latency_ms']['p95']:.1f} | {m['ece']:.3f} |"
         )
-    lines.append("")
-    lines.append(QWEN3_NOTE + ".")
     text = "\n".join(lines) + "\n"
     (out / "table.md").write_text(text)
     return text
@@ -490,13 +492,14 @@ def main() -> int:
         "fig1": (
             f"Pareto-optimal: {', '.join(DISPLAY[d] for d in pareto['frontier'])}. "
             f"Dominated (another decider is both faster and more accurate): "
-            f"{', '.join(DISPLAY[d] for d in pareto['dominated']) or 'none'}. "
-            f"{QWEN3_NOTE}."
+            f"{', '.join(DISPLAY[d] for d in pareto['dominated']) or 'none'}."
         ),
         "fig4": (
             "Accuracy-per-joule: " + ", ".join(f"{DISPLAY[d]} {v:.3f} %/J" for d, v in eff.items())
-            + ". Only Kev-4B and Kev-9B have a valid energy measurement in this run "
-              "(Kev-0.8B's laptop GPU counter failed validation; Jev/GPT-OSS-20B are hosted, no local GPU)."
+            + ". No energy measurement: "
+            + (", ".join(DISPLAY.get(d, d) for d in metrics if d not in eff) or "none")
+            + " (hosted deciders have no local GPU; the cascade isn't re-metered live; a laptop GPU "
+              "counter that failed validation is not reported)."
         ),
         "fig8": {
             DISPLAY[d]: {"total_incorrect": sum(c.values()), "dominant": (max(c, key=c.get) if c else "n/a"), "counts": dict(c)}

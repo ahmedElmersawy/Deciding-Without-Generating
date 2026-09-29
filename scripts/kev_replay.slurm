@@ -11,7 +11,7 @@
 #
 # Submit from repo root, one job per size, into the SAME run dir as the Jev/LLM replay so
 # analyze_decisions.py compares them side by side:
-#   sbatch --mem=32G --export=ALL,KEV_MODEL=kev-4b,STATES=results/states/mock-pilot.jsonl,RUN=results/replay/mock-pilot scripts/kev_replay.slurm
+#   sbatch --export=ALL,KEV_MODEL=kev-4b,STATES=results/states/mock-pilot.jsonl,RUN=results/replay/mock-pilot scripts/kev_replay.slurm
 #SBATCH --job-name=dwg-kev-replay
 #SBATCH --account=davisjam
 #SBATCH --partition=a100-80gb
@@ -19,7 +19,10 @@
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --time=02:00:00
+#SBATCH --mem=64G
 #SBATCH --output=results/logs/%x-%j.out
+# --mem=64G: Kev loads its weights in host RAM first. Peak RSS on airline: Kev-4B 23 GB, Kev-9B 44 GB
+# (job 11820225); the 32 GB default OOM-killed Kev-9B (job 11819745).
 set -euo pipefail
 mkdir -p results/logs
 : "${KEV_MODEL:=kev-4b}" "${STATES:?set STATES=<states.jsonl>}" "${RUN:?set RUN=<replay run dir>}" "${REPEATS:=5}"

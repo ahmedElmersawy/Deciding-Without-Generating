@@ -1,0 +1,15 @@
+{
+  "decider": "jev",
+  "model": null,
+  "cascade_threshold": null,
+  "repeats": 5,
+  "workers": 4,
+  "started": "20260925T231427Z",
+  "host": "gilbreth-fe01.rcac.purdue.edu",
+  "kev_url": null,
+  "kev_models": null,
+  "gpu": null,
+  "gpu_idle_watts": null,
+  "energy_unavailable": null,
+  "energy_block": null
+}

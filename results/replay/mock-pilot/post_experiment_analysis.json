@@ -37,107 +37,108 @@
       }
     },
     "Jev vs GPT-OSS-20B": {
-      "mean_diff": -0.08000000000000002,
-      "ci_lo": -0.1476923076923077,
-      "ci_hi": -0.01846153846153846,
+      "mean_diff": -0.08230769230769232,
+      "ci_lo": -0.1523076923076923,
+      "ci_hi": -0.018461538461538463,
       "n_states": 65,
-      "std_diff": 0.27340446228984633,
+      "std_diff": 0.278448655673095,
       "significant": true,
       "needed": {
         "0.05": {
-          "n_states": 115,
+          "n_states": 120,
           "multiple_of_current": 1.8
         },
         "0.03": {
-          "n_states": 320,
-          "multiple_of_current": 4.9
+          "n_states": 331,
+          "multiple_of_current": 5.1
         }
       }
     },
     "Cascade (Kev-4B\u2192GPT-OSS, t=0.9) vs Kev-4B": {
-      "mean_diff": 0.08307692307692308,
-      "ci_lo": -0.015384615384615379,
-      "ci_hi": 0.18461538461538463,
+      "mean_diff": 0.08153846153846155,
+      "ci_lo": -0.016923076923076912,
+      "ci_hi": 0.18307692307692308,
       "n_states": 65,
-      "std_diff": 0.41214728510010185,
+      "std_diff": 0.41416041113781765,
       "significant": false,
       "needed": {
         "0.05": {
-          "n_states": 262,
-          "multiple_of_current": 4.0
+          "n_states": 264,
+          "multiple_of_current": 4.1
         },
         "0.03": {
-          "n_states": 726,
-          "multiple_of_current": 11.2
+          "n_states": 733,
+          "multiple_of_current": 11.3
         }
       }
     },
     "Cascade (Kev-4B\u2192GPT-OSS, t=0.9) vs Kev-9B": {
-      "mean_diff": 0.0676923076923077,
-      "ci_lo": -0.02769230769230769,
+      "mean_diff": 0.06615384615384616,
+      "ci_lo": -0.030769230769230764,
       "ci_hi": 0.16923076923076924,
       "n_states": 65,
-      "std_diff": 0.4112130273303046,
+      "std_diff": 0.4131725286869136,
       "significant": false,
       "needed": {
         "0.05": {
-          "n_states": 260,
+          "n_states": 263,
           "multiple_of_current": 4.0
         },
         "0.03": {
-          "n_states": 722,
-          "multiple_of_current": 11.1
+          "n_states": 729,
+          "multiple_of_current": 11.2
         }
       }
     },
     "Cascade (Kev-4B\u2192GPT-OSS, t=0.9) vs Jev": {
-      "mean_diff": -0.07384615384615385,
-      "ci_lo": -0.19384615384615383,
-      "ci_hi": 0.046153846153846156,
+      "mean_diff": -0.07538461538461538,
+      "ci_lo": -0.1953846153846154,
+      "ci_hi": 0.04461538461538461,
       "n_states": 65,
-      "std_diff": 0.49569298811011886,
+      "std_diff": 0.4968748488146843,
       "significant": false,
       "needed": {
         "0.05": {
-          "n_states": 378,
+          "n_states": 380,
           "multiple_of_current": 5.8
         },
         "0.03": {
-          "n_states": 1049,
-          "multiple_of_current": 16.1
+          "n_states": 1054,
+          "multiple_of_current": 16.2
         }
       }
     },
     "Cascade (Kev-4B\u2192GPT-OSS, t=0.9) vs GPT-OSS-20B": {
-      "mean_diff": -0.15384615384615385,
-      "ci_lo": -0.2584615384615384,
-      "ci_hi": -0.04923076923076923,
+      "mean_diff": -0.1576923076923077,
+      "ci_lo": -0.2630769230769231,
+      "ci_hi": -0.05384615384615384,
       "n_states": 65,
-      "std_diff": 0.4283241044600904,
+      "std_diff": 0.4322208970493604,
       "significant": true,
       "needed": {
         "0.05": {
-          "n_states": 282,
-          "multiple_of_current": 4.3
+          "n_states": 288,
+          "multiple_of_current": 4.4
         },
         "0.03": {
-          "n_states": 784,
-          "multiple_of_current": 12.0
+          "n_states": 798,
+          "multiple_of_current": 12.3
         }
       }
     }
   },
   "phase_b_validation": {
     "cascade-kev-4b-t0.9": {
-      "total_rows": 327,
-      "ok_rows": 325,
+      "total_rows": 325,
+      "ok_rows": 323,
       "error_rows": 2,
       "distinct_states_seen": 65,
       "expected_states": 65,
       "missing_states": [],
       "extra_states": [],
       "calls_per_state_histogram": {
-        "5": 65
+        "5": 63,
+        "4": 2
       },
       "any_state_over_5_calls": "clean (no state exceeds 5 logged calls)",
       "prefix_cache": {
@@ -225,10 +226,10 @@
       },
       "cache_clean": true
     },
-    "llm:openrouter/openai/gpt-oss-20b": {
-      "total_rows": 326,
+    "llm:local/qwen3-8b": {
+      "total_rows": 325,
       "ok_rows": 325,
-      "error_rows": 1,
+      "error_rows": 0,
       "distinct_states_seen": 65,
       "expected_states": 65,
       "missing_states": [],
@@ -237,9 +238,29 @@
         "5": 65
       },
       "any_state_over_5_calls": "clean (no state exceeds 5 logged calls)"
+    },
+    "llm:openrouter/openai/gpt-oss-20b": {
+      "total_rows": 325,
+      "ok_rows": 324,
+      "error_rows": 1,
+      "distinct_states_seen": 65,
+      "expected_states": 65,
+      "missing_states": [],
+      "extra_states": [],
+      "calls_per_state_histogram": {
+        "5": 64,
+        "4": 1
+      },
+      "any_state_over_5_calls": "clean (no state exceeds 5 logged calls)"
     }
   },
   "phase_c_error_analysis": {
+    "deciders_present": [
+      "Jev",
+      "GPT-OSS-20B",
+      "Kev-4B",
+      "Kev-9B"
+    ],
     "n_common_states": 65,
     "hardest_states": [
       {
@@ -251,26 +272,6 @@
         "GPT-OSS-20B": "respond_to_user",
         "Kev-4B": "respond_to_user",
         "Kev-9B": "respond_to_user"
-      },
-      {
-        "state_id": "impossible_task_1/t2/turn1",
-        "task_id": "impossible_task_1",
-        "reference": "respond_to_user",
-        "n_failing": 3,
-        "Jev": "transfer_to_human_agents",
-        "GPT-OSS-20B": "respond_to_user",
-        "Kev-4B": "transfer_to_human_agents",
-        "Kev-9B": "transfer_to_human_agents"
-      },
-      {
-        "state_id": "impossible_task_1/t1/turn1",
-        "task_id": "impossible_task_1",
-        "reference": "respond_to_user",
-        "n_failing": 3,
-        "Jev": "transfer_to_human_agents",
-        "GPT-OSS-20B": "respond_to_user",
-        "Kev-4B": "transfer_to_human_agents",
-        "Kev-9B": "transfer_to_human_agents"
       },
       {
         "state_id": "impossible_task_1/t0/turn3",
@@ -303,8 +304,48 @@
         "Kev-9B": "transfer_to_human_agents"
       },
       {
-        "state_id": "create_task_1_nl_eval/t1/turn0",
+        "state_id": "impossible_task_1/t1/turn1",
+        "task_id": "impossible_task_1",
+        "reference": "respond_to_user",
+        "n_failing": 3,
+        "Jev": "transfer_to_human_agents",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "transfer_to_human_agents",
+        "Kev-9B": "transfer_to_human_agents"
+      },
+      {
+        "state_id": "impossible_task_1/t2/turn1",
+        "task_id": "impossible_task_1",
+        "reference": "respond_to_user",
+        "n_failing": 3,
+        "Jev": "transfer_to_human_agents",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "transfer_to_human_agents",
+        "Kev-9B": "transfer_to_human_agents"
+      },
+      {
+        "state_id": "create_task_1_nl_eval/t0/turn1",
         "task_id": "create_task_1_nl_eval",
+        "reference": "respond_to_user",
+        "n_failing": 2,
+        "Jev": "respond_to_user",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "create_task",
+        "Kev-9B": "create_task"
+      },
+      {
+        "state_id": "impossible_task_1/t0/turn2",
+        "task_id": "impossible_task_1",
+        "reference": "transfer_to_human_agents",
+        "n_failing": 2,
+        "Jev": "respond_to_user",
+        "GPT-OSS-20B": "transfer_to_human_agents",
+        "Kev-4B": "respond_to_user",
+        "Kev-9B": "transfer_to_human_agents"
+      },
+      {
+        "state_id": "create_task_1_with_env_assertions/t1/turn0",
+        "task_id": "create_task_1_with_env_assertions",
         "reference": "create_task",
         "n_failing": 2,
         "Jev": "get_users",
@@ -313,22 +354,12 @@
         "Kev-9B": "create_task"
       },
       {
-        "state_id": "update_task_1/t2/turn1",
-        "task_id": "update_task_1",
-        "reference": "respond_to_user",
+        "state_id": "create_task_1_nl_eval/t2/turn0",
+        "task_id": "create_task_1_nl_eval",
+        "reference": "create_task",
         "n_failing": 2,
-        "Jev": "respond_to_user",
-        "GPT-OSS-20B": "respond_to_user",
-        "Kev-4B": "update_task_status",
-        "Kev-9B": "update_task_status"
-      },
-      {
-        "state_id": "create_task_1/t2/turn1",
-        "task_id": "create_task_1",
-        "reference": "respond_to_user",
-        "n_failing": 2,
-        "Jev": "respond_to_user",
-        "GPT-OSS-20B": "respond_to_user",
+        "Jev": "get_users",
+        "GPT-OSS-20B": "get_users",
         "Kev-4B": "create_task",
         "Kev-9B": "create_task"
       },
@@ -343,24 +374,14 @@
         "Kev-9B": "create_task"
       },
       {
-        "state_id": "update_task_1/t0/turn1",
-        "task_id": "update_task_1",
+        "state_id": "create_task_1/t0/turn1",
+        "task_id": "create_task_1",
         "reference": "respond_to_user",
         "n_failing": 2,
         "Jev": "respond_to_user",
         "GPT-OSS-20B": "respond_to_user",
-        "Kev-4B": "update_task_status",
-        "Kev-9B": "update_task_status"
-      },
-      {
-        "state_id": "update_task_with_history_and_env_assertions/t0/turn1",
-        "task_id": "update_task_with_history_and_env_assertions",
-        "reference": "respond_to_user",
-        "n_failing": 2,
-        "Jev": "respond_to_user",
-        "GPT-OSS-20B": "respond_to_user",
-        "Kev-4B": "update_task_status",
-        "Kev-9B": "update_task_status"
+        "Kev-4B": "create_task",
+        "Kev-9B": "create_task"
       }
     ],
     "kev4_wins_kev9_loses": {
@@ -388,28 +409,28 @@
     "jev_beats_both_kev": {
       "count": 19,
       "by_task": {
-        "update_task_1": 3,
+        "create_task_1_nl_eval": 3,
         "update_task_with_history_and_env_assertions": 3,
         "update_task_with_initialization_actions": 3,
-        "create_task_1_nl_eval": 3,
-        "create_task_1": 2,
+        "update_task_1": 3,
         "create_task_1_with_env_assertions": 2,
+        "create_task_1": 2,
         "update_task_with_message_history": 2,
         "impossible_task_1": 1
       },
       "examples": [
         {
-          "state_id": "update_task_1/t2/turn1",
-          "task_id": "update_task_1",
+          "state_id": "impossible_task_1/t0/turn3",
+          "task_id": "impossible_task_1",
           "reference": "respond_to_user",
           "Jev": "respond_to_user",
-          "GPT-OSS-20B": "respond_to_user",
-          "Kev-4B": "update_task_status",
-          "Kev-9B": "update_task_status"
+          "GPT-OSS-20B": "transfer_to_human_agents",
+          "Kev-4B": "transfer_to_human_agents",
+          "Kev-9B": "transfer_to_human_agents"
         },
         {
-          "state_id": "create_task_1/t2/turn1",
-          "task_id": "create_task_1",
+          "state_id": "create_task_1_nl_eval/t0/turn1",
+          "task_id": "create_task_1_nl_eval",
           "reference": "respond_to_user",
           "Jev": "respond_to_user",
           "GPT-OSS-20B": "respond_to_user",
@@ -426,13 +447,13 @@
           "Kev-9B": "create_task"
         },
         {
-          "state_id": "update_task_1/t0/turn1",
-          "task_id": "update_task_1",
+          "state_id": "create_task_1/t0/turn1",
+          "task_id": "create_task_1",
           "reference": "respond_to_user",
           "Jev": "respond_to_user",
           "GPT-OSS-20B": "respond_to_user",
-          "Kev-4B": "update_task_status",
-          "Kev-9B": "update_task_status"
+          "Kev-4B": "create_task",
+          "Kev-9B": "create_task"
         },
         {
           "state_id": "update_task_with_history_and_env_assertions/t0/turn1",
@@ -444,8 +465,8 @@
           "Kev-9B": "update_task_status"
         },
         {
-          "state_id": "update_task_with_initialization_actions/t1/turn1",
-          "task_id": "update_task_with_initialization_actions",
+          "state_id": "update_task_with_message_history/t0/turn1",
+          "task_id": "update_task_with_message_history",
           "reference": "respond_to_user",
           "Jev": "respond_to_user",
           "GPT-OSS-20B": "respond_to_user",
@@ -462,7 +483,16 @@
       },
       "examples": [
         {
-          "state_id": "impossible_task_1/t2/turn1",
+          "state_id": "create_task_1/t2/turn3",
+          "task_id": "create_task_1",
+          "reference": "respond_to_user",
+          "Jev": "transfer_to_human_agents",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "transfer_to_human_agents",
+          "Kev-9B": "transfer_to_human_agents"
+        },
+        {
+          "state_id": "impossible_task_1/t0/turn1",
           "task_id": "impossible_task_1",
           "reference": "respond_to_user",
           "Jev": "transfer_to_human_agents",
@@ -480,16 +510,7 @@
           "Kev-9B": "transfer_to_human_agents"
         },
         {
-          "state_id": "create_task_1/t2/turn3",
-          "task_id": "create_task_1",
-          "reference": "respond_to_user",
-          "Jev": "transfer_to_human_agents",
-          "GPT-OSS-20B": "respond_to_user",
-          "Kev-4B": "transfer_to_human_agents",
-          "Kev-9B": "transfer_to_human_agents"
-        },
-        {
-          "state_id": "impossible_task_1/t0/turn1",
+          "state_id": "impossible_task_1/t2/turn1",
           "task_id": "impossible_task_1",
           "reference": "respond_to_user",
           "Jev": "transfer_to_human_agents",
@@ -530,13 +551,13 @@
           },
           {
             "T": 1.8000000000000003,
-            "ece_before": 0.12543749999999973,
-            "ece_after": 0.05311378920226406,
-            "n_test": 160
+            "ece_before": 0.11999999999999979,
+            "ece_after": 0.04761284215880403,
+            "n_test": 159
           }
         ],
-        "mean_ece_before": 0.11093087121212108,
-        "mean_ece_after": 0.05745566265577708
+        "mean_ece_before": 0.10821212121212112,
+        "mean_ece_after": 0.054705189134047066
       },
       "Kev-4B": {
         "folds": [
@@ -671,21 +692,21 @@
         "accept_rate": 0.0,
         "escalate_rate": 1.0,
         "unmatched_escalations": 0,
-        "blended_accuracy": 0.8523076923076924,
-        "blended_latency_ms": 1092.9866399439586,
-        "blended_cost_usd_per_decision": 8.085313846153845e-05
+        "blended_accuracy": 0.8546153846153848,
+        "blended_latency_ms": 1085.4015396524196,
+        "blended_cost_usd_per_decision": 8.098857692307692e-05
       }
     ]
   },
   "phase_e_efficiency": {
     "Cascade (Kev-4B\u2192GPT-OSS, t=0.9)": {
-      "accuracy_pct": 69.84615384615384,
-      "median_latency_ms": 249.24336897674948,
-      "accuracy_per_ms": 0.28023274654367797,
+      "accuracy_pct": 69.65944272445822,
+      "median_latency_ms": 248.98531200597063,
+      "accuracy_per_ms": 0.2797733013375014,
       "energy_j": 18.333289230769232,
-      "accuracy_per_joule": 3.8097993746222714,
-      "mean_cost_usd": 8.818130769230768e-05,
-      "note": "energy reused from Kev-4B's own standalone run (fast stage always runs); not re-metered live"
+      "accuracy_per_joule": 3.799615107121475,
+      "mean_cost_usd": 3.517346749226006e-05,
+      "note": "energy reused from kev-4b's own standalone run in this run (fast stage always runs); not re-metered live"
     },
     "Jev": {
       "accuracy_pct": 77.23076923076924,
@@ -723,13 +744,22 @@
       "mean_cost_usd": null,
       "note": null
     },
+    "Qwen3-8B (local)": {
+      "accuracy_pct": 92.92307692307692,
+      "median_latency_ms": 422.84104897407815,
+      "accuracy_per_ms": 0.21975888374256086,
+      "energy_j": 125.79746153846155,
+      "accuracy_per_joule": 0.7386721145773394,
+      "mean_cost_usd": null,
+      "note": null
+    },
     "GPT-OSS-20B": {
-      "accuracy_pct": 85.23076923076923,
-      "median_latency_ms": 872.7637080010027,
-      "accuracy_per_ms": 0.09765617938672504,
+      "accuracy_pct": 85.49382716049382,
+      "median_latency_ms": 872.7402739896206,
+      "accuracy_per_ms": 0.09796021761396402,
       "energy_j": null,
       "accuracy_per_joule": null,
-      "mean_cost_usd": 8.085313846153845e-05,
+      "mean_cost_usd": 8.089367283950617e-05,
       "note": null
     }
   }

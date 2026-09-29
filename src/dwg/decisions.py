@@ -49,6 +49,7 @@ class Decision:
     server_latency_s: Optional[float] = None  # model-side time, when the server reports it
     energy_j: Optional[float] = None  # gross GPU energy over the call; local deciders only
     escalated: bool = False  # CascadeDecider only: whether the second stage was called
+    provider: Optional[str] = None  # hosted LLMs: which OpenRouter upstream served the call
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -145,17 +146,33 @@ LLM_DECIDER_SYSTEM = (
 )
 
 
+class NoDecisionError(RuntimeError):
+    """The LLM answered without the forced `decide_next_action` call (a decider failure)."""
+
+
 class LLMChoiceDecider:
     """A generative LLM asked the same decision as a single constrained tool call.
 
     The action is an enum over the options, so the model cannot answer outside them; it
     also reports a verbalized confidence in [0, 1].
+
+    `provider_sort="price"` asks OpenRouter to route to the cheapest upstream (default routing
+    was found 2026-09-25 to bill gpt-oss-20b at ~3x its listed price); the serving provider is
+    recorded per call either way. For a local OpenAI-compatible server (vLLM), pass
+    `api_base=...` through `completion_args`, and optionally an `energy_meter` (whole-GPU;
+    the caller must serialize calls, see `dwg.energy`). `extra_body` adds request-body fields,
+    e.g. `{"chat_template_kwargs": {"enable_thinking": false}}` for Qwen3 on vLLM.
     """
 
-    def __init__(self, model: str, name: Optional[str] = None, **completion_args: Any) -> None:
+    def __init__(self, model: str, name: Optional[str] = None, provider_sort: Optional[str] = None,
+                 extra_body: Optional[dict] = None, energy_meter=None, **completion_args: Any) -> None:
         self.model = model
         self.name = name or f"llm:{model}"
+        self.provider_sort = provider_sort
+        self.extra_body = extra_body or {}
+        self.energy_meter = energy_meter
         self.completion_args = completion_args
+        self.hosted = model.startswith("openrouter/")
 
     def decide(self, state: str, options: dict[str, str]) -> Decision:
         import litellm
@@ -183,6 +200,13 @@ class LLMChoiceDecider:
                 },
             },
         }
+        extra_body = dict(self.extra_body)
+        if self.hosted:
+            # Ask OpenRouter for its own per-call $ cost — the same source Jev's cost comes from.
+            extra_body["usage"] = {"include": True}
+            if self.provider_sort:
+                extra_body["provider"] = {"sort": self.provider_sort}
+        e0 = self.energy_meter.read_mj() if self.energy_meter else None
         t0 = time.perf_counter()
         response = litellm.completion(
             model=self.model,
@@ -192,14 +216,17 @@ class LLMChoiceDecider:
             ],
             tools=[tool],
             tool_choice={"type": "function", "function": {"name": "decide_next_action"}},
-            # Ask OpenRouter for its own per-call $ cost — the same source Jev's cost comes from.
-            extra_body={"usage": {"include": True}},
+            extra_body=extra_body or None,
             **self.completion_args,
         )
         latency = time.perf_counter() - t0
+        energy_j = (self.energy_meter.read_mj() - e0) / 1000.0 if self.energy_meter else None
 
-        call = response.choices[0].message.tool_calls[0]
-        args = json.loads(call.function.arguments)
+        tool_calls = response.choices[0].message.tool_calls
+        if not tool_calls:
+            content = (response.choices[0].message.content or "")[:200]
+            raise NoDecisionError(f"no decide_next_action call in the response (content: {content!r})")
+        args = json.loads(tool_calls[0].function.arguments)
         choice = args["action"]
         if choice not in options:
             raise ValueError(f"LLM decider returned {choice!r}, not one of {list(options)}")
@@ -210,10 +237,12 @@ class LLMChoiceDecider:
             confidence=None if confidence is None else min(max(float(confidence), 0.0), 1.0),
             probabilities=None,
             latency_s=latency,
-            cost_usd=_openrouter_cost(response),
+            cost_usd=_openrouter_cost(response) if self.hosted else None,
             input_tokens=getattr(usage, "prompt_tokens", None),
             output_tokens=getattr(usage, "completion_tokens", None),
             model=response.model or self.model,
+            energy_j=energy_j,
+            provider=getattr(response, "provider", None) or (getattr(response, "model_extra", None) or {}).get("provider"),
         )
 
 
@@ -245,6 +274,8 @@ class CascadeDecider:
         d1 = self.fast.decide(state, options)
         if d1.confidence is not None and d1.confidence >= self.threshold:
             d1.escalated = False
+            if d1.cost_usd is None and getattr(self.escalate, "hosted", False):
+                d1.cost_usd = 0.0  # only the local fast stage ran: $0, so it counts in $/decision means
             return d1
         d2 = self.escalate.decide(state, options)
         cost = None
@@ -268,6 +299,7 @@ class CascadeDecider:
             server_latency_s=None,
             energy_j=None,  # attached post-hoc from the fast decider's own standalone run
             escalated=True,
+            provider=d2.provider,
         )
 
 

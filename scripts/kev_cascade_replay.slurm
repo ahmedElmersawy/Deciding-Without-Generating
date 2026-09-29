@@ -19,8 +19,9 @@
 #SBATCH --constraint=a100-80gb
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
-#SBATCH --time=00:30:00
+#SBATCH --time=02:00:00
 #SBATCH --output=results/logs/%x-%j.out
+# (2 h: airline has ~4,000 cascade calls x ~2.3 s / 4 workers ≈ 40 min, plus Kev load.)
 set -euo pipefail
 mkdir -p results/logs
 : "${STATES:?set STATES=<states.jsonl>}" "${RUN:?set RUN=<replay run dir>}" "${THRESHOLD:=0.9}" "${REPEATS:=5}"

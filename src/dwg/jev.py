@@ -10,6 +10,7 @@ path is supported.
 from __future__ import annotations
 
 import os
+import threading
 from dataclasses import dataclass
 from typing import Any
 
@@ -94,7 +95,17 @@ class JevDecider:
         self.model = model
         self.timeout = timeout
         self.session = session or requests.Session()
-        self.last_response: dict[str, Any] | None = None  # raw response, cached for audit
+        # Raw response, cached for audit. Per thread: one client is shared by concurrent calls
+        # (replay workers, in-loop episodes), and each caller must read its own response.
+        self._local = threading.local()
+
+    @property
+    def last_response(self) -> dict[str, Any] | None:
+        return getattr(self._local, "body", None)
+
+    @last_response.setter
+    def last_response(self, body: dict[str, Any] | None) -> None:
+        self._local.body = body
 
     def ask(self, state: Any, questions: dict[str, dict[str, Any]]) -> dict[str, Any]:
         """Send one or more typed questions about `state`. Returns the raw parsed JSON body."""

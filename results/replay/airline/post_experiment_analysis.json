@@ -1,31 +1,526 @@
 {
   "phase_a_significance": {
     "Kev-4B vs Kev-9B": {
-      "mean_diff": -0.12235649546827794,
-      "ci_lo": -0.1555891238670695,
-      "ci_hi": -0.0891238670694864,
-      "n_states": 662,
-      "std_diff": 0.4350198212519771,
+      "mean_diff": -0.07965451055662189,
+      "ci_lo": -0.10844529750479846,
+      "ci_hi": -0.04990403071017274,
+      "n_states": 1042,
+      "std_diff": 0.48847296376985105,
       "significant": true,
       "needed": {
         "0.05": {
-          "n_states": 291,
+          "n_states": 367,
           "multiple_of_current": 0.4
         },
         "0.03": {
-          "n_states": 808,
+          "n_states": 1019,
+          "multiple_of_current": 1.0
+        }
+      }
+    },
+    "Jev vs Kev-9B": {
+      "mean_diff": 0.4074856046065259,
+      "ci_lo": 0.3742802303262956,
+      "ci_hi": 0.4408877159309021,
+      "n_states": 1042,
+      "std_diff": 0.545263080872177,
+      "significant": true,
+      "needed": {
+        "0.05": {
+          "n_states": 457,
+          "multiple_of_current": 0.4
+        },
+        "0.03": {
+          "n_states": 1270,
           "multiple_of_current": 1.2
+        }
+      }
+    },
+    "Jev vs GPT-OSS-20B": {
+      "mean_diff": 0.15464429947188568,
+      "ci_lo": 0.13226157191674434,
+      "ci_hi": 0.17778852127990058,
+      "n_states": 1073,
+      "std_diff": 0.38334336499537186,
+      "significant": true,
+      "needed": {
+        "0.05": {
+          "n_states": 226,
+          "multiple_of_current": 0.2
+        },
+        "0.03": {
+          "n_states": 628,
+          "multiple_of_current": 0.6
+        }
+      }
+    },
+    "Cascade (Kev-4B\u2192GPT-OSS, t=0.9) vs Kev-4B": {
+      "mean_diff": 0.3274348422496571,
+      "ci_lo": 0.2841758116140833,
+      "ci_hi": 0.3718564243255601,
+      "n_states": 729,
+      "std_diff": 0.6066546571783401,
+      "significant": true,
+      "needed": {
+        "0.05": {
+          "n_states": 566,
+          "multiple_of_current": 0.8
+        },
+        "0.03": {
+          "n_states": 1571,
+          "multiple_of_current": 2.2
+        }
+      }
+    },
+    "Cascade (Kev-4B\u2192GPT-OSS, t=0.9) vs Kev-9B": {
+      "mean_diff": 0.25747599451303155,
+      "ci_lo": 0.2152949245541838,
+      "ci_hi": 0.29913237311385454,
+      "n_states": 729,
+      "std_diff": 0.5844319589674802,
+      "significant": true,
+      "needed": {
+        "0.05": {
+          "n_states": 525,
+          "multiple_of_current": 0.7
+        },
+        "0.03": {
+          "n_states": 1458,
+          "multiple_of_current": 2.0
+        }
+      }
+    },
+    "Cascade (Kev-4B\u2192GPT-OSS, t=0.9) vs Jev": {
+      "mean_diff": -0.1403292181069959,
+      "ci_lo": -0.17176554641060815,
+      "ci_hi": -0.10861854138088706,
+      "n_states": 729,
+      "std_diff": 0.4313420875275947,
+      "significant": true,
+      "needed": {
+        "0.05": {
+          "n_states": 286,
+          "multiple_of_current": 0.4
+        },
+        "0.03": {
+          "n_states": 795,
+          "multiple_of_current": 1.1
+        }
+      }
+    },
+    "Cascade (Kev-4B\u2192GPT-OSS, t=0.9) vs GPT-OSS-20B": {
+      "mean_diff": 0.001945970695970696,
+      "ci_lo": -0.020490499084249082,
+      "ci_hi": 0.024085966117216095,
+      "n_states": 728,
+      "std_diff": 0.30278842907068987,
+      "significant": false,
+      "needed": {
+        "0.05": {
+          "n_states": 141,
+          "multiple_of_current": 0.2
+        },
+        "0.03": {
+          "n_states": 392,
+          "multiple_of_current": 0.5
         }
       }
     }
   },
   "phase_b_validation": {
-    "kev-4b": {
-      "total_rows": 3445,
-      "ok_rows": 3310,
-      "error_rows": 135,
-      "distinct_states_seen": 662,
-      "expected_states": 689,
+    "cascade-kev-4b-t0.9": {
+      "total_rows": 3169,
+      "ok_rows": 1147,
+      "error_rows": 2022,
+      "distinct_states_seen": 729,
+      "expected_states": 1076,
+      "missing_states": [
+        "0/t1/turn0",
+        "0/t1/turn2",
+        "0/t1/turn3",
+        "0/t2/turn5",
+        "1/t0/turn0",
+        "1/t0/turn10",
+        "1/t0/turn11",
+        "1/t0/turn9",
+        "1/t1/turn11",
+        "1/t2/turn5",
+        "1/t2/turn7",
+        "10/t0/turn0",
+        "10/t0/turn2",
+        "10/t0/turn4",
+        "10/t0/turn9",
+        "10/t1/turn0",
+        "10/t1/turn10",
+        "10/t2/turn4",
+        "10/t2/turn6",
+        "11/t0/turn2",
+        "11/t0/turn3",
+        "11/t0/turn4",
+        "11/t0/turn6",
+        "11/t1/turn2",
+        "11/t1/turn4",
+        "11/t1/turn6",
+        "11/t1/turn8",
+        "11/t1/turn9",
+        "11/t2/turn10",
+        "11/t2/turn11",
+        "11/t2/turn12",
+        "11/t2/turn2",
+        "11/t2/turn7",
+        "12/t0/turn0",
+        "12/t0/turn4",
+        "12/t0/turn6",
+        "12/t1/turn2",
+        "12/t1/turn5",
+        "12/t2/turn1",
+        "12/t2/turn2",
+        "12/t2/turn4",
+        "12/t2/turn5",
+        "13/t0/turn0",
+        "13/t1/turn0",
+        "13/t2/turn1",
+        "13/t2/turn2",
+        "14/t1/turn0",
+        "14/t1/turn10",
+        "14/t1/turn11",
+        "14/t1/turn12",
+        "14/t1/turn13",
+        "14/t1/turn2",
+        "14/t1/turn4",
+        "14/t1/turn5",
+        "14/t1/turn6",
+        "14/t2/turn11",
+        "14/t2/turn12",
+        "14/t2/turn6",
+        "14/t2/turn9",
+        "15/t0/turn5",
+        "15/t1/turn10",
+        "15/t1/turn11",
+        "15/t1/turn2",
+        "15/t1/turn7",
+        "15/t1/turn8",
+        "15/t1/turn9",
+        "15/t2/turn5",
+        "16/t1/turn0",
+        "16/t1/turn2",
+        "16/t1/turn8",
+        "17/t0/turn10",
+        "17/t0/turn11",
+        "17/t0/turn4",
+        "17/t0/turn8",
+        "17/t1/turn0",
+        "17/t1/turn10",
+        "17/t1/turn3",
+        "17/t1/turn7",
+        "17/t2/turn3",
+        "17/t2/turn6",
+        "17/t2/turn8",
+        "19/t0/turn2",
+        "19/t0/turn4",
+        "19/t0/turn5",
+        "19/t0/turn7",
+        "19/t0/turn8",
+        "19/t1/turn4",
+        "19/t2/turn0",
+        "19/t2/turn2",
+        "19/t2/turn6",
+        "2/t0/turn11",
+        "2/t0/turn3",
+        "2/t0/turn5",
+        "2/t0/turn8",
+        "2/t2/turn0",
+        "2/t2/turn2",
+        "2/t2/turn3",
+        "2/t2/turn5",
+        "2/t2/turn7",
+        "20/t2/turn0",
+        "20/t2/turn1",
+        "20/t2/turn10",
+        "20/t2/turn11",
+        "20/t2/turn12",
+        "20/t2/turn3",
+        "20/t2/turn5",
+        "20/t2/turn7",
+        "20/t2/turn8",
+        "20/t2/turn9",
+        "21/t1/turn10",
+        "21/t1/turn11",
+        "21/t1/turn16",
+        "21/t1/turn17",
+        "21/t1/turn18",
+        "21/t1/turn8",
+        "21/t1/turn9",
+        "21/t2/turn1",
+        "21/t2/turn10",
+        "21/t2/turn14",
+        "21/t2/turn5",
+        "21/t2/turn7",
+        "22/t0/turn0",
+        "22/t0/turn4",
+        "22/t0/turn5",
+        "22/t0/turn6",
+        "22/t0/turn7",
+        "22/t1/turn11",
+        "22/t1/turn12",
+        "22/t1/turn3",
+        "22/t1/turn7",
+        "22/t2/turn1",
+        "22/t2/turn3",
+        "22/t2/turn4",
+        "22/t2/turn6",
+        "23/t0/turn0",
+        "23/t0/turn10",
+        "23/t0/turn11",
+        "23/t0/turn12",
+        "23/t0/turn13",
+        "23/t0/turn14",
+        "23/t0/turn4",
+        "23/t0/turn9",
+        "23/t1/turn10",
+        "23/t1/turn11",
+        "23/t1/turn12",
+        "23/t1/turn13",
+        "23/t1/turn14",
+        "23/t2/turn10",
+        "23/t2/turn11",
+        "23/t2/turn12",
+        "23/t2/turn13",
+        "23/t2/turn14",
+        "23/t2/turn15",
+        "23/t2/turn3",
+        "23/t2/turn4",
+        "23/t2/turn9",
+        "24/t2/turn0",
+        "24/t2/turn1",
+        "24/t2/turn12",
+        "24/t2/turn13",
+        "24/t2/turn15",
+        "24/t2/turn18",
+        "24/t2/turn3",
+        "25/t0/turn0",
+        "25/t0/turn4",
+        "25/t0/turn5",
+        "25/t0/turn7",
+        "25/t0/turn8",
+        "25/t1/turn2",
+        "25/t1/turn7",
+        "25/t2/turn2",
+        "25/t2/turn8",
+        "26/t0/turn4",
+        "26/t0/turn5",
+        "26/t1/turn1",
+        "26/t1/turn2",
+        "26/t2/turn3",
+        "26/t2/turn5",
+        "27/t0/turn10",
+        "27/t0/turn11",
+        "27/t0/turn12",
+        "27/t0/turn2",
+        "27/t0/turn3",
+        "27/t0/turn4",
+        "27/t0/turn8",
+        "27/t0/turn9",
+        "27/t1/turn1",
+        "27/t1/turn12",
+        "27/t1/turn3",
+        "27/t1/turn6",
+        "27/t2/turn0",
+        "28/t0/turn2",
+        "28/t0/turn4",
+        "28/t1/turn0",
+        "28/t1/turn2",
+        "28/t1/turn5",
+        "28/t2/turn0",
+        "28/t2/turn4",
+        "3/t0/turn3",
+        "3/t0/turn4",
+        "3/t0/turn5",
+        "3/t1/turn3",
+        "30/t0/turn2",
+        "30/t0/turn5",
+        "30/t0/turn6",
+        "30/t1/turn2",
+        "30/t1/turn4",
+        "30/t1/turn6",
+        "31/t0/turn0",
+        "31/t0/turn1",
+        "31/t0/turn2",
+        "31/t0/turn4",
+        "31/t0/turn5",
+        "31/t1/turn0",
+        "31/t1/turn3",
+        "31/t1/turn5",
+        "33/t0/turn2",
+        "33/t0/turn3",
+        "33/t0/turn5",
+        "33/t0/turn6",
+        "33/t0/turn9",
+        "33/t1/turn3",
+        "33/t1/turn4",
+        "33/t1/turn7",
+        "33/t1/turn8",
+        "33/t2/turn0",
+        "33/t2/turn2",
+        "33/t2/turn4",
+        "33/t2/turn6",
+        "33/t2/turn8",
+        "34/t2/turn2",
+        "36/t1/turn0",
+        "36/t1/turn1",
+        "36/t2/turn0",
+        "37/t0/turn0",
+        "37/t0/turn3",
+        "37/t0/turn7",
+        "37/t0/turn8",
+        "37/t2/turn10",
+        "37/t2/turn3",
+        "37/t2/turn8",
+        "38/t0/turn2",
+        "38/t0/turn7",
+        "38/t0/turn9",
+        "38/t1/turn10",
+        "38/t1/turn4",
+        "38/t1/turn5",
+        "38/t1/turn6",
+        "38/t2/turn3",
+        "4/t0/turn10",
+        "4/t0/turn11",
+        "4/t0/turn2",
+        "4/t1/turn1",
+        "4/t1/turn2",
+        "4/t1/turn4",
+        "4/t1/turn7",
+        "4/t2/turn10",
+        "4/t2/turn11",
+        "40/t0/turn0",
+        "40/t0/turn1",
+        "40/t1/turn1",
+        "40/t2/turn1",
+        "41/t0/turn1",
+        "41/t0/turn2",
+        "41/t0/turn9",
+        "41/t1/turn1",
+        "41/t1/turn10",
+        "41/t1/turn11",
+        "41/t1/turn13",
+        "41/t1/turn2",
+        "41/t1/turn4",
+        "41/t1/turn7",
+        "41/t1/turn9",
+        "41/t2/turn11",
+        "41/t2/turn4",
+        "41/t2/turn7",
+        "42/t0/turn1",
+        "42/t0/turn10",
+        "42/t0/turn5",
+        "42/t0/turn8",
+        "42/t1/turn10",
+        "42/t1/turn11",
+        "42/t1/turn13",
+        "42/t2/turn11",
+        "42/t2/turn4",
+        "42/t2/turn5",
+        "42/t2/turn9",
+        "43/t0/turn0",
+        "43/t0/turn3",
+        "43/t0/turn6",
+        "43/t0/turn7",
+        "43/t0/turn8",
+        "43/t2/turn1",
+        "43/t2/turn2",
+        "43/t2/turn5",
+        "43/t2/turn6",
+        "45/t0/turn4",
+        "45/t0/turn5",
+        "45/t1/turn0",
+        "45/t1/turn1",
+        "45/t1/turn6",
+        "45/t2/turn1",
+        "45/t2/turn3",
+        "45/t2/turn4",
+        "45/t2/turn5",
+        "46/t0/turn1",
+        "46/t1/turn0",
+        "46/t2/turn0",
+        "47/t1/turn0",
+        "47/t1/turn5",
+        "47/t2/turn2",
+        "48/t0/turn0",
+        "48/t1/turn0",
+        "48/t1/turn1",
+        "48/t1/turn2",
+        "48/t2/turn2",
+        "48/t2/turn5",
+        "49/t1/turn4",
+        "49/t2/turn0",
+        "49/t2/turn1",
+        "49/t2/turn2",
+        "5/t0/turn2",
+        "5/t1/turn0",
+        "5/t1/turn11",
+        "5/t1/turn4",
+        "5/t2/turn2",
+        "6/t0/turn0",
+        "6/t0/turn1",
+        "6/t0/turn2",
+        "6/t0/turn5",
+        "6/t1/turn1",
+        "6/t2/turn2",
+        "8/t1/turn12",
+        "8/t1/turn4",
+        "8/t1/turn9",
+        "8/t2/turn1",
+        "8/t2/turn2",
+        "8/t2/turn4",
+        "8/t2/turn5",
+        "8/t2/turn8",
+        "9/t0/turn4",
+        "9/t1/turn5",
+        "9/t1/turn6",
+        "9/t1/turn9",
+        "9/t2/turn3",
+        "9/t2/turn6",
+        "9/t2/turn7"
+      ],
+      "extra_states": [],
+      "calls_per_state_histogram": {
+        "1": 410,
+        "2": 241,
+        "3": 60,
+        "4": 15,
+        "5": 3
+      },
+      "any_state_over_5_calls": "clean (no state exceeds 5 logged calls)",
+      "prefix_cache": {
+        "size": 0,
+        "min_state_tokens": 0,
+        "hits": 0,
+        "misses": 0,
+        "cached_states": 0
+      },
+      "cache_clean": true
+    },
+    "jev": {
+      "total_rows": 5380,
+      "ok_rows": 5379,
+      "error_rows": 1,
+      "distinct_states_seen": 1076,
+      "expected_states": 1076,
+      "missing_states": [],
+      "extra_states": [],
+      "calls_per_state_histogram": {
+        "5": 1075,
+        "4": 1
+      },
+      "any_state_over_5_calls": "clean (no state exceeds 5 logged calls)"
+    },
+    "kev-0.8b": {
+      "total_rows": 5380,
+      "ok_rows": 5205,
+      "error_rows": 175,
+      "distinct_states_seen": 1041,
+      "expected_states": 1076,
       "missing_states": [
         "14/t1/turn11",
         "14/t1/turn12",
@@ -43,21 +538,85 @@
         "20/t2/turn7",
         "20/t2/turn8",
         "20/t2/turn9",
+        "21/t1/turn18",
         "23/t0/turn10",
         "23/t0/turn11",
         "23/t0/turn12",
         "23/t0/turn13",
         "23/t0/turn14",
+        "23/t0/turn9",
+        "23/t1/turn10",
+        "23/t1/turn11",
+        "23/t1/turn12",
+        "23/t1/turn13",
+        "23/t1/turn14",
         "23/t2/turn10",
         "23/t2/turn11",
         "23/t2/turn12",
         "23/t2/turn13",
         "23/t2/turn14",
+        "23/t2/turn15",
         "23/t2/turn9"
       ],
       "extra_states": [],
       "calls_per_state_histogram": {
-        "5": 662
+        "5": 1041
+      },
+      "any_state_over_5_calls": "clean (no state exceeds 5 logged calls)",
+      "prefix_cache": {
+        "size": 0,
+        "min_state_tokens": 0,
+        "hits": 0,
+        "misses": 0,
+        "cached_states": 0
+      },
+      "cache_clean": true
+    },
+    "kev-4b": {
+      "total_rows": 5380,
+      "ok_rows": 5210,
+      "error_rows": 170,
+      "distinct_states_seen": 1042,
+      "expected_states": 1076,
+      "missing_states": [
+        "14/t1/turn11",
+        "14/t1/turn12",
+        "14/t1/turn13",
+        "14/t2/turn11",
+        "14/t2/turn12",
+        "15/t1/turn10",
+        "15/t1/turn11",
+        "15/t1/turn8",
+        "15/t1/turn9",
+        "17/t0/turn11",
+        "20/t2/turn10",
+        "20/t2/turn11",
+        "20/t2/turn12",
+        "20/t2/turn7",
+        "20/t2/turn8",
+        "20/t2/turn9",
+        "21/t1/turn18",
+        "23/t0/turn10",
+        "23/t0/turn11",
+        "23/t0/turn12",
+        "23/t0/turn13",
+        "23/t0/turn14",
+        "23/t1/turn10",
+        "23/t1/turn11",
+        "23/t1/turn12",
+        "23/t1/turn13",
+        "23/t1/turn14",
+        "23/t2/turn10",
+        "23/t2/turn11",
+        "23/t2/turn12",
+        "23/t2/turn13",
+        "23/t2/turn14",
+        "23/t2/turn15",
+        "23/t2/turn9"
+      ],
+      "extra_states": [],
+      "calls_per_state_histogram": {
+        "5": 1042
       },
       "any_state_over_5_calls": "clean (no state exceeds 5 logged calls)",
       "prefix_cache": {
@@ -70,11 +629,11 @@
       "cache_clean": true
     },
     "kev-9b": {
-      "total_rows": 3445,
-      "ok_rows": 3310,
-      "error_rows": 135,
-      "distinct_states_seen": 662,
-      "expected_states": 689,
+      "total_rows": 5380,
+      "ok_rows": 5210,
+      "error_rows": 170,
+      "distinct_states_seen": 1042,
+      "expected_states": 1076,
       "missing_states": [
         "14/t1/turn11",
         "14/t1/turn12",
@@ -92,21 +651,28 @@
         "20/t2/turn7",
         "20/t2/turn8",
         "20/t2/turn9",
+        "21/t1/turn18",
         "23/t0/turn10",
         "23/t0/turn11",
         "23/t0/turn12",
         "23/t0/turn13",
         "23/t0/turn14",
+        "23/t1/turn10",
+        "23/t1/turn11",
+        "23/t1/turn12",
+        "23/t1/turn13",
+        "23/t1/turn14",
         "23/t2/turn10",
         "23/t2/turn11",
         "23/t2/turn12",
         "23/t2/turn13",
         "23/t2/turn14",
+        "23/t2/turn15",
         "23/t2/turn9"
       ],
       "extra_states": [],
       "calls_per_state_histogram": {
-        "5": 662
+        "5": 1042
       },
       "any_state_over_5_calls": "clean (no state exceeds 5 logged calls)",
       "prefix_cache": {
@@ -117,323 +683,786 @@
         "cached_states": 0
       },
       "cache_clean": true
+    },
+    "llm:local/qwen3-8b": {
+      "total_rows": 5380,
+      "ok_rows": 5380,
+      "error_rows": 0,
+      "distinct_states_seen": 1076,
+      "expected_states": 1076,
+      "missing_states": [],
+      "extra_states": [],
+      "calls_per_state_histogram": {
+        "5": 1076
+      },
+      "any_state_over_5_calls": "clean (no state exceeds 5 logged calls)"
+    },
+    "llm:openrouter/openai/gpt-oss-20b": {
+      "total_rows": 5380,
+      "ok_rows": 4165,
+      "error_rows": 1215,
+      "distinct_states_seen": 1073,
+      "expected_states": 1076,
+      "missing_states": [
+        "17/t2/turn7",
+        "20/t2/turn8",
+        "24/t2/turn12"
+      ],
+      "extra_states": [],
+      "calls_per_state_histogram": {
+        "4": 424,
+        "5": 323,
+        "3": 217,
+        "2": 94,
+        "1": 15
+      },
+      "any_state_over_5_calls": "clean (no state exceeds 5 logged calls)"
     }
   },
   "phase_c_error_analysis": {
     "deciders_present": [
+      "Jev",
+      "GPT-OSS-20B",
       "Kev-4B",
       "Kev-9B"
     ],
-    "n_common_states": 662,
+    "n_common_states": 1040,
     "hardest_states": [
       {
-        "state_id": "8/t1/turn3",
-        "task_id": "8",
-        "reference": "get_reservation_details",
-        "n_failing": 2,
-        "Kev-4B": "get_user_details",
-        "Kev-9B": "search_direct_flight"
-      },
-      {
-        "state_id": "25/t2/turn4",
-        "task_id": "25",
-        "reference": "search_onestop_flight",
-        "n_failing": 2,
-        "Kev-4B": "get_user_details",
-        "Kev-9B": "get_user_details"
-      },
-      {
-        "state_id": "17/t1/turn12",
-        "task_id": "17",
-        "reference": "respond_to_user",
-        "n_failing": 2,
-        "Kev-4B": "update_reservation_passengers",
-        "Kev-9B": "update_reservation_passengers"
-      },
-      {
-        "state_id": "25/t2/turn8",
-        "task_id": "25",
-        "reference": "respond_to_user",
-        "n_failing": 2,
-        "Kev-4B": "book_reservation",
-        "Kev-9B": "book_reservation"
-      },
-      {
-        "state_id": "8/t2/turn11",
-        "task_id": "8",
-        "reference": "respond_to_user",
-        "n_failing": 2,
-        "Kev-4B": "book_reservation",
-        "Kev-9B": "book_reservation"
-      },
-      {
-        "state_id": "8/t2/turn3",
-        "task_id": "8",
-        "reference": "get_reservation_details",
-        "n_failing": 2,
-        "Kev-4B": "get_user_details",
-        "Kev-9B": "search_direct_flight"
-      },
-      {
-        "state_id": "1/t1/turn8",
-        "task_id": "1",
-        "reference": "get_flight_status",
-        "n_failing": 2,
-        "Kev-4B": "respond_to_user",
-        "Kev-9B": "respond_to_user"
-      },
-      {
-        "state_id": "15/t2/turn7",
-        "task_id": "15",
-        "reference": "respond_to_user",
-        "n_failing": 2,
-        "Kev-4B": "update_reservation_flights",
-        "Kev-9B": "update_reservation_flights"
-      },
-      {
-        "state_id": "5/t1/turn10",
-        "task_id": "5",
-        "reference": "transfer_to_human_agents",
-        "n_failing": 2,
-        "Kev-4B": "respond_to_user",
-        "Kev-9B": "respond_to_user"
-      },
-      {
-        "state_id": "26/t1/turn2",
-        "task_id": "26",
-        "reference": "get_reservation_details",
-        "n_failing": 2,
-        "Kev-4B": "get_user_details",
-        "Kev-9B": "get_user_details"
-      },
-      {
-        "state_id": "22/t2/turn6",
-        "task_id": "22",
-        "reference": "search_direct_flight",
-        "n_failing": 2,
-        "Kev-4B": "update_reservation_passengers",
-        "Kev-9B": "respond_to_user"
-      },
-      {
-        "state_id": "10/t2/turn3",
+        "state_id": "10/t1/turn4",
         "task_id": "10",
         "reference": "search_direct_flight",
-        "n_failing": 2,
+        "n_failing": 4,
+        "Jev": "search_onestop_flight",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "respond_to_user",
+        "Kev-9B": "respond_to_user"
+      },
+      {
+        "state_id": "48/t2/turn4",
+        "task_id": "48",
+        "reference": "transfer_to_human_agents",
+        "n_failing": 4,
+        "Jev": "respond_to_user",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "respond_to_user",
+        "Kev-9B": "respond_to_user"
+      },
+      {
+        "state_id": "20/t2/turn3",
+        "task_id": "20",
+        "reference": "list_all_airports",
+        "n_failing": 4,
+        "Jev": "search_direct_flight",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "search_direct_flight",
+        "Kev-9B": "search_direct_flight"
+      },
+      {
+        "state_id": "40/t0/turn1",
+        "task_id": "40",
+        "reference": "get_user_details",
+        "n_failing": 4,
+        "Jev": "get_reservation_details",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "update_reservation_passengers",
+        "Kev-9B": "get_reservation_details"
+      },
+      {
+        "state_id": "46/t2/turn0",
+        "task_id": "46",
+        "reference": "transfer_to_human_agents",
+        "n_failing": 4,
+        "Jev": "respond_to_user",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "get_reservation_details",
+        "Kev-9B": "respond_to_user"
+      },
+      {
+        "state_id": "31/t1/turn4",
+        "task_id": "31",
+        "reference": "search_direct_flight",
+        "n_failing": 4,
+        "Jev": "respond_to_user",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "respond_to_user",
+        "Kev-9B": "respond_to_user"
+      },
+      {
+        "state_id": "9/t2/turn6",
+        "task_id": "9",
+        "reference": "search_direct_flight",
+        "n_failing": 4,
+        "Jev": "respond_to_user",
+        "GPT-OSS-20B": "transfer_to_human_agents",
+        "Kev-4B": "cancel_reservation",
+        "Kev-9B": "get_flight_status"
+      },
+      {
+        "state_id": "13/t2/turn1",
+        "task_id": "13",
+        "reference": "get_user_details",
+        "n_failing": 4,
+        "Jev": "get_reservation_details",
+        "GPT-OSS-20B": "get_reservation_details",
         "Kev-4B": "update_reservation_flights",
         "Kev-9B": "get_reservation_details"
+      },
+      {
+        "state_id": "2/t2/turn6",
+        "task_id": "2",
+        "reference": "get_flight_status",
+        "n_failing": 4,
+        "Jev": "respond_to_user",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "transfer_to_human_agents",
+        "Kev-9B": "respond_to_user"
+      },
+      {
+        "state_id": "10/t2/turn6",
+        "task_id": "10",
+        "reference": "search_direct_flight",
+        "n_failing": 4,
+        "Jev": "respond_to_user",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "update_reservation_flights",
+        "Kev-9B": "search_onestop_flight"
+      },
+      {
+        "state_id": "47/t1/turn3",
+        "task_id": "47",
+        "reference": "get_flight_status",
+        "n_failing": 4,
+        "Jev": "respond_to_user",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "cancel_reservation",
+        "Kev-9B": "get_reservation_details"
+      },
+      {
+        "state_id": "11/t0/turn5",
+        "task_id": "11",
+        "reference": "search_direct_flight",
+        "n_failing": 4,
+        "Jev": "respond_to_user",
+        "GPT-OSS-20B": "respond_to_user",
+        "Kev-4B": "get_user_details",
+        "Kev-9B": "respond_to_user"
       }
     ],
     "kev4_wins_kev9_loses": {
-      "count": 27,
+      "count": 86,
       "by_task": {
+        "27": 14,
+        "43": 12,
         "1": 8,
+        "33": 7,
+        "41": 6,
         "4": 5,
+        "38": 5,
+        "37": 4,
+        "21": 3,
+        "23": 2,
         "20": 2,
+        "31": 2,
+        "48": 1,
+        "42": 1,
         "34": 1,
-        "6": 1,
-        "17": 1,
-        "12": 1,
-        "5": 1,
-        "11": 1,
         "22": 1,
         "24": 1,
+        "6": 1,
+        "17": 1,
         "28": 1,
-        "33": 1,
+        "11": 1,
+        "46": 1,
+        "12": 1,
+        "49": 1,
         "2": 1,
-        "0": 1
+        "47": 1,
+        "0": 1,
+        "5": 1
       },
       "examples": [
         {
-          "state_id": "34/t2/turn3",
-          "task_id": "34",
-          "reference": "search_direct_flight",
-          "Kev-4B": "search_direct_flight",
-          "Kev-9B": "respond_to_user"
-        },
-        {
-          "state_id": "1/t2/turn4",
-          "task_id": "1",
+          "state_id": "48/t1/turn3",
+          "task_id": "48",
           "reference": "get_reservation_details",
-          "Kev-4B": "get_reservation_details",
-          "Kev-9B": "get_user_details"
-        },
-        {
-          "state_id": "4/t0/turn4",
-          "task_id": "4",
-          "reference": "get_reservation_details",
-          "Kev-4B": "get_reservation_details",
-          "Kev-9B": "get_user_details"
-        },
-        {
-          "state_id": "6/t1/turn6",
-          "task_id": "6",
-          "reference": "respond_to_user",
-          "Kev-4B": "respond_to_user",
-          "Kev-9B": "get_flight_status"
-        },
-        {
-          "state_id": "17/t0/turn4",
-          "task_id": "17",
-          "reference": "get_reservation_details",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "respond_to_user",
           "Kev-4B": "get_reservation_details",
           "Kev-9B": "respond_to_user"
         },
         {
-          "state_id": "12/t2/turn1",
-          "task_id": "12",
-          "reference": "get_user_details",
-          "Kev-4B": "get_user_details",
-          "Kev-9B": "get_reservation_details"
+          "state_id": "41/t0/turn6",
+          "task_id": "41",
+          "reference": "get_reservation_details",
+          "Jev": "get_reservation_details",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "get_reservation_details",
+          "Kev-9B": "get_user_details"
+        },
+        {
+          "state_id": "43/t0/turn4",
+          "task_id": "43",
+          "reference": "get_reservation_details",
+          "Jev": "get_reservation_details",
+          "GPT-OSS-20B": "get_reservation_details",
+          "Kev-4B": "get_reservation_details",
+          "Kev-9B": "get_user_details"
+        },
+        {
+          "state_id": "27/t1/turn8",
+          "task_id": "27",
+          "reference": "get_reservation_details",
+          "Jev": "get_reservation_details",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "get_reservation_details",
+          "Kev-9B": "respond_to_user"
+        },
+        {
+          "state_id": "43/t2/turn8",
+          "task_id": "43",
+          "reference": "transfer_to_human_agents",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "transfer_to_human_agents",
+          "Kev-9B": "respond_to_user"
+        },
+        {
+          "state_id": "42/t2/turn10",
+          "task_id": "42",
+          "reference": "cancel_reservation",
+          "Jev": "cancel_reservation",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "cancel_reservation",
+          "Kev-9B": "respond_to_user"
         }
       ]
     },
     "kev9_wins_kev4_loses": {
-      "count": 108,
+      "count": 169,
       "by_task": {
         "22": 13,
         "9": 12,
+        "38": 12,
         "17": 10,
+        "41": 8,
         "4": 8,
-        "19": 5,
+        "37": 6,
+        "21": 6,
         "36": 5,
+        "42": 5,
         "30": 5,
+        "19": 5,
+        "45": 4,
         "3": 4,
-        "11": 4,
-        "16": 4,
-        "6": 4,
+        "43": 4,
         "10": 4,
-        "12": 3,
-        "1": 3,
+        "16": 4,
+        "48": 4,
+        "33": 4,
+        "11": 4,
+        "6": 4,
+        "47": 3,
         "26": 3,
-        "15": 3,
+        "27": 3,
         "14": 3,
-        "13": 2,
-        "8": 2,
+        "12": 3,
+        "15": 3,
+        "1": 3,
         "2": 2,
+        "13": 2,
+        "23": 2,
         "5": 2,
+        "8": 2,
         "0": 2,
-        "23": 1,
-        "28": 1,
+        "40": 1,
         "25": 1,
+        "28": 1,
         "24": 1,
-        "27": 1
+        "31": 1
       },
       "examples": [
         {
-          "state_id": "3/t2/turn0",
-          "task_id": "3",
+          "state_id": "2/t0/turn9",
+          "task_id": "2",
           "reference": "respond_to_user",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "get_flight_status",
+          "Kev-9B": "respond_to_user"
+        },
+        {
+          "state_id": "36/t1/turn0",
+          "task_id": "36",
+          "reference": "respond_to_user",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "respond_to_user",
           "Kev-4B": "get_user_details",
           "Kev-9B": "respond_to_user"
         },
         {
-          "state_id": "17/t0/turn0",
-          "task_id": "17",
-          "reference": "respond_to_user",
-          "Kev-4B": "get_user_details",
-          "Kev-9B": "respond_to_user"
-        },
-        {
-          "state_id": "9/t1/turn4",
-          "task_id": "9",
-          "reference": "get_reservation_details",
-          "Kev-4B": "get_user_details",
-          "Kev-9B": "get_reservation_details"
-        },
-        {
-          "state_id": "22/t2/turn11",
+          "state_id": "22/t2/turn3",
           "task_id": "22",
-          "reference": "update_reservation_baggages",
-          "Kev-4B": "update_reservation_flights",
-          "Kev-9B": "update_reservation_baggages"
+          "reference": "get_reservation_details",
+          "Jev": "get_reservation_details",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "update_reservation_passengers",
+          "Kev-9B": "get_reservation_details"
         },
         {
-          "state_id": "9/t1/turn0",
-          "task_id": "9",
+          "state_id": "22/t1/turn9",
+          "task_id": "22",
           "reference": "respond_to_user",
-          "Kev-4B": "get_user_details",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "update_reservation_passengers",
           "Kev-9B": "respond_to_user"
         },
         {
-          "state_id": "12/t1/turn1",
-          "task_id": "12",
-          "reference": "get_reservation_details",
+          "state_id": "42/t0/turn12",
+          "task_id": "42",
+          "reference": "cancel_reservation",
+          "Jev": "cancel_reservation",
+          "GPT-OSS-20B": "cancel_reservation",
           "Kev-4B": "respond_to_user",
-          "Kev-9B": "get_reservation_details"
+          "Kev-9B": "cancel_reservation"
+        },
+        {
+          "state_id": "45/t1/turn3",
+          "task_id": "45",
+          "reference": "get_flight_status",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "cancel_reservation",
+          "Kev-9B": "get_flight_status"
         }
       ]
     },
     "jev_beats_both_kev": {
-      "count": null,
-      "by_task": {},
-      "examples": [],
-      "note": "not available: required decider(s) missing from this run"
+      "count": 381,
+      "by_task": {
+        "42": 21,
+        "8": 18,
+        "11": 18,
+        "25": 16,
+        "21": 15,
+        "33": 14,
+        "41": 14,
+        "30": 12,
+        "16": 12,
+        "27": 11,
+        "12": 11,
+        "26": 11,
+        "10": 10,
+        "23": 10,
+        "4": 10,
+        "14": 10,
+        "17": 10,
+        "43": 9,
+        "6": 9,
+        "28": 9,
+        "40": 9,
+        "15": 9,
+        "19": 9,
+        "2": 8,
+        "49": 8,
+        "22": 8,
+        "3": 7,
+        "0": 7,
+        "1": 6,
+        "24": 6,
+        "45": 6,
+        "48": 6,
+        "9": 6,
+        "5": 5,
+        "31": 5,
+        "13": 4,
+        "36": 4,
+        "47": 4,
+        "37": 4,
+        "38": 3,
+        "46": 3,
+        "20": 2,
+        "34": 2
+      },
+      "examples": [
+        {
+          "state_id": "33/t0/turn8",
+          "task_id": "33",
+          "reference": "update_reservation_flights",
+          "Jev": "update_reservation_flights",
+          "GPT-OSS-20B": "update_reservation_flights",
+          "Kev-4B": "get_user_details",
+          "Kev-9B": "get_user_details"
+        },
+        {
+          "state_id": "43/t2/turn2",
+          "task_id": "43",
+          "reference": "get_reservation_details",
+          "Jev": "get_reservation_details",
+          "GPT-OSS-20B": "get_reservation_details",
+          "Kev-4B": "get_user_details",
+          "Kev-9B": "get_user_details"
+        },
+        {
+          "state_id": "5/t1/turn11",
+          "task_id": "5",
+          "reference": "respond_to_user",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "transfer_to_human_agents",
+          "Kev-9B": "transfer_to_human_agents"
+        },
+        {
+          "state_id": "33/t0/turn13",
+          "task_id": "33",
+          "reference": "respond_to_user",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "update_reservation_baggages",
+          "Kev-9B": "update_reservation_baggages"
+        },
+        {
+          "state_id": "10/t0/turn2",
+          "task_id": "10",
+          "reference": "get_reservation_details",
+          "Jev": "get_reservation_details",
+          "GPT-OSS-20B": "respond_to_user",
+          "Kev-4B": "get_user_details",
+          "Kev-9B": "get_user_details"
+        },
+        {
+          "state_id": "10/t2/turn4",
+          "task_id": "10",
+          "reference": "search_onestop_flight",
+          "Jev": "search_onestop_flight",
+          "GPT-OSS-20B": "search_onestop_flight",
+          "Kev-4B": "search_direct_flight",
+          "Kev-9B": "search_direct_flight"
+        }
+      ]
     },
     "gptoss_beats_everyone": {
-      "count": null,
-      "by_task": {},
-      "examples": [],
-      "note": "not available: required decider(s) missing from this run"
+      "count": 38,
+      "by_task": {
+        "23": 6,
+        "15": 4,
+        "16": 3,
+        "9": 3,
+        "26": 2,
+        "37": 2,
+        "17": 2,
+        "42": 2,
+        "22": 2,
+        "36": 2,
+        "43": 1,
+        "8": 1,
+        "0": 1,
+        "40": 1,
+        "24": 1,
+        "21": 1,
+        "33": 1,
+        "11": 1,
+        "13": 1,
+        "14": 1
+      },
+      "examples": [
+        {
+          "state_id": "26/t1/turn5",
+          "task_id": "26",
+          "reference": "transfer_to_human_agents",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "transfer_to_human_agents",
+          "Kev-4B": "cancel_reservation",
+          "Kev-9B": "get_flight_status"
+        },
+        {
+          "state_id": "23/t1/turn3",
+          "task_id": "23",
+          "reference": "search_direct_flight",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "search_direct_flight",
+          "Kev-4B": "respond_to_user",
+          "Kev-9B": "get_reservation_details"
+        },
+        {
+          "state_id": "43/t1/turn8",
+          "task_id": "43",
+          "reference": "transfer_to_human_agents",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "transfer_to_human_agents",
+          "Kev-4B": "get_reservation_details",
+          "Kev-9B": "get_user_details"
+        },
+        {
+          "state_id": "15/t1/turn4",
+          "task_id": "15",
+          "reference": "search_direct_flight",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "search_direct_flight",
+          "Kev-4B": "get_user_details",
+          "Kev-9B": "get_user_details"
+        },
+        {
+          "state_id": "23/t2/turn3",
+          "task_id": "23",
+          "reference": "search_direct_flight",
+          "Jev": "respond_to_user",
+          "GPT-OSS-20B": "search_direct_flight",
+          "Kev-4B": "get_user_details",
+          "Kev-9B": "get_reservation_details"
+        },
+        {
+          "state_id": "16/t0/turn3",
+          "task_id": "16",
+          "reference": "search_direct_flight",
+          "Jev": "get_reservation_details",
+          "GPT-OSS-20B": "search_direct_flight",
+          "Kev-4B": "update_reservation_flights",
+          "Kev-9B": "get_reservation_details"
+        }
+      ]
     }
   },
   "phase_d_calibration": {
     "temperature_scaling": {
+      "Jev": {
+        "folds": [
+          {
+            "T": 1.2000000000000002,
+            "ece_before": 0.03590554109334327,
+            "ece_after": 0.020273483694252734,
+            "n_test": 2689
+          },
+          {
+            "T": 1.2000000000000002,
+            "ece_before": 0.03956133828996288,
+            "ece_after": 0.037834331604184326,
+            "n_test": 2690
+          }
+        ],
+        "mean_ece_before": 0.037733439691653076,
+        "mean_ece_after": 0.02905390764921853
+      },
+      "GPT-OSS-20B": {
+        "folds": [
+          {
+            "T": 5.200000000000001,
+            "ece_before": 0.2787290664100095,
+            "ece_after": 0.042018361580918706,
+            "n_test": 2078
+          },
+          {
+            "T": 4.6,
+            "ece_before": 0.2919488663772311,
+            "ece_after": 0.04902886448438092,
+            "n_test": 2073
+          }
+        ],
+        "mean_ece_before": 0.28533896639362033,
+        "mean_ece_after": 0.04552361303264982
+      },
       "Kev-4B": {
         "folds": [
           {
-            "T": 0.8500000000000001,
-            "ece_before": 0.20820030211480361,
-            "ece_after": 0.2085213549144292,
-            "n_test": 1655
+            "T": 0.95,
+            "ece_before": 0.13744548944337812,
+            "ece_after": 0.15063442402743477,
+            "n_test": 2605
           },
           {
-            "T": 0.65,
-            "ece_before": 0.18974078549848944,
-            "ece_after": 0.19370208743411155,
-            "n_test": 1655
+            "T": 1.9000000000000001,
+            "ece_before": 0.1386456813819578,
+            "ece_after": 0.1647980886805544,
+            "n_test": 2605
           }
         ],
-        "mean_ece_before": 0.19897054380664653,
-        "mean_ece_after": 0.20111172117427037
+        "mean_ece_before": 0.13804558541266795,
+        "mean_ece_after": 0.15771625635399458
       },
       "Kev-9B": {
         "folds": [
           {
-            "T": 2.4000000000000004,
-            "ece_before": 0.20849395770392748,
-            "ece_after": 0.0855147083444101,
-            "n_test": 1655
+            "T": 1.9000000000000001,
+            "ece_before": 0.1708241842610365,
+            "ece_after": 0.10282263350785717,
+            "n_test": 2605
           },
           {
-            "T": 6.0,
-            "ece_before": 0.18676797583081572,
-            "ece_after": 0.09746518905449918,
-            "n_test": 1655
+            "T": 4.1,
+            "ece_before": 0.18729558541266794,
+            "ece_after": 0.11206526304797501,
+            "n_test": 2605
           }
         ],
-        "mean_ece_before": 0.1976309667673716,
-        "mean_ece_after": 0.09148994869945465
+        "mean_ece_before": 0.1790598848368522,
+        "mean_ece_after": 0.10744394827791609
+      },
+      "Kev-0.8B": {
+        "folds": [
+          {
+            "T": 1.5,
+            "ece_before": 0.07314548944337812,
+            "ece_after": 0.04776310688930613,
+            "n_test": 2605
+          },
+          {
+            "T": 1.4000000000000001,
+            "ece_before": 0.1030448076923077,
+            "ece_after": 0.0577019821231318,
+            "n_test": 2600
+          }
+        ],
+        "mean_ece_before": 0.08809514856784291,
+        "mean_ece_after": 0.05273254450621896
       }
     },
-    "cascade_kev4b_to_gptoss": null
+    "cascade_kev4b_to_gptoss": [
+      {
+        "threshold": 0.0,
+        "accept_rate": 1.0,
+        "escalate_rate": 0.0,
+        "unmatched_escalations": 0,
+        "blended_accuracy": 0.32149712092130517,
+        "blended_latency_ms": 495.2186726275903,
+        "blended_cost_usd_per_decision": 0.0
+      },
+      {
+        "threshold": 0.3,
+        "accept_rate": 0.6957773512476008,
+        "escalate_rate": 0.30422264875239924,
+        "unmatched_escalations": 5,
+        "blended_accuracy": 0.39993602047344845,
+        "blended_latency_ms": 1002.9521845333844,
+        "blended_cost_usd_per_decision": 0.00010441821216957396
+      },
+      {
+        "threshold": 0.5,
+        "accept_rate": 0.31669865642994244,
+        "escalate_rate": 0.6833013435700576,
+        "unmatched_escalations": 5,
+        "blended_accuracy": 0.5115163147792708,
+        "blended_latency_ms": 1564.5190755254184,
+        "blended_cost_usd_per_decision": 0.00022825303403872728
+      },
+      {
+        "threshold": 0.6,
+        "accept_rate": 0.21689059500959693,
+        "escalate_rate": 0.783109404990403,
+        "unmatched_escalations": 10,
+        "blended_accuracy": 0.5519673704414603,
+        "blended_latency_ms": 1700.1272654120205,
+        "blended_cost_usd_per_decision": 0.00026008600552707503
+      },
+      {
+        "threshold": 0.7,
+        "accept_rate": 0.15355086372360843,
+        "escalate_rate": 0.8464491362763915,
+        "unmatched_escalations": 10,
+        "blended_accuracy": 0.5789187460012808,
+        "blended_latency_ms": 1773.7712727925502,
+        "blended_cost_usd_per_decision": 0.0002804627747131812
+      },
+      {
+        "threshold": 0.8,
+        "accept_rate": 0.09980806142034548,
+        "escalate_rate": 0.9001919385796545,
+        "unmatched_escalations": 10,
+        "blended_accuracy": 0.5946577095329502,
+        "blended_latency_ms": 1833.1615504207202,
+        "blended_cost_usd_per_decision": 0.00029666890082147876
+      },
+      {
+        "threshold": 0.9,
+        "accept_rate": 0.02399232245681382,
+        "escalate_rate": 0.9760076775431862,
+        "unmatched_escalations": 10,
+        "blended_accuracy": 0.6335412667946264,
+        "blended_latency_ms": 1926.9946952795785,
+        "blended_cost_usd_per_decision": 0.0003184578011785759
+      },
+      {
+        "threshold": 0.95,
+        "accept_rate": 0.0,
+        "escalate_rate": 1.0,
+        "unmatched_escalations": 10,
+        "blended_accuracy": 0.6503998720409474,
+        "blended_latency_ms": 1954.0802685638573,
+        "blended_cost_usd_per_decision": 0.0003249909990384589
+      },
+      {
+        "threshold": 1.01,
+        "accept_rate": 0.0,
+        "escalate_rate": 1.0,
+        "unmatched_escalations": 10,
+        "blended_accuracy": 0.6503998720409474,
+        "blended_latency_ms": 1954.0802685638573,
+        "blended_cost_usd_per_decision": 0.0003249909990384589
+      }
+    ]
   },
   "phase_e_efficiency": {
+    "Cascade (Kev-4B\u2192GPT-OSS, t=0.9)": {
+      "accuracy_pct": 66.87009590235397,
+      "median_latency_ms": 2100.092001899611,
+      "accuracy_per_ms": 0.03184150782054666,
+      "energy_j": 132.39245642994243,
+      "accuracy_per_joule": 0.5050899251026386,
+      "mean_cost_usd": 0.00032750025719267654,
+      "note": "energy reused from kev-4b's own standalone run in this run (fast stage always runs); not re-metered live"
+    },
+    "Jev": {
+      "accuracy_pct": 81.37200223089793,
+      "median_latency_ms": 176.28347198478878,
+      "accuracy_per_ms": 0.46159745615810993,
+      "energy_j": null,
+      "accuracy_per_joule": null,
+      "mean_cost_usd": 0.0001730970775237033,
+      "note": null
+    },
+    "Kev-0.8B": {
+      "accuracy_pct": 27.281460134486068,
+      "median_latency_ms": 217.55491301883012,
+      "accuracy_per_ms": 0.12540034033671657,
+      "energy_j": 47.217491258405374,
+      "accuracy_per_joule": 0.5777829233913309,
+      "mean_cost_usd": null,
+      "note": null
+    },
     "Kev-4B": {
-      "accuracy_pct": 28.851963746223564,
-      "median_latency_ms": 436.7604755098,
-      "accuracy_per_ms": 0.06605900800100256,
-      "energy_j": 131.80547160120844,
-      "accuracy_per_joule": 0.21889807301413305,
+      "accuracy_pct": 32.149712092130514,
+      "median_latency_ms": 438.71885450789705,
+      "accuracy_per_ms": 0.07328089905821863,
+      "energy_j": 132.39245642994243,
+      "accuracy_per_joule": 0.2428364346358589,
       "mean_cost_usd": null,
       "note": null
     },
     "Kev-9B": {
-      "accuracy_pct": 41.08761329305136,
-      "median_latency_ms": 547.3304659826681,
-      "accuracy_per_ms": 0.07506911426770907,
-      "energy_j": 166.5431900302115,
-      "accuracy_per_joule": 0.24670845614040376,
+      "accuracy_pct": 40.11516314779271,
+      "median_latency_ms": 547.5436584965792,
+      "accuracy_per_ms": 0.07326386220587254,
+      "energy_j": 170.47669462571977,
+      "accuracy_per_joule": 0.23531171363842565,
       "mean_cost_usd": null,
+      "note": null
+    },
+    "Qwen3-8B (local)": {
+      "accuracy_pct": 39.646840148698885,
+      "median_latency_ms": 655.8978874818422,
+      "accuracy_per_ms": 0.06044666541146081,
+      "energy_j": 211.20431078066915,
+      "accuracy_per_joule": 0.1877179495160552,
+      "mean_cost_usd": null,
+      "note": null
+    },
+    "GPT-OSS-20B": {
+      "accuracy_pct": 67.1548619447779,
+      "median_latency_ms": 1160.811172972899,
+      "accuracy_per_ms": 0.05785166744457735,
+      "energy_j": null,
+      "accuracy_per_joule": null,
+      "mean_cost_usd": 0.0003315185474189676,
       "note": null
     }
   }
