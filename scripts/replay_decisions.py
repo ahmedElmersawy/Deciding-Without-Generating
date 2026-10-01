@@ -56,8 +56,8 @@ from dwg.runfiles import calls_path, decider_meta_path, load_calls  # noqa: E402
 
 DEFAULT_LLM = "openrouter/openai/gpt-oss-20b"
 def is_paid(decider) -> bool:
-    if hasattr(decider, "fast"):  # cascade: paid whenever its escalation stage is
-        return is_paid(decider.escalate)
+    if hasattr(decider, "fast"):  # cascade: paid whenever either stage is
+        return is_paid(decider.fast) or is_paid(decider.escalate)
     if isinstance(decider, LLMChoiceDecider):
         return decider.hosted
     return decider.name == "jev"
@@ -109,14 +109,19 @@ def build_deciders(names: list[str], args, energy_meter) -> list:
         elif name == "kev":
             deciders.append(make_kev_decider(base_url=args.kev_url, name=args.kev_name, energy_meter=energy_meter))
         elif name == "cascade":
-            # No energy meter on the fast stage here: see CascadeDecider's docstring for why
-            # a live NVML window around a call that may block on a network escalation would
-            # misattribute GPU idle power as decision energy. Kev's own energy figure from a
-            # standalone replay is reused post-hoc instead.
-            fast = make_kev_decider(base_url=args.kev_url, name=args.kev_name, energy_meter=None)
+            # Jev is the project's fast stage; Kev is only a comparison next to it. No energy
+            # meter on a Kev fast stage here: see CascadeDecider's docstring for why a live NVML
+            # window around a call that may block on a network escalation would misattribute GPU
+            # idle power as decision energy. Kev's own energy figure from a standalone replay is
+            # reused post-hoc instead.
+            if args.cascade_fast == "jev":
+                fast, fast_name = JevChoiceDecider(), "jev"
+            else:
+                fast = make_kev_decider(base_url=args.kev_url, name=args.kev_name, energy_meter=None)
+                fast_name = args.kev_name
             escalate = llm_decider(args, None)
             deciders.append(CascadeDecider(fast=fast, escalate=escalate, threshold=args.cascade_threshold,
-                                            name=f"cascade-{args.kev_name}-t{args.cascade_threshold:g}"))
+                                            name=f"cascade-{fast_name}-t{args.cascade_threshold:g}"))
         else:
             raise SystemExit(f"unknown decider {name!r} (known: jev, llm, kev, cascade)")
     return deciders
@@ -153,8 +158,11 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true", help="print the call count and $ estimate, then exit")
     parser.add_argument("--kev-url", default="http://127.0.0.1:8009", help="local Kev server (scripts/serve_kev.sh)")
     parser.add_argument("--kev-name", default="kev", help="label for this Kev run, e.g. kev-4b")
+    parser.add_argument("--cascade-fast", default="jev", choices=["jev", "kev"],
+                        help="cascade decider's fast stage (kev = the --kev-url server, for comparison only)")
     parser.add_argument("--cascade-threshold", type=float, default=0.9,
-                         help="cascade decider: escalate to --llm-model when Kev's confidence is below this")
+                         help="cascade decider: escalate to --llm-model when the fast stage's confidence is "
+                              "below this. Pick it from an offline sweep over standalone runs, not a fixed value")
     parser.add_argument("--no-energy", action="store_true", help="skip GPU energy for local deciders")
     parser.add_argument("--warmup", type=int, default=5, help="discarded warmup calls per local decider")
     parser.add_argument("--repeats", type=int, default=5, help="calls per (decider, state)")
@@ -196,21 +204,24 @@ def main() -> int:
             if energy_meter:
                 idle_w = energy_meter.idle_watts()
                 print(f"==> GPU {energy_meter.device_name}: idle {idle_w:.1f} W")
-    elif "cascade" in args.deciders:
+    elif "cascade" in args.deciders and args.cascade_fast == "kev":
         # Provenance only: record which Kev checkpoint backs the fast stage. No energy meter
         # is created here on purpose (CascadeDecider's docstring explains why).
         kev_info = local_model_info(args.kev_url)
         energy_unavailable = ("not measured live for the cascade run: the fast stage's GPU energy is "
                                "reused post-hoc from that decider's own standalone replay, not re-metered here")
+    elif "cascade" in args.deciders:
+        energy_unavailable = "hosted: both cascade stages are API calls"
     deciders = build_deciders(args.deciders, args, energy_meter)
 
     # Run-level record: written once by whoever creates the run; only n_states is refreshed.
     run_meta_path = out / "meta.json"
     if run_meta_path.exists():
         # The one field that can go stale: states files grow when episodes are added later
-        # (airline went 689 -> 1,076 states). Keep the old count in a history list.
+        # (airline went 689 -> 1,076 states). Keep the old count in a history list. Only ever
+        # grow it: a pilot on a few states (--states <subset>) is not the run shrinking.
         run_meta = json.loads(run_meta_path.read_text())
-        if run_meta.get("n_states") != len(states):
+        if len(states) > (run_meta.get("n_states") or 0):
             run_meta.setdefault("n_states_history", []).append({"n_states": run_meta.get("n_states"), "until": stamp})
             run_meta["n_states"] = len(states)
             run_meta_path.write_text(json.dumps(run_meta, indent=2))
@@ -232,10 +243,11 @@ def main() -> int:
         provenance = local or is_cascade  # cascade: record which Kev checkpoint, even with no energy meter
         # Server provenance: a Kev checkpoint for Kev and the cascade's fast stage; the vLLM
         # server's model list for a local LLM decider (never the other one's).
-        uses_kev = decider.name == args.kev_name or is_cascade
+        uses_kev = decider.name == args.kev_name or (is_cascade and args.cascade_fast == "kev")
         meta = {
             "decider": decider.name,
             "model": args.llm_model if isinstance(decider, (LLMChoiceDecider, CascadeDecider)) else None,
+            "cascade_fast": args.cascade_fast if is_cascade else None,
             "cascade_threshold": args.cascade_threshold if is_cascade else None,
             "provider_sort": args.provider_sort if is_paid(decider) else None,
             "llm_api_base": args.llm_api_base if isinstance(decider, LLMChoiceDecider) else None,

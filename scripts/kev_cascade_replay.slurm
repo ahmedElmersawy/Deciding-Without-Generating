@@ -44,5 +44,5 @@ python3 scripts/check_connectivity.py || { echo "!! OpenRouter unreachable from 
 
 # workers=4 (not 1): no NVML lock to serialize on here, escalation is a normal API call.
 python scripts/replay_decisions.py --states "$STATES" --out "$RUN" --deciders cascade \
-  --kev-name kev-4b --cascade-threshold "$THRESHOLD" --repeats "$REPEATS" --workers 4
+  --cascade-fast kev --kev-name kev-4b --cascade-threshold "$THRESHOLD" --repeats "$REPEATS" --workers 4
 python scripts/analyze_decisions.py "$RUN"
