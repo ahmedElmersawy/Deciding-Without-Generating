@@ -58,7 +58,7 @@ Clone Kev to `/scratch/gilbreth/$USER/repos/kev`, `git checkout 557598f`, then `
   *Why:* the pilot's largest "error" for both Jev and the LLM was a valid `get_users` before `create_task`.
 - [x] **U2. Airline states** (done 2026-09-25: 50 tasks × 3 episodes, reference agent `openrouter/openai/gpt-5.6`, 1,076 reward=1 states in `results/states/airline.jsonl`) with the real ceiling model as the reference agent.
   Estimate $ with a 5-task dry run first. Push `results/states/airline-*.jsonl` for G4.
-- [ ] **U3. Arm 0 on airline:** Jev, the frontier LLM and a small API LLM (arm D-API), 5 repeats each.
+- [x] **U3. Arm 0 on airline:** (done 2026-10-02: GPT-5.6-sol 0.885, GPT-OSS-20B completed; DECISIONS.md) Jev, the frontier LLM and a small API LLM (arm D-API), 5 repeats each.
   Frontier = `openrouter/openai/gpt-5.6-sol` with `--provider-sort price` (DECISIONS.md 2026-10-01). After it lands: offline
   Jev→GPT-5.6 cascade sweep to pick the threshold, then the live `--deciders cascade` run (fast stage = Jev by default).
 - [ ] **U4. In-loop harness, arms A–D.** (harness built 2026-09-26: `src/dwg/decider_tau2_agent.py`, `scripts/run_inloop.py`, `scripts/analyze_inloop.py`; free local run `scripts/inloop_local.slurm` with G = user = Qwen3-8B; airline B/C/E × 5 trials done 2026-09-26: reward B 0.308, C 0.196, E 0.048, see DECISIONS.md; paid frontier-G runs and arms A/D wait on credit) Generalize `JevTau2Agent` into a `DeciderTau2Agent` that works with any decider;

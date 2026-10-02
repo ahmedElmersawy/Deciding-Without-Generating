@@ -14,7 +14,8 @@
 | kev-4b | — | 5 | 1 | gilbreth-i003.rcac.purdue.edu | NVIDIA A100 80GB PCIe, idle 65.2 W |
 | kev-9b | — | 5 | 1 | gilbreth-k025.rcac.purdue.edu | NVIDIA A100 80GB PCIe, idle 64.1 W |
 | llm:local/qwen3-8b | hosted_vllm/Qwen/Qwen3-8B | 5 | 1 | gilbreth-k002.rcac.purdue.edu | NVIDIA A100 80GB PCIe, idle 61.0 W |
-| llm:openrouter/openai/gpt-oss-20b | openrouter/openai/gpt-oss-20b | 5 | 4 | gilbreth-fe01.rcac.purdue.edu | n/a (hosted) |
+| llm:openrouter/openai/gpt-5.6-sol | openrouter/openai/gpt-5.6-sol | 5 | 4 | amar-alazizy | n/a (hosted) |
+| llm:openrouter/openai/gpt-oss-20b | openrouter/openai/gpt-oss-20b | 5 | 4 | amar-alazizy | n/a (hosted) |
 
 ## Decision quality
 
@@ -29,9 +30,10 @@
 | kev-4b | 5380 | 170 (3.2%) | 0 | 0.321 [0.294, 0.350] | 0.445 [0.415, 0.476] | 1.000 [1.000, 1.000] | 1.00 | 0.124 | 0.259 |
 | kev-9b | 5380 | 170 (3.2%) | 0 | 0.401 [0.371, 0.431] | 0.546 [0.515, 0.577] | 1.000 [1.000, 1.000] | 1.00 | 0.179 | 0.288 |
 | llm:local/qwen3-8b | 5380 | 0 (0.0%) | 0 | 0.396 [0.368, 0.425] | 0.442 [0.413, 0.472] | 0.967 [0.961, 0.973] | 0.89 | 0.599 | 0.596 |
-| llm:openrouter/openai/gpt-oss-20b | 5380 | 496 (9.2%) | 719 | 0.672 [0.647, 0.696] | 0.688 [0.664, 0.712] | 0.874 [0.863, 0.885] | 0.64 | 0.285 | 0.303 |
+| llm:openrouter/openai/gpt-5.6-sol | 5380 | 3 (0.1%) | 0 | 0.885 [0.868, 0.901] | 0.897 [0.881, 0.912] | 0.958 [0.951, 0.965] | 0.86 | 0.103 | 0.110 |
+| llm:openrouter/openai/gpt-oss-20b | 5380 | 584 (10.9%) | 0 | 0.670 [0.646, 0.693] | 0.686 [0.663, 0.709] | 0.867 [0.855, 0.877] | 0.60 | 0.286 | 0.304 |
 
-Infra errors retried (raw attempts in the calls files, not decider failures): `cascade-kev-4b-t0.9` 1794 of 3169 attempts, `jev` 1 of 5380 attempts, `llm:openrouter/openai/gpt-oss-20b` 719 of 5380 attempts
+Infra errors retried (raw attempts in the calls files, not decider failures): `cascade-kev-4b-t0.9` 1794 of 3169 attempts, `jev` 1 of 5380 attempts, `llm:openrouter/openai/gpt-oss-20b` 719 of 6099 attempts
 
 ## Decision cost
 
@@ -43,7 +45,8 @@ Infra errors retried (raw attempts in the calls files, not decider failures): `c
 | kev-4b | 0.495s | 0.439s | 0.832s | 0.293s | 10.050s | 133 | n/a (local) | n/a | 3148 |
 | kev-9b | 0.631s | 0.548s | 1.053s | 0.363s | 31.003s | 133 | n/a (local) | n/a | 3148 |
 | llm:local/qwen3-8b | 0.716s | 0.656s | 1.076s | 0.549s | 4.192s | 294 | n/a (local) | n/a | 3434 |
-| llm:openrouter/openai/gpt-oss-20b | 1.426s | 1.161s | 3.155s | 0.323s | 22.904s | 176 | 3.32e-04 [3.24e-04, 3.39e-04] | 1.3808 | 3225 |
+| llm:openrouter/openai/gpt-5.6-sol | 4.899s | 3.909s | 11.444s | 1.210s | 42.192s | 469 | 3.83e-03 [3.73e-03, 3.92e-03] | 20.5680 | 3192 |
+| llm:openrouter/openai/gpt-oss-20b | 1.991s | 1.299s | 6.069s | 0.323s | 43.077s | 431 | 3.11e-04 [3.04e-04, 3.18e-04] | 1.4929 | 3224 |
 
 ## Local deciders: model time vs. overhead, and energy
 
@@ -63,4 +66,5 @@ Energy is whole-GPU (GPU per decider in the Deciders table). Block = counter del
 - vs `kev-4b`: median latency 2.49x, no $ cost (local) (>1 means Jev is faster/cheaper); accuracy difference +0.492
 - vs `kev-9b`: median latency 3.11x, no $ cost (local) (>1 means Jev is faster/cheaper); accuracy difference +0.413
 - vs `llm:local/qwen3-8b`: median latency 3.72x, no $ cost (local) (>1 means Jev is faster/cheaper); accuracy difference +0.417
-- vs `llm:openrouter/openai/gpt-oss-20b`: median latency 6.58x, mean $/decision 1.92x (>1 means Jev is faster/cheaper); accuracy difference +0.142
+- vs `llm:openrouter/openai/gpt-5.6-sol`: median latency 22.17x, mean $/decision 22.10x (>1 means Jev is faster/cheaper); accuracy difference -0.071
+- vs `llm:openrouter/openai/gpt-oss-20b`: median latency 7.37x, mean $/decision 1.80x (>1 means Jev is faster/cheaper); accuracy difference +0.144
