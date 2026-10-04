@@ -12,8 +12,10 @@ from __future__ import annotations
 
 import re
 
+# "key limit exceeded": OpenRouter's per-API-key spending cap (a 403, separate from the account
+# balance). Matched by message, not by 403, which OpenRouter also uses for e.g. moderation refusals.
 INFRA_ERROR_MARKERS = (
-    "in_flight_budget", "insufficient credits", "rate limit", "ratelimit", "APIConnectionError",
+    "in_flight_budget", "insufficient credits", "key limit exceeded", "rate limit", "ratelimit", "APIConnectionError",
     "ServiceUnavailable", "InternalServerError", "Timeout", "ConnectionError", "timed out",
 )
 # Status codes only where they are reported as one — `HTTP 520`, `"code":402`, `status 429` —
@@ -27,7 +29,7 @@ def is_infra_error(error: str) -> bool:
 
 
 def is_out_of_credits(error: str) -> bool:
-    """A 402 / exhausted OpenRouter budget: the replay stops paid calls on the first one."""
+    """A 402 / exhausted OpenRouter budget or key limit: paid calls stop on the first one."""
     low = error.lower()
-    return ("in_flight_budget" in low or "insufficient credits" in low
+    return ("in_flight_budget" in low or "insufficient credits" in low or "key limit exceeded" in low
             or bool(re.search(r"(?:http|\"code\"|status(?:_code)?)\W{0,3}402(?!\d)", low)))

@@ -87,6 +87,37 @@ def summarize_arm(rows: list[dict]) -> dict:
     }
 
 
+# Paired arm comparisons. Every arm runs the same (task, trial) with the same user-simulator seed,
+# so differences are taken per task (mean over its trials), then bootstrapped over tasks.
+# A-B isolates who decides (Jev vs. G, same executor); A-C is Jev+G vs. the production single
+# call; D-A and E-A put the other deciders against Jev.
+PAIRS = [("A", "B"), ("A", "C"), ("B", "C"), ("D", "A"), ("E", "A")]
+
+
+def paired_task_diff(rows_a: list[dict], rows_b: list[dict], value, n_boot: int = 10000, seed: int = 0) -> dict:
+    """Mean over tasks of (mean value in arm a) - (mean value in arm b), with a 95% bootstrap
+    CI over tasks, on (task, trial) pairs both arms finished."""
+    a = {(r["task_id"], r["trial"]): value(r) for r in rows_a}
+    b = {(r["task_id"], r["trial"]): value(r) for r in rows_b}
+    by_task = defaultdict(list)
+    for key in a.keys() & b.keys():
+        if a[key] is not None and b[key] is not None:
+            by_task[key[0]].append(a[key] - b[key])
+    diffs = np.array([np.mean(v) for v in by_task.values()])
+    if diffs.size == 0:
+        return {"tasks": 0, "pairs": 0, "diff": float("nan"), "ci": (float("nan"), float("nan")), "significant": False}
+    rng = np.random.default_rng(seed)
+    boot = diffs[rng.integers(0, diffs.size, size=(n_boot, diffs.size))].mean(axis=1)
+    lo, hi = np.quantile(boot, [0.025, 0.975])
+    return {"tasks": int(diffs.size), "pairs": int(sum(len(v) for v in by_task.values())),
+            "diff": float(diffs.mean()), "ci": (float(lo), float(hi)), "significant": not (lo <= 0 <= hi)}
+
+
+def agent_cost(r: dict):
+    parts = [r.get("decision_cost_usd"), r.get("exec_cost_usd")]
+    return None if all(p is None for p in parts) else float(sum(p or 0.0 for p in parts))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("run", type=Path)
@@ -134,10 +165,37 @@ def main() -> int:
             f"{f(s['decision_share_latency'], '{:.1%}')} | {f(s['agent_latency_per_turn_s'], '{:.2f}')} | "
             f"{f(s['turns_per_episode'], '{:.1f}')} | {f(s['decider_fallback_rate'], '{:.1%}')} |"
         )
+    ok = {arm: [r for r in rows if r["arm"] == arm and r.get("error") is None and r.get("reward") is not None]
+          for arm in summary}
+    paired = {}
+    for a, b in PAIRS:
+        if a in ok and b in ok:
+            paired[f"{a}-{b}"] = {
+                "reward": paired_task_diff(ok[a], ok[b], lambda r: r["reward"]),
+                "agent_usd_per_episode": paired_task_diff(ok[a], ok[b], agent_cost),
+                "wall_s_per_episode": paired_task_diff(ok[a], ok[b], lambda r: r.get("wall_s")),
+            }
+    if paired:
+        lines += [
+            "",
+            "## Paired arm differences (first arm minus second)",
+            "",
+            "Same (task, trial) and user seed in both arms; per-task mean difference, 95% bootstrap CI over tasks. "
+            "Starred = CI excludes 0.",
+            "",
+            "| comparison | tasks (pairs) | reward diff [95% CI] | agent $/episode diff [95% CI] | wall s/episode diff [95% CI] |",
+            "|---|---|---|---|---|",
+        ]
+        for name, c in paired.items():
+            def cell(x, fmt):
+                star = "*" if x["significant"] else ""
+                return f"{fmt.format(x['diff'])}{star} [{fmt.format(x['ci'][0])}, {fmt.format(x['ci'][1])}]"
+            lines.append(f"| {name} | {c['reward']['tasks']} ({c['reward']['pairs']}) | {cell(c['reward'], '{:+.3f}')} | "
+                         f"{cell(c['agent_usd_per_episode'], '{:+.4f}')} | {cell(c['wall_s_per_episode'], '{:+.1f}')} |")
     report = args.run / "report"
     report.mkdir(exist_ok=True)
     (report / "summary.md").write_text("\n".join(lines) + "\n")
-    (report / "summary.json").write_text(json.dumps(summary, indent=2, default=float))
+    (report / "summary.json").write_text(json.dumps({"arms": summary, "paired": paired}, indent=2, default=float))
     print("\n".join(lines))
     print(f"==> report in {report}")
     return 0

@@ -1,0 +1,300 @@
+{
+  "arms": {
+    "A": {
+      "episodes": 250,
+      "episode_errors": 0,
+      "tasks": 50,
+      "reward": [
+        0.744,
+        0.636,
+        0.844
+      ],
+      "pass_k": {
+        "1": 0.7440000000000001,
+        "2": 0.682,
+        "3": 0.6459999999999999,
+        "4": 0.62,
+        "5": 0.6
+      },
+      "successes": 186,
+      "agent_cost_usd": 8.874586126000002,
+      "user_cost_usd": 2.8142278000000003,
+      "usd_per_success": 0.047712828634408615,
+      "decision_share_cost": 0.052804640052686994,
+      "decision_share_latency": 0.06963528729916714,
+      "agent_latency_per_turn_s": 2.760457165868117,
+      "turns_per_episode": 10.468,
+      "decider_fallback_rate": 0.00038211692777990065,
+      "still_missing_infra": 0
+    },
+    "B": {
+      "episodes": 250,
+      "episode_errors": 0,
+      "tasks": 50,
+      "reward": [
+        0.796,
+        0.696,
+        0.888
+      ],
+      "pass_k": {
+        "1": 0.7959999999999999,
+        "2": 0.75,
+        "3": 0.718,
+        "4": 0.688,
+        "5": 0.66
+      },
+      "successes": 199,
+      "agent_cost_usd": 35.02885860000001,
+      "user_cost_usd": 2.460247,
+      "usd_per_success": 0.17602441507537692,
+      "decision_share_cost": 0.7450818965594271,
+      "decision_share_latency": 0.510560068981274,
+      "agent_latency_per_turn_s": 5.3556157825085045,
+      "turns_per_episode": 10.204,
+      "decider_fallback_rate": 0.006664053312426499,
+      "still_missing_infra": 0
+    },
+    "C": {
+      "episodes": 250,
+      "episode_errors": 0,
+      "tasks": 50,
+      "reward": [
+        0.792,
+        0.696,
+        0.884
+      ],
+      "pass_k": {
+        "1": 0.792,
+        "2": 0.7380000000000001,
+        "3": 0.7,
+        "4": 0.6680000000000001,
+        "5": 0.64
+      },
+      "successes": 198,
+      "agent_cost_usd": 6.5937616000000006,
+      "user_cost_usd": 2.3044778,
+      "usd_per_success": 0.03330182626262627,
+      "decision_share_cost": 0.0,
+      "decision_share_latency": 0.0,
+      "agent_latency_per_turn_s": 2.633965976626131,
+      "turns_per_episode": 10.256,
+      "decider_fallback_rate": 0.0,
+      "still_missing_infra": 0
+    },
+    "D": {
+      "episodes": 250,
+      "episode_errors": 0,
+      "tasks": 50,
+      "reward": [
+        0.692,
+        0.572,
+        0.804
+      ],
+      "pass_k": {
+        "1": 0.6920000000000001,
+        "2": 0.638,
+        "3": 0.6040000000000001,
+        "4": 0.572,
+        "5": 0.54
+      },
+      "successes": 173,
+      "agent_cost_usd": 7.46919128,
+      "user_cost_usd": 2.4786910000000004,
+      "usd_per_success": 0.04317451606936416,
+      "decision_share_cost": 0.04869168111597751,
+      "decision_share_latency": 0.5268876613712385,
+      "agent_latency_per_turn_s": 5.350472328550285,
+      "turns_per_episode": 9.092,
+      "decider_fallback_rate": 0.08666959964804223,
+      "still_missing_infra": 0
+    },
+    "E": {
+      "episodes": 244,
+      "episode_errors": 6,
+      "tasks": 50,
+      "reward": [
+        0.045081967213114756,
+        0.012244897959183673,
+        0.08906882591093117
+      ],
+      "pass_k": {
+        "1": 0.044000000000000004,
+        "2": 0.016,
+        "3": 0.008,
+        "4": 0.004
+      },
+      "successes": 11,
+      "agent_cost_usd": 5.2351166,
+      "user_cost_usd": 0.8093821999999999,
+      "usd_per_success": 0.47591969090909086,
+      "decision_share_cost": 0.0,
+      "decision_share_latency": 0.1542180615194506,
+      "agent_latency_per_turn_s": 3.2426978460375846,
+      "turns_per_episode": 8.491803278688524,
+      "decider_fallback_rate": 0.06274131274131274,
+      "still_missing_infra": 0
+    }
+  },
+  "paired": {
+    "A-B": {
+      "reward": {
+        "tasks": 50,
+        "pairs": 250,
+        "diff": -0.05200000000000001,
+        "ci": [
+          -0.10799999999999998,
+          -0.003999999999999997
+        ],
+        "significant": true
+      },
+      "agent_usd_per_episode": {
+        "tasks": 50,
+        "pairs": 250,
+        "diff": -0.10461708989599998,
+        "ci": [
+          -0.12577663226100003,
+          -0.0851010564746
+        ],
+        "significant": true
+      },
+      "wall_s_per_episode": {
+        "tasks": 50,
+        "pairs": 250,
+        "diff": -24.198996510715837,
+        "ci": [
+          -29.224466983280646,
+          -19.30131173163444
+        ],
+        "significant": true
+      }
+    },
+    "A-C": {
+      "reward": {
+        "tasks": 50,
+        "pairs": 250,
+        "diff": -0.04800000000000001,
+        "ci": [
+          -0.10800000000000001,
+          0.008
+        ],
+        "significant": false
+      },
+      "agent_usd_per_episode": {
+        "tasks": 50,
+        "pairs": 250,
+        "diff": 0.009123298104,
+        "ci": [
+          0.0058183155166,
+          0.0124965598774
+        ],
+        "significant": true
+      },
+      "wall_s_per_episode": {
+        "tasks": 50,
+        "pairs": 250,
+        "diff": 4.114933302352787,
+        "ci": [
+          1.8463985235577511,
+          6.378863403922817
+        ],
+        "significant": true
+      }
+    },
+    "B-C": {
+      "reward": {
+        "tasks": 50,
+        "pairs": 250,
+        "diff": 0.004,
+        "ci": [
+          -0.028000000000000008,
+          0.04
+        ],
+        "significant": false
+      },
+      "agent_usd_per_episode": {
+        "tasks": 50,
+        "pairs": 250,
+        "diff": 0.11374038800000001,
+        "ci": [
+          0.09282788568,
+          0.13636244121000002
+        ],
+        "significant": true
+      },
+      "wall_s_per_episode": {
+        "tasks": 50,
+        "pairs": 250,
+        "diff": 28.313929813068622,
+        "ci": [
+          23.55169249739487,
+          33.27012345390001
+        ],
+        "significant": true
+      }
+    },
+    "D-A": {
+      "reward": {
+        "tasks": 50,
+        "pairs": 250,
+        "diff": -0.052000000000000005,
+        "ci": [
+          -0.124,
+          0.02
+        ],
+        "significant": false
+      },
+      "agent_usd_per_episode": {
+        "tasks": 50,
+        "pairs": 250,
+        "diff": -0.005621579383999999,
+        "ci": [
+          -0.0097805792258,
+          -0.0018196444294000013
+        ],
+        "significant": true
+      },
+      "wall_s_per_episode": {
+        "tasks": 50,
+        "pairs": 250,
+        "diff": 18.41197201493618,
+        "ci": [
+          11.738636182752137,
+          25.33891260659309
+        ],
+        "significant": true
+      }
+    },
+    "E-A": {
+      "reward": {
+        "tasks": 50,
+        "pairs": 244,
+        "diff": -0.7010000000000001,
+        "ci": [
+          -0.801,
+          -0.5950000000000001
+        ],
+        "significant": true
+      },
+      "agent_usd_per_episode": {
+        "tasks": 50,
+        "pairs": 244,
+        "diff": -0.014068995225999999,
+        "ci": [
+          -0.022153554094900003,
+          -0.006499891755600002
+        ],
+        "significant": true
+      },
+      "wall_s_per_episode": {
+        "tasks": 50,
+        "pairs": 244,
+        "diff": -9.92554569166388,
+        "ci": [
+          -16.176208938611122,
+          -3.489031146209319
+        ],
+        "significant": true
+      }
+    }
+  }
+}

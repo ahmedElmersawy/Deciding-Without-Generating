@@ -5,6 +5,7 @@ results/*
 # the Gilbreth Kev jobs) can add to the same run. Logs stay local.
 !results/states/
 !results/replay/
+!results/inloop/
 # GAIA text must never be committed — the repo is public and GAIA's terms forbid crawlable
 # re-sharing (CHECKS.md #5). Name any GAIA-derived states/runs with "gaia" in the path.
 results/**/*gaia*

@@ -38,6 +38,10 @@ def test_infra_error_classification():
 
     billing = 'litellm.APIError: OpenrouterException - {"error":{"message":"...","code":402}}'
     assert is_infra_error(billing) and is_out_of_credits(billing)
+    key_limit = ('litellm.APIError: APIError: OpenrouterException - {"error":{"message":"Key limit exceeded '
+                 '(total limit). Manage it using https://openrouter.ai/workspaces/default/keys/x","code":403}}')
+    assert is_infra_error(key_limit) and is_out_of_credits(key_limit)
+    assert not is_infra_error('{"error":{"message":"flagged by moderation","code":403}}')
     assert is_infra_error("JevError('Jev returned HTTP 520: error code: 520')")
     assert is_infra_error("litellm.RateLimitError: status 429")
     # token counts and JSON positions are not status codes

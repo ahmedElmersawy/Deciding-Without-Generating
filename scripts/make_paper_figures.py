@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""Publication-quality figures for the mock-pilot agent-control decision benchmark.
+"""Publication-quality figures for the arm-0 agent-control decision benchmark (airline is the
+headline run; mock-pilot is an appendix point).
 
 Reads the SAME source of truth as scripts/analyze_decisions.py (results/replay/<run>/
 calls-*.jsonl + meta-*.json, plus the states file(s) named in meta.json) and reuses
 dwg.stats for every statistic (bootstrap CIs, ECE, Brier, reliability bins) so numbers
 here never diverge from the run's own report/summary.md.
 
-Deciders included: jev, kev-0.8b, kev-4b, kev-9b, llm:openrouter/openai/gpt-oss-20b —
-the five with real replay data in this run. Qwen3 is NOT included anywhere: no Qwen3
-decider has been run yet (PLAN.md G3 is still open), so no value is invented for it;
-every figure that would show it instead prints where its bar/point would go with an
-explicit "not yet benchmarked" label.
+Deciders: every one in ORDER that has replay data in the run (GPT-5.6-sol ceiling, the live
+Jev -> GPT-5.6 cascade, Jev, GPT-OSS-20B, Qwen3-8B, Kev 0.8B/4B/9B, the Kev-4B -> GPT-OSS
+cascade); a decider without data is simply absent. GPT-5.6 is graded against its own
+reference trajectories on airline, so its accuracy is an upper bound (marked with a dagger).
 
 Usage:
     python3 scripts/make_paper_figures.py results/replay/mock-pilot
@@ -34,20 +34,29 @@ from dwg.stats import bootstrap_ci, brier_score, describe, expected_calibration_
 RESPOND = "respond_to_user"
 
 # Fixed order and display names, used identically across every figure and the table.
-ORDER = ["jev", "llm:openrouter/openai/gpt-oss-20b", "llm:local/qwen3-8b", "kev-0.8b", "kev-4b", "kev-9b", "cascade-kev-4b-t0.9"]
+GPT56 = "llm:openrouter/openai/gpt-5.6-sol"
+ORDER = [GPT56, "cascade-jev-t0.65", "jev", "llm:openrouter/openai/gpt-oss-20b", "llm:local/qwen3-8b",
+         "kev-0.8b", "kev-4b", "kev-9b", "cascade-kev-4b-t0.9"]
 DISPLAY = {
+    GPT56: "GPT-5.6†",  # † graded against its own reference actions: an upper bound
+    "cascade-jev-t0.65": "Jev→GPT-5.6",
     "jev": "Jev",
     "llm:openrouter/openai/gpt-oss-20b": "GPT-OSS-20B",
     "llm:local/qwen3-8b": "Qwen3-8B",  # local on the A100; short so tick labels don't collide
     "kev-0.8b": "Kev-0.8B",
     "kev-4b": "Kev-4B",
     "kev-9b": "Kev-9B",
-    "cascade-kev-4b-t0.9": "Cascade (t=0.9)",
+    "cascade-kev-4b-t0.9": "Kev-4B→GPT-OSS",
 }
 # Family color rule carried over from analyze_decisions.py (hue = family, never position):
 # blue = Jev, orange = generative LLM (dark orange = the local one on the A100), green shades = local Kev sizes (light->dark = small->large),
-# purple = the hybrid cascade (its own family: neither pure-local nor pure-hosted).
+# purple = the hybrid cascade (its own family: neither pure-local nor pure-hosted), magenta = the
+# Jev-led cascade (the headline one), gold = the frontier ceiling. Nine series exceed what hue
+# alone separates (blue/purple fail all-pairs CVD), so every figure also names each decider on
+# its axis or with a direct label; the Jev cascade sits beside Jev, never the Kev cascade.
 COLOR = {
+    GPT56: "#c9a000",
+    "cascade-jev-t0.65": "#cf3f8a",
     "jev": "#2a78d6",
     "llm:openrouter/openai/gpt-oss-20b": "#eb6834",
     "llm:local/qwen3-8b": "#a8431c",
@@ -136,8 +145,12 @@ def compute_metrics(run: Path) -> dict[str, dict]:
             else:
                 err_counts["Other decision errors"] += 1  # should not trigger; kept for safety
 
+        costs = [r["cost_usd"] for r in ok if r.get("cost_usd") is not None]
+        cost = bootstrap_ci(costs, [r["state_id"] for r in ok if r.get("cost_usd") is not None]) if costs else None
+
         metrics[d] = dict(
             n=len(ok),
+            cost_usd=cost,
             errors=len(drows) - len(ok),
             accuracy=acc,
             latency_ms=lat_desc,
@@ -168,6 +181,21 @@ def _style(ax, xlabel=None, ylabel=None):
         ax.set_ylabel(ylabel, color=INK_2, fontsize=10)
 
 
+def _plain_log_ticks(axis) -> None:
+    """Plain-number ticks (ms below 1 s, s above) on a log ms axis; matplotlib's default 'a×10^b'
+    minor labels run into each other. 1-2-5 steps up to three decades, decades only beyond."""
+    import math
+
+    from matplotlib.ticker import FuncFormatter, LogLocator, NullFormatter
+
+    axis.axes.autoscale_view()
+    lo, hi = axis.get_view_interval()
+    subs = (1.0, 2.0, 5.0) if math.log10(hi / max(lo, 1e-9)) <= 3 else (1.0,)
+    axis.set_major_locator(LogLocator(base=10, subs=subs))
+    axis.set_major_formatter(FuncFormatter(lambda x, _: f"{x:,.0f} ms" if x < 1000 else f"{x / 1000:,.0f} s"))
+    axis.set_minor_formatter(NullFormatter())
+
+
 def _save(fig, out: Path, name: str) -> None:
     fig.tight_layout()
     fig.savefig(out / f"{name}.png", dpi=200, facecolor=BG, metadata={"Software": None})
@@ -175,7 +203,10 @@ def _save(fig, out: Path, name: str) -> None:
 
 
 def fig1_pareto(metrics, out, plt) -> dict:
-    pts = {d: (metrics[d]["latency_ms"]["p50"], metrics[d]["accuracy"][0] * 100) for d in metrics}
+    # Mean, not median, latency: a cascade's median is just its fast stage's (5 of 6 calls never
+    # escalate), which would let it "dominate" its own fast stage on run-to-run noise; the mean
+    # is the expected time per decision and carries the escalations it pays for.
+    pts = {d: (metrics[d]["latency_ms"]["mean"], metrics[d]["accuracy"][0] * 100) for d in metrics}
     items = sorted(pts.items(), key=lambda kv: kv[1][0])
     frontier, best_y = [], -1.0
     for d, (_, y) in items:
@@ -200,7 +231,8 @@ def fig1_pareto(metrics, out, plt) -> dict:
         ax.annotate(tag, (x, y), xytext=off, textcoords="offset points",
                     ha="right" if off[0] < 0 else "left", fontsize=9.5, color=INK)
     ax.set_xscale("log")
-    _style(ax, xlabel="Median latency (ms, log scale)", ylabel="Accuracy (%)")
+    _plain_log_ticks(ax.xaxis)
+    _style(ax, xlabel="Mean latency per decision (log scale)", ylabel="Accuracy (%)")
     ax.set_title("Figure 1. Accuracy vs. latency: the decision-cost Pareto frontier", loc="left", fontsize=12, color=INK)
     ax.set_ylim(0, 100)
     _save(fig, out, "fig1_pareto_accuracy_latency")
@@ -222,7 +254,7 @@ def fig2_accuracy_ci(metrics, out, plt) -> None:
         a = metrics[d]["accuracy"]
         ax.annotate(f"{a[0]*100:.1f}%\n[{a[1]*100:.1f}, {a[2]*100:.1f}]", (x, means[xs.tolist().index(x)] + hi[list(xs).index(x)] + 2),
                     ha="center", fontsize=8, color=INK)
-    ax.set_xticks(xs, [DISPLAY[d] for d in order])
+    ax.set_xticks(xs, [DISPLAY[d] for d in order], rotation=25, ha="right")
     ax.set_ylim(0, 105)
     _style(ax, ylabel="Accuracy (%)")
     ax.set_title("Figure 2. Decision accuracy with 95% CI (lowest → highest)", loc="left", fontsize=12, color=INK)
@@ -310,7 +342,7 @@ def fig5_consistency(metrics, out, plt) -> None:
     ax.errorbar(range(len(order)), vals, yerr=[lo, hi], fmt="none", ecolor=INK, elinewidth=1.4, capsize=4, zorder=3)
     for i, d in enumerate(order):
         ax.annotate(f"{vals[i]:.1f}%", (i, vals[i] + hi[i] + 1.5), ha="center", fontsize=9, color=INK)
-    ax.set_xticks(range(len(order)), [DISPLAY[d] for d in order])
+    ax.set_xticks(range(len(order)), [DISPLAY[d] for d in order], rotation=25, ha="right")
     ax.set_ylim(0, 108)
     _style(ax, ylabel="Repeats matching the modal choice (%)")
     ax.set_title("Figure 5. Decision consistency across 5 repeats per state", loc="left", fontsize=12, color=INK)
@@ -344,7 +376,7 @@ def fig7_latency(metrics, out, plt) -> None:
     order = [d for d in ORDER if d in metrics]
     fig, ax = plt.subplots(figsize=(7.5, 4.8))
     data = [metrics[d]["raw_latency_ms"] for d in order]
-    bp = ax.boxplot(data, vert=False, positions=range(len(order)), widths=0.55, showfliers=True,
+    bp = ax.boxplot(data, orientation="horizontal", positions=range(len(order)), widths=0.55, showfliers=True,
                      patch_artist=True, medianprops=dict(color=INK, linewidth=1.8),
                      flierprops=dict(marker="o", markersize=3.5, markerfacecolor=INK_2, markeredgecolor="none", alpha=0.6))
     for i, (d, box) in enumerate(zip(order, bp["boxes"])):
@@ -356,7 +388,8 @@ def fig7_latency(metrics, out, plt) -> None:
         ax.annotate(f"p95 {p95:.0f}ms", (p95, i), xytext=(6, 8), textcoords="offset points", fontsize=7.5, color=INK_2)
     ax.set_yticks(range(len(order)), [DISPLAY[d] for d in order])
     ax.set_xscale("log")
-    _style(ax, xlabel="Latency per decision (ms, log scale)")
+    _plain_log_ticks(ax.xaxis)
+    _style(ax, xlabel="Latency per decision (log scale)")
     ax.set_title("Figure 7. Latency distribution: median, IQR, p95, outliers", loc="left", fontsize=12, color=INK)
     _save(fig, out, "fig7_latency_distribution")
     plt.close(fig)
@@ -369,7 +402,7 @@ ERROR_COLORS = ["#c0392b", "#e67e22", "#8e44ad", "#7f8c8d", "#bdc3c7"]
 
 def fig8_error_breakdown(metrics, out, plt) -> dict:
     order = [d for d in ORDER if d in metrics]
-    fig, ax = plt.subplots(figsize=(7.5, 5))
+    fig, ax = plt.subplots(figsize=(10, 5))  # wider: the legend sits outside, right of the bars
     bottoms = np.zeros(len(order))
     totals = {d: sum(metrics[d]["error_counts"].values()) for d in order}
     for cat, col in zip(ERROR_CATS, ERROR_COLORS):
@@ -379,9 +412,10 @@ def fig8_error_breakdown(metrics, out, plt) -> dict:
     for i, d in enumerate(order):
         if totals[d]:
             ax.annotate(f"n={totals[d]}", (i, bottoms[i] + 1), ha="center", fontsize=8, color=INK)
-    ax.set_xticks(range(len(order)), [DISPLAY[d] for d in order])
+    ax.set_xticks(range(len(order)), [DISPLAY[d] for d in order], rotation=25, ha="right")
+    ax.set_ylim(0, max(bottoms) * 1.08)  # headroom for the n= labels
     _style(ax, ylabel="Incorrect calls (count)")
-    ax.legend(frameon=False, fontsize=8, loc="upper right", bbox_to_anchor=(1.0, 1.15), ncol=1)
+    ax.legend(frameon=False, fontsize=8, loc="upper left", bbox_to_anchor=(1.01, 1.0), ncol=1)
     ax.set_title("Figure 8. Error-type breakdown", loc="left", fontsize=12, color=INK)
     _save(fig, out, "fig8_error_breakdown")
     plt.close(fig)
@@ -448,16 +482,20 @@ def write_table(metrics, out: Path, run_name: str) -> str:
     lines = [
         f"# Benchmark table ({run_name})",
         "",
-        "| Decider | Accuracy | 95% CI | Median latency (ms) | p95 latency (ms) | ECE |",
-        "|---|---|---|---|---|---|",
+        "| Decider | Accuracy | 95% CI | Median latency (ms) | p95 latency (ms) | $ / decision | ECE |",
+        "|---|---|---|---|---|---|---|",
     ]
     for d in order:
         m = metrics[d]
         a = m["accuracy"]
+        usd = f"{m['cost_usd'][0]:.2e}" if m["cost_usd"] else "local (no API $)"
         lines.append(
             f"| {DISPLAY[d]} | {a[0]*100:.1f}% | [{a[1]*100:.1f}%, {a[2]*100:.1f}%] | "
-            f"{m['latency_ms']['p50']:.1f} | {m['latency_ms']['p95']:.1f} | {m['ece']:.3f} |"
+            f"{m['latency_ms']['p50']:.1f} | {m['latency_ms']['p95']:.1f} | {usd} | {m['ece']:.3f} |"
         )
+    if GPT56 in metrics:
+        lines += ["", "† Graded against its own reference trajectories (the airline labels are GPT-5.6's "
+                      "actions), so its accuracy is an upper bound."]
     text = "\n".join(lines) + "\n"
     (out / "table.md").write_text(text)
     return text

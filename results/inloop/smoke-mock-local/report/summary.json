@@ -1,0 +1,71 @@
+{
+  "B": {
+    "episodes": 10,
+    "episode_errors": 0,
+    "tasks": 10,
+    "reward": [
+      0.8,
+      0.5,
+      1.0
+    ],
+    "pass_k": {
+      "1": 0.8
+    },
+    "successes": 8,
+    "agent_cost_usd": 0.0,
+    "user_cost_usd": 0.0,
+    "usd_per_success": 0.0,
+    "decision_share_cost": NaN,
+    "decision_share_latency": 0.5882284211731724,
+    "agent_latency_per_turn_s": 0.9554002052929718,
+    "turns_per_episode": 2.0,
+    "decider_fallback_rate": 0.0,
+    "still_missing_infra": 0
+  },
+  "C": {
+    "episodes": 10,
+    "episode_errors": 0,
+    "tasks": 10,
+    "reward": [
+      0.8,
+      0.5,
+      1.0
+    ],
+    "pass_k": {
+      "1": 0.8
+    },
+    "successes": 8,
+    "agent_cost_usd": 0.0,
+    "user_cost_usd": 0.0,
+    "usd_per_success": 0.0,
+    "decision_share_cost": NaN,
+    "decision_share_latency": 0.0,
+    "agent_latency_per_turn_s": 0.4021556077571586,
+    "turns_per_episode": 2.5,
+    "decider_fallback_rate": 0.0,
+    "still_missing_infra": 0
+  },
+  "E": {
+    "episodes": 10,
+    "episode_errors": 0,
+    "tasks": 10,
+    "reward": [
+      0.6,
+      0.3,
+      0.9
+    ],
+    "pass_k": {
+      "1": 0.6
+    },
+    "successes": 6,
+    "agent_cost_usd": 0.0,
+    "user_cost_usd": 0.0,
+    "usd_per_success": 0.0,
+    "decision_share_cost": NaN,
+    "decision_share_latency": 0.5893618268475173,
+    "agent_latency_per_turn_s": 1.4898511739715155,
+    "turns_per_episode": 7.4,
+    "decider_fallback_rate": 0.0,
+    "still_missing_infra": 0
+  }
+}

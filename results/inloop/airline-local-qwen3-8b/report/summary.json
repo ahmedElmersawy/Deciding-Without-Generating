@@ -1,0 +1,83 @@
+{
+  "B": {
+    "episodes": 250,
+    "episode_errors": 0,
+    "tasks": 50,
+    "reward": [
+      0.308,
+      0.196,
+      0.428
+    ],
+    "pass_k": {
+      "1": 0.308,
+      "2": 0.258,
+      "3": 0.23,
+      "4": 0.21200000000000002,
+      "5": 0.2
+    },
+    "successes": 77,
+    "agent_cost_usd": 0.0,
+    "user_cost_usd": 0.0,
+    "usd_per_success": 0.0,
+    "decision_share_cost": NaN,
+    "decision_share_latency": 0.3267601059884178,
+    "agent_latency_per_turn_s": 2.0902058392622687,
+    "turns_per_episode": 7.032,
+    "decider_fallback_rate": 0.0,
+    "still_missing_infra": 0
+  },
+  "C": {
+    "episodes": 250,
+    "episode_errors": 0,
+    "tasks": 50,
+    "reward": [
+      0.196,
+      0.116,
+      0.284
+    ],
+    "pass_k": {
+      "1": 0.196,
+      "2": 0.114,
+      "3": 0.08,
+      "4": 0.064,
+      "5": 0.06
+    },
+    "successes": 49,
+    "agent_cost_usd": 0.0,
+    "user_cost_usd": 0.0,
+    "usd_per_success": 0.0,
+    "decision_share_cost": NaN,
+    "decision_share_latency": 0.0,
+    "agent_latency_per_turn_s": 1.427001214135939,
+    "turns_per_episode": 11.504,
+    "decider_fallback_rate": 0.0,
+    "still_missing_infra": 0
+  },
+  "E": {
+    "episodes": 250,
+    "episode_errors": 0,
+    "tasks": 50,
+    "reward": [
+      0.048,
+      0.012,
+      0.092
+    ],
+    "pass_k": {
+      "1": 0.048,
+      "2": 0.02,
+      "3": 0.006000000000000001,
+      "4": 0.0,
+      "5": 0.0
+    },
+    "successes": 12,
+    "agent_cost_usd": 0.0,
+    "user_cost_usd": 0.0,
+    "usd_per_success": 0.0,
+    "decision_share_cost": NaN,
+    "decision_share_latency": 0.7044289777090186,
+    "agent_latency_per_turn_s": 6.893353848968846,
+    "turns_per_episode": 10.232,
+    "decider_fallback_rate": 0.024628616106333073,
+    "still_missing_infra": 0
+  }
+}

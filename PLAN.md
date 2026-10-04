@@ -62,10 +62,10 @@ Clone Kev to `/scratch/gilbreth/$USER/repos/kev`, `git checkout 557598f`, then `
   Frontier = `openrouter/openai/gpt-5.6-sol` with `--provider-sort price` (DECISIONS.md 2026-10-01). After it lands: offline
   Jev→GPT-5.6 cascade sweep to pick the threshold, then the live `--deciders cascade` run (fast stage = Jev by default).
   Done: sweep picked t = 0.65 (2026-10-02); live run 2026-10-03: 0.849, 16.7% escalated, $4.39 (DECISIONS.md).
-- [ ] **U4. In-loop harness, arms A–D.** (harness built 2026-09-26: `src/dwg/decider_tau2_agent.py`, `scripts/run_inloop.py`, `scripts/analyze_inloop.py`; free local run `scripts/inloop_local.slurm` with G = user = Qwen3-8B; airline B/C/E × 5 trials done 2026-09-26: reward B 0.308, C 0.196, E 0.048, see DECISIONS.md; paid frontier-G runs and arms A/D wait on credit) Generalize `JevTau2Agent` into a `DeciderTau2Agent` that works with any decider;
+- [x] **U4. In-loop harness, arms A–D.** (frontier-G run done 2026-10-04: arms A–E × 50 tasks × 5 trials with G = user = GPT-5.6-sol, $74; reward A 0.744, B 0.796, C 0.792, D 0.692, E 0.045, see DECISIONS.md; harness built 2026-09-26: `src/dwg/decider_tau2_agent.py`, `scripts/run_inloop.py`, `scripts/analyze_inloop.py`; free local run `scripts/inloop_local.slurm` with G = user = Qwen3-8B; airline B/C/E × 5 trials done 2026-09-26: reward B 0.308, C 0.196, E 0.048, see DECISIONS.md; paid frontier-G runs and arms A/D wait on credit) Generalize `JevTau2Agent` into a `DeciderTau2Agent` that works with any decider;
   arm C is tau2's own `LLMAgent`. Script `run_inloop.py`: arms × tasks × ≥5 trials. For each episode, log reward plus decision vs. execution
   latency, $ and tokens. Report pass^k (tau2's metric), reward with 95% CI, $ per successful task, and the decision share of cost.
-- [ ] **U5. Paper tables and figures** from arms 0 and A–E. State the framing plainly: Kev is not Jev, and the laptop runs have no energy data.
+- [x] **U5. Paper tables and figures** from arms 0 and A–E. (done 2026-10-04: `make_paper_figures.py` figs 1–9 + table, `make_cascade_figure.py` fig 10/10b, `make_inloop_figures.py` figs 11–14, paired arm table in `analyze_inloop.py`; prose still to write) State the framing plainly: Kev is not Jev, and the laptop runs have no energy data.
 
 ## Order and hand-offs
 

@@ -1,0 +1,19 @@
+{
+  "arm": "B",
+  "domain": "mock",
+  "decider": "llm:hosted_vllm/Qwen/Qwen3-8B",
+  "g_model": "hosted_vllm/Qwen/Qwen3-8B",
+  "g_api_base": "http://127.0.0.1:8000/v1",
+  "g_extra_body": "{\"chat_template_kwargs\": {\"enable_thinking\": false}}",
+  "user_model": "hosted_vllm/Qwen/Qwen3-8B",
+  "user_api_base": "http://127.0.0.1:8000/v1",
+  "small_model": null,
+  "kev_url": null,
+  "trials": 1,
+  "max_steps": 40,
+  "max_tokens": 2048,
+  "workers": 4,
+  "seed_base": 2000,
+  "started": "20260926T173130Z",
+  "host": "gilbreth-k033.rcac.purdue.edu"
+}

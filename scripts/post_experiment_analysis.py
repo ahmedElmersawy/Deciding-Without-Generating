@@ -41,7 +41,10 @@ DISPLAY = {
     "kev-4b": "Kev-4B",
     "kev-9b": "Kev-9B",
     "cascade-kev-4b-t0.9": "Cascade (Kev-4B→GPT-OSS, t=0.9)",
+    "llm:openrouter/openai/gpt-5.6-sol": "GPT-5.6-sol",
+    "cascade-jev-t0.65": "Cascade (Jev→GPT-5.6, t=0.65)",
 }
+GPT56 = "llm:openrouter/openai/gpt-5.6-sol"
 
 
 def cascade_fast_stage(cascade: str) -> str:
@@ -272,6 +275,8 @@ def two_fold_temperature(rows_with_conf, seed=0):
 
 
 def cascade_sim(kev_rows, gpt_rows, thresholds):
+    # Generic despite the names: kev_rows = the fast stage's calls, gpt_rows = the escalation
+    # target's calls, both standalone replays of the same states.
     gpt_by_state = defaultdict(list)
     for r in gpt_rows:
         if r["error"] is None:
@@ -279,6 +284,10 @@ def cascade_sim(kev_rows, gpt_rows, thresholds):
     kev_ok = [r for r in kev_rows if r["error"] is None and r["confidence"] is not None]
     n = len(kev_ok)
     avg_kev_latency_s = float(np.mean([r["latency_s"] for r in kev_ok]))
+    # The fast stage runs on every call, so its own $ is paid on every call too ($0 for local Kev,
+    # Jev's per-call price for the Jev cascade).
+    fast_costs = [r["cost_usd"] for r in kev_ok if r.get("cost_usd") is not None]
+    avg_fast_cost = float(np.mean(fast_costs)) if fast_costs else 0.0
     out = []
     for t in thresholds:
         accepted = [r for r in kev_ok if r["confidence"] >= t]
@@ -303,7 +312,7 @@ def cascade_sim(kev_rows, gpt_rows, thresholds):
             unmatched_escalations=len(escalated) - matched,
             blended_accuracy=blended_accuracy,
             blended_latency_ms=(avg_kev_latency_s + esc_rate * avg_extra_lat) * 1000,
-            blended_cost_usd_per_decision=avg_cost,
+            blended_cost_usd_per_decision=avg_fast_cost + avg_cost,
         ))
     return out
 
@@ -326,7 +335,13 @@ def phase_d(rows_by_decider: dict) -> dict:
     if "kev-4b" in rows_by_decider and "llm:openrouter/openai/gpt-oss-20b" in rows_by_decider:
         thresholds = [0.0, 0.3, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1.01]
         cascade = cascade_sim(rows_by_decider["kev-4b"], rows_by_decider["llm:openrouter/openai/gpt-oss-20b"], thresholds)
-    return dict(temperature_scaling=out, cascade_kev4b_to_gptoss=cascade)
+    # The headline cascade (DECISIONS.md 2026-10-02): Jev first, GPT-5.6 below the threshold.
+    # 0.65 (the held-out pick) and 0.75 (its runner-up) are on the grid.
+    jev_cascade = None
+    if "jev" in rows_by_decider and GPT56 in rows_by_decider:
+        thresholds = [0.0, 0.3, 0.5, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.01]
+        jev_cascade = cascade_sim(rows_by_decider["jev"], rows_by_decider[GPT56], thresholds)
+    return dict(temperature_scaling=out, cascade_kev4b_to_gptoss=cascade, cascade_jev_to_gpt56=jev_cascade)
 
 
 # ---------------------------------------------------------------- Phase E ---
