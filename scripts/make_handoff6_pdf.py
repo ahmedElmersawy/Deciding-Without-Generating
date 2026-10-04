@@ -190,7 +190,7 @@ story.append(Spacer(1, 12))
 
 story.append(para("Your first 5 minutes", "h2"))
 story.append(code(
-    f'git fetch &amp;&amp; git checkout jev-cascade-gpt56-pilot  {C}# still on the branch, not main</font><br/>'
+    f'git checkout main &amp;&amp; git pull  {C}# everything is merged into main (fast-forward)</font><br/>'
     f'less results/inloop/airline-frontier-gpt-5.6-sol/report/summary.md  {C}# U4: arms + paired diffs</font><br/>'
     f'ls results/replay/airline/paper_figures results/inloop/*/paper_figures  {C}# all figures</font><br/>'
     f'less DECISIONS.md  &nbsp;&nbsp;{C}# new rows dated 2026-10-02/03/04</font>'))
@@ -221,7 +221,7 @@ story.append(para("PLAN.md checklist", "h2"))
 story.extend(bullets([
     "<b>Done:</b> G1–G4, U0–U3, and now <b>U4</b> (frontier-G in-loop) and <b>U5</b> (figures and tables).",
     "<b>Not started:</b> the paper's prose; router and cache-guard decision points; the floor classifier.",
-    "<b>Housekeeping:</b> merge <font face=\"Courier\" size=9>jev-cascade-gpt56-pilot</font> into main.",
+    "<b>Housekeeping:</b> <font face=\"Courier\" size=9>jev-cascade-gpt56-pilot</font> is merged into main.",
 ]))
 
 story.append(Spacer(1, 10))
@@ -355,7 +355,6 @@ story.append(PageBreak())
 story.append(para("7 · What's next", "h1"))
 story.extend(bullets([
     "<b>Advisor meeting:</b> paper framing and scope (page 7).",
-    "<b>Merge the branch</b> <font face=\"Courier\" size=9>jev-cascade-gpt56-pilot</font> into main.",
     "<b>Paper prose</b> from figures 1–14 and the tables. State plainly: Kev is not Jev; GPT-5.6's arm-0 accuracy is an upper bound; "
     "airline is the only headline domain.",
     "<b>Credit:</b> ~$9 left. Load ~$25 only for the in-loop cascade; ~$75 for router + cache-guard once built.",
