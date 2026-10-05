@@ -86,3 +86,70 @@ G2 (anytime, early): decides whether arm E can run inside the agent loop
   any GAIA-derived path must contain "gaia" so it stays ignored (CHECKS.md #5).
 - Pinned: tau2-bench v1.0.1 (`fc0055d`), Kev `557598f`, litellm 1.82.6 (hash-checked). Change a pin only with a `DECISIONS.md` row.
 - Kev runs with prefix cache **off** (`serve_kev.sh` default). Energy numbers only count if `validate()` passed.
+
+---
+
+# Decision point 2: cache guard (designed 2026-10-05; nothing built yet)
+
+**Question.** A semantic cache found a stored prompt close to the new one. Should it **reuse** the stored answer, or
+**regenerate**? Here the decision *replaces* generation: a correct reuse skips the model call, a wrong reuse serves a wrong
+answer. Agent control showed a separate decider doesn't pay when generation happens anyway (U4: arm C cheapest); this
+tests the other half of the thesis: *a standalone decider pays off when its decision avoids generation.*
+Router (decision point 1) comes after, on the same harness. Reasons for every choice below: DECISIONS.md 2026-10-05.
+
+## Datasets (all graded for free; none built by us)
+
+| Dataset | Role | Unit | "Reuse is correct" when | Sample |
+|---|---|---|---|---|
+| **vCache SemBenchmarkLmArena** (Apache-2.0, 51k) | main: realistic chat traffic | prompt + nearest earlier prompt | both in the same `ID_Set` | ~2,000 queries |
+| **GSM-Plus** (CC BY-SA 4.0, 10,552 variants of 1,319 GSM8K test questions) | main: near-identical questions whose answers differ | variant vs its seed question (cache = the seeds) | variant's `answer` equals `seed_answer` (critical-thinking variants: never) | ~2,000 variants, stratified over the 8 perturbation types |
+| **vCache SemBenchmarkSearchQueries** (150k real ORCAS queries) | secondary: real users, short queries | as LmArena | same `id_set` | ~2,000 queries |
+
+- vCache sets ship precomputed embeddings (`emb_e5_large_v2`, `emb_gte`, OpenAI, fine-tuned) and responses with latencies.
+  The parquet files are 2.4–6.6 GB: they live on Gilbreth scratch, never in git; only our sampled streams are committed.
+- **Stream, not pairs:** each dataset is a fixed-seed shuffled stream; the cache holds every earlier prompt; each query's
+  candidate is its nearest cached neighbour (e5-large-v2 cosine, the same embedding for every decider). Report on the
+  natural stream **and** per similarity band (the band near the threshold is where deciders differ).
+- **Splits by class** (`ID_Set` / GSM-Plus seed): a dev split (threshold tuning, cascade band, floor training) and a test
+  split that no tuning sees.
+- **Label caveat:** vCache groups come from GPT-4.1-nano (generated variants for LmArena; clustering + LLM judge for
+  SearchQueries). Hand-audit ~100 test cases where the deciders disagree with the label and report the label error rate.
+
+## Deciders (same `Decider` interface as arm 0: options `reuse` / `regenerate`, with a confidence)
+
+| Decider | Kind | Repeats | Runs on |
+|---|---|---|---|
+| Similarity threshold (tuned on dev) | the production default | 1 (deterministic) | anywhere |
+| vCache's own method (per-prompt learned thresholds, error bound δ) | state of the art | 1 | anywhere |
+| Off-the-shelf duplicate-question cross-encoder (picked before any results) | general-purpose, no training: the baseline Jev's "no training" claim must beat | 1 | Gilbreth |
+| **Jev** | under test | 5 | API |
+| **Threshold → Jev cascade** (Jev only inside the ambiguous similarity band, band set on dev) | the natural deployment | 5 | API |
+| GPT-OSS-20B | small LLM | 5 | API |
+| GPT-5.6-sol | ceiling | 3 | API |
+| Qwen3-8B (vLLM), Kev-4B | local LLM / open-weights Jev-like | 5 | Gilbreth (A100, energy) |
+| Floor: small classifier trained on dev | trained baseline | 1 | Gilbreth |
+
+Deciders see the new query, the cached prompt, and (LmArena, GSM-Plus) the cached answer.
+
+## Metrics
+
+- Per decider: **wrong-reuse rate** (served a wrong answer), **needless-regeneration rate**, reuse precision / recall,
+  with cluster-bootstrap 95% CIs over classes; paired differences vs the threshold and vs the cross-encoder.
+- **Cost per query** = decider $ + (regenerate → measured generation $) and latency likewise; generation $ / s measured
+  on ~500 real GPT-5.6 answers per dataset (LmArena, GSM-Plus; SearchQueries reuses the vCache latencies).
+- **Curves, not single points:** wrong-reuse vs reuse rate as threshold / δ / cascade band sweep, with each LLM decider
+  as a point on the same axes. Energy per decision for the local deciders, as in arm 0.
+
+## Steps
+
+- [ ] **CG1. Data on Gilbreth scratch:** download the three datasets; build the dev/test streams (fixed seed) and commit
+  only the sampled streams under `results/states/cacheguard-*.jsonl`.
+- [ ] **CG2. Decider prompt + options** (`reuse` / `regenerate`) for the LLM deciders and Jev; unit tests on a few hand-made cases.
+- [ ] **CG3. Harness:** `scripts/replay_cacheguard.py` on top of the arm-0 replay (per-decider calls files, resume,
+  spending guard, `dwg.errors`), plus the non-LLM baselines (threshold, cross-encoder, vCache, floor).
+- [ ] **CG4. Pilot:** ~200 test queries per dataset, every decider, 1 repeat (~$3–4, fits the current balance). Measure
+  real $/call before sizing the full run.
+- [ ] **CG5. Full run:** ~2,000 test queries per dataset (~$40–55; load ~$60 and raise the API key's own spend limit first).
+- [ ] **CG6. Generation cost:** ~500 GPT-5.6 answers per dataset (LmArena, GSM-Plus) for the $ / latency of a regeneration.
+- [ ] **CG7. Label audit:** ~100 decider-vs-label disagreements hand-checked.
+- [ ] **CG8. Analysis + figures:** per-dataset tables, wrong-reuse vs reuse-rate curves, cost per query, paired differences.
