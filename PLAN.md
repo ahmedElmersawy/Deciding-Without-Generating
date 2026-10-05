@@ -155,3 +155,32 @@ Deciders see the new query, the cached prompt, and (LmArena, GSM-Plus) the cache
 - [x] **CG6. Generation cost:** (done 2026-10-05 with 200, not 500, answers per dataset to fit the balance: GSM-Plus $0.0016 / 4.3 s, LmArena $0.0084 / 13.8 s; `scripts/cacheguard_regen_cost.py`) ~500 GPT-5.6 answers per dataset (LmArena, GSM-Plus) for the $ / latency of a regeneration.
 - [ ] **CG7. Label audit:** (sheet built 2026-10-05: `results/replay/cacheguard-label-audit.csv`, 100 cases; waiting on the hand verdicts) ~100 decider-vs-label disagreements hand-checked.
 - [x] **CG8. Analysis + figures:** (done 2026-10-05: `analyze_cacheguard.py` per-dataset tables, `make_cacheguard_figures.py` figs 15–16; label-audit correction still to apply after CG7) per-dataset tables, wrong-reuse vs reuse-rate curves, cost per query, paired differences.
+
+---
+
+# Decision point 1: router (designed 2026-10-05)
+
+**Question.** Send a prompt to the **small** model (Mixtral-8x7B-chat) or the **large** one (GPT-4-1106)? Like the cache
+guard, the decision replaces generation (the expensive call is skipped when the small model suffices), but it asks
+something different: not "do these mean the same?" but "will *this* small model get it right?", which depends on that
+model's strengths. Expected: a router trained on the small model's own correctness beats Jev (DECISIONS.md 2026-10-05).
+
+**Data: RouterBench 0-shot** (withmartian, code MIT; 36,497 prompts with 11 models' graded answers and $ costs, so ground
+truth and model cost are free). Six exactly graded families: MMLU (pooled), GSM8K, ARC-Challenge, HellaSwag, WinoGrande,
+MBPP; MT-Bench (continuous scores) and the small Chinese sets are left out. Stratified by family: 2,000 test, 600 dev,
+the rest train (for the floor). Label: `large` iff Mixtral is wrong **and** GPT-4 is right; else `small`.
+
+**Deciders** (options `small` / `large`, with a confidence): Jev, GPT-OSS-20B, GPT-5.6-sol (API); Kev-4B, Qwen3-8B
+(Gilbreth); floor = small classifier fine-tuned on the train split to predict Mixtral's correctness (RouteLLM-style).
+Baselines: always-small, always-large, random mix (the line between them).
+
+**Metrics.** Quality = mean correctness of the routed model's recorded answer; $ per query = decider $ + routed model's
+recorded $. Cost-quality curves (each decider's confidence swept; floor's score swept), the random-mix line, and
+APGR (share of the large-small quality gap recovered) at matched large-call rates. 95% CIs by bootstrap over prompts.
+
+- [ ] **R1. Streams** `results/states/router-routerbench.jsonl` (`scripts/build_router_streams.py`).
+- [ ] **R2. Question** `dwg/router.py` + live smoke on hand cases.
+- [ ] **R3. Harness** `replay_decisions.py --task router`; floor `scripts/router_floor.py`; `scripts/analyze_router.py`.
+- [ ] **R4. Pilot** 200 test prompts, API deciders, 1 repeat.
+- [ ] **R5. Full run** 2,000 test prompts; Jev / GPT-OSS / Kev / Qwen × 5, GPT-5.6 × 3 (~$8–10).
+- [ ] **R6. Figures** cost-quality curves + table.
