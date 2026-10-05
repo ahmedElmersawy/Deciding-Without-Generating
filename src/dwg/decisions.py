@@ -97,15 +97,19 @@ class JevChoiceDecider:
     energy is read off NVML's counter — the caller must serialize calls (see `dwg.energy`).
     """
 
-    def __init__(self, jev: Optional[JevDecider] = None, name: str = "jev", energy_meter=None) -> None:
+    def __init__(self, jev: Optional[JevDecider] = None, name: str = "jev", energy_meter=None,
+                 question: str = DECISION_QUESTION, choice_name: str = "next_action") -> None:
         self.jev = jev or JevDecider()
         self.name = name
         self.energy_meter = energy_meter
+        # The decision point's question; agent control by default (dwg.cacheguard sets its own).
+        self.question = question
+        self.choice_name = choice_name
 
     def decide(self, state: str, options: dict[str, str]) -> Decision:
         e0 = self.energy_meter.read_mj() if self.energy_meter else None
         t0 = time.perf_counter()
-        answer = self.jev.choice(state=state, name="next_action", instructions=DECISION_QUESTION, criteria=options)
+        answer = self.jev.choice(state=state, name=self.choice_name, instructions=self.question, criteria=options)
         latency = time.perf_counter() - t0
         energy_j = (self.energy_meter.read_mj() - e0) / 1000.0 if self.energy_meter else None
         server_ms = (self.jev.last_response or {}).get("latency_ms")
@@ -128,6 +132,7 @@ def make_kev_decider(
     name: str = "kev",
     energy_meter=None,
     timeout: float = 120.0,
+    **decider_args: Any,
 ) -> JevChoiceDecider:
     """Kev (github.com/jaredpalmer/kev), an open-weights System One reproduction served locally.
 
@@ -136,7 +141,7 @@ def make_kev_decider(
     """
     client = JevDecider(base_url=base_url, path="/v1/systemone", model="kev-latest",
                         require_api_key=False, api_key="", timeout=timeout)
-    return JevChoiceDecider(jev=client, name=name, energy_meter=energy_meter)
+    return JevChoiceDecider(jev=client, name=name, energy_meter=energy_meter, **decider_args)
 
 
 LLM_DECIDER_SYSTEM = (
@@ -165,8 +170,10 @@ class LLMChoiceDecider:
     """
 
     def __init__(self, model: str, name: Optional[str] = None, provider_sort: Optional[str] = None,
-                 extra_body: Optional[dict] = None, energy_meter=None, **completion_args: Any) -> None:
+                 extra_body: Optional[dict] = None, energy_meter=None, system: str = LLM_DECIDER_SYSTEM,
+                 **completion_args: Any) -> None:
         self.model = model
+        self.system = system  # the decision point's framing; agent control by default
         self.name = name or f"llm:{model}"
         self.provider_sort = provider_sort
         self.extra_body = extra_body or {}
@@ -211,7 +218,7 @@ class LLMChoiceDecider:
         response = litellm.completion(
             model=self.model,
             messages=[
-                {"role": "system", "content": LLM_DECIDER_SYSTEM},
+                {"role": "system", "content": self.system},
                 {"role": "user", "content": state},
             ],
             tools=[tool],

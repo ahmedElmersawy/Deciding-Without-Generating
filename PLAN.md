@@ -146,7 +146,7 @@ Deciders see the new query, the cached prompt, and (LmArena, GSM-Plus) the cache
 - [x] **CG1. Data on Gilbreth scratch:** (done 2026-10-05: `scripts/build_cacheguard_streams.py`, `scripts/cacheguard_build.slurm`;
   2,000 test + 600 dev queries per dataset; reuse correct on test: LmArena 88.8%, SearchQueries 54.1%, GSM-Plus 33.6%) download the three datasets; build the dev/test streams (fixed seed) and commit
   only the sampled streams under `results/states/cacheguard-*.jsonl`.
-- [ ] **CG2. Decider prompt + options** (`reuse` / `regenerate`) for the LLM deciders and Jev; unit tests on a few hand-made cases.
+- [x] **CG2. Decider prompt + options** (done 2026-10-05: `src/dwg/cacheguard.py`, `tests/test_cacheguard.py`; live smoke `scripts/smoke_cacheguard.py`: Jev, GPT-OSS, GPT-5.6 all 6/6 hand-made cases, $0.006) (`reuse` / `regenerate`) for the LLM deciders and Jev; unit tests on a few hand-made cases.
 - [ ] **CG3. Harness:** `scripts/replay_cacheguard.py` on top of the arm-0 replay (per-decider calls files, resume,
   spending guard, `dwg.errors`), plus the non-LLM baselines (threshold, cross-encoder, vCache, floor).
 - [ ] **CG4. Pilot:** ~200 test queries per dataset, every decider, 1 repeat (~$3–4, fits the current balance). Measure
