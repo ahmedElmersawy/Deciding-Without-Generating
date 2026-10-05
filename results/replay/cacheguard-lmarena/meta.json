@@ -4,7 +4,13 @@
   ],
   "task": "cacheguard",
   "split": "test",
-  "n_states": 200,
+  "n_states": 2000,
   "include_failed": false,
-  "created": "20261005T062430Z"
+  "created": "20261005T062430Z",
+  "n_states_history": [
+    {
+      "n_states": 200,
+      "until": "20261005T063759Z"
+    }
+  ]
 }

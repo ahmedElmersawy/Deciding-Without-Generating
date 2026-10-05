@@ -151,7 +151,7 @@ Deciders see the new query, the cached prompt, and (LmArena, GSM-Plus) the cache
   spending guard, `dwg.errors`), plus the non-LLM baselines (threshold, cross-encoder, vCache, floor).
 - [x] **CG4. Pilot:** (done 2026-10-05: Jev, GPT-OSS-20B, GPT-5.6 × 200 test queries × 3 datasets, 1 repeat, $0.78; DECISIONS.md) ~200 test queries per dataset, every decider, 1 repeat (~$3–4, fits the current balance). Measure
   real $/call before sizing the full run.
-- [ ] **CG5. Full run:** ~2,000 test queries per dataset (~$40–55; load ~$60 and raise the API key's own spend limit first).
-- [ ] **CG6. Generation cost:** ~500 GPT-5.6 answers per dataset (LmArena, GSM-Plus) for the $ / latency of a regeneration.
-- [ ] **CG7. Label audit:** ~100 decider-vs-label disagreements hand-checked.
-- [ ] **CG8. Analysis + figures:** per-dataset tables, wrong-reuse vs reuse-rate curves, cost per query, paired differences.
+- [x] **CG5. Full run:** (done 2026-10-05: 2,000 test queries × 3 datasets; Jev, GPT-OSS ×5, GPT-5.6 ×3, Kev-4B and Qwen3-8B ×5 on Gilbreth, Jev ×5 on dev for the cascade; $23.7; DECISIONS.md) ~2,000 test queries per dataset (~$40–55; load ~$60 and raise the API key's own spend limit first).
+- [x] **CG6. Generation cost:** (done 2026-10-05 with 200, not 500, answers per dataset to fit the balance: GSM-Plus $0.0016 / 4.3 s, LmArena $0.0084 / 13.8 s; `scripts/cacheguard_regen_cost.py`) ~500 GPT-5.6 answers per dataset (LmArena, GSM-Plus) for the $ / latency of a regeneration.
+- [ ] **CG7. Label audit:** (sheet built 2026-10-05: `results/replay/cacheguard-label-audit.csv`, 100 cases; waiting on the hand verdicts) ~100 decider-vs-label disagreements hand-checked.
+- [x] **CG8. Analysis + figures:** (done 2026-10-05: `analyze_cacheguard.py` per-dataset tables, `make_cacheguard_figures.py` figs 15–16; label-audit correction still to apply after CG7) per-dataset tables, wrong-reuse vs reuse-rate curves, cost per query, paired differences.
