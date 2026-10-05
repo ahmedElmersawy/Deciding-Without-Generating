@@ -1,0 +1,22 @@
+{
+  "small": "mistralai/mixtral-8x7b-chat",
+  "large": "gpt-4-1106-preview",
+  "seed": 0,
+  "families": [
+    "arc",
+    "gsm8k",
+    "hellaswag",
+    "mbpp",
+    "mmlu",
+    "winogrande"
+  ],
+  "counts": {
+    "train": 32106,
+    "dev": 594,
+    "test": 1998
+  },
+  "needs_large": {
+    "dev": 0.2895622895622896,
+    "test": 0.2807807807807808
+  }
+}

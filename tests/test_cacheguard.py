@@ -48,3 +48,14 @@ def test_agent_control_defaults_unchanged():
     assert LLMChoiceDecider("openrouter/openai/gpt-oss-20b").system == LLM_DECIDER_SYSTEM
     guard = cg.llm_decider("openrouter/openai/gpt-oss-20b")
     assert guard.system == cg.CACHE_GUARD_SYSTEM
+
+
+def test_router_rendering_and_labels():
+    from dwg import router
+
+    row = {"query": "What is 2+2?", "label": "small"}
+    assert router.render_state(row) == "Prompt to route:\nWhat is 2+2?"
+    assert router.reference(row) == "small" and set(router.OPTIONS) == {"small", "large"}
+    long = router.render_state({"query": "x" * (router.MAX_PROMPT_CHARS + 10), "label": "large"})
+    assert long.endswith(" [...]")
+    assert router.CHOICE_NAME == "route" and "Mixtral" in router.QUESTION

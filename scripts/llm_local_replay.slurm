@@ -52,4 +52,4 @@ python scripts/replay_decisions.py --states "$STATES" --out "$RUN" --deciders ll
   --repeats "$REPEATS" --workers 1 ${EXTRA_ARGS:-}
 # EXTRA_ARGS carries other decision points' options, e.g. "--task cacheguard --split test" (PLAN.md CG5);
 # their runs are summarized by their own analysis script, not analyze_decisions.py.
-if [[ "${EXTRA_ARGS:-}" != *"--task cacheguard"* ]]; then python scripts/analyze_decisions.py "$RUN"; fi
+if [[ "${EXTRA_ARGS:-}" != *"--task "* ]]; then python scripts/analyze_decisions.py "$RUN"; fi

@@ -58,6 +58,11 @@ from dwg.decisions import (  # noqa: E402
     render_transcript,
 )
 from dwg import cacheguard as cg  # noqa: E402
+from dwg import router  # noqa: E402
+
+# Decision points replayed from a stream file (rather than tau2 states): each module provides
+# QUESTION / SYSTEM / CHOICE_NAME, OPTIONS, render_state(row) and reference(row).
+STREAM_TASKS = {"cacheguard": cg, "router": router}
 from dwg.energy import try_energy_meter  # noqa: E402
 from dwg.billing import check_budget  # noqa: E402
 from dwg.errors import is_infra_error, is_out_of_credits  # noqa: E402
@@ -78,9 +83,9 @@ def cost_per_call(rows: list[dict], decider_name: str) -> Optional[float]:
     return sum(costs) / len(costs) if len(costs) >= 20 else None
 
 
-def load_cacheguard_states(paths: list[Path], split: str, limit: Optional[int], seed: int = 0) -> list[dict]:
-    """Cache-guard stream rows as replay states: id, label (the correct decision), and the
-    query's class as `task_id` (the unit the analysis clusters CIs over)."""
+def load_stream_states(paths: list[Path], split: str, limit: Optional[int], task, seed: int = 0) -> list[dict]:
+    """Decision-point stream rows (cache guard, router) as replay states: id, label (the correct
+    decision), and the query's class as `task_id` (the unit the analysis clusters CIs over)."""
     rows = []
     for path in paths:
         with path.open() as fh:
@@ -89,7 +94,7 @@ def load_cacheguard_states(paths: list[Path], split: str, limit: Optional[int], 
     if limit is not None and limit < len(rows):
         rows = random.Random(seed).sample(rows, limit)  # seeded: a pilot is reproducible and a later run extends it
     return [dict(r, state_id=f"{r['dataset']}:{r['split']}:{r['query_id']}", task_id=str(r["query_class"]),
-                 domain=r["dataset"], label=cg.reference(r)) for r in rows]
+                 domain=r["dataset"], label=task.reference(r)) for r in rows]
 
 
 def load_states(paths: list[Path], include_failed: bool) -> list[dict]:
@@ -116,7 +121,7 @@ def llm_decider(args, energy_meter) -> LLMChoiceDecider:
     if args.llm_api_base:  # local OpenAI-compatible server (vLLM), e.g. Qwen3-8B on the A100
         completion_args["api_base"] = args.llm_api_base
         completion_args["api_key"] = "local"
-    framing = {"system": cg.CACHE_GUARD_SYSTEM} if args.task == "cacheguard" else {}
+    framing = {"system": STREAM_TASKS[args.task].SYSTEM} if args.task in STREAM_TASKS else {}
     return LLMChoiceDecider(model=args.llm_model, name=args.llm_name, provider_sort=args.provider_sort, **framing,
                             extra_body=json.loads(args.llm_extra_body) if args.llm_extra_body else None,
                             energy_meter=energy_meter if args.llm_api_base else None,
@@ -125,8 +130,8 @@ def llm_decider(args, energy_meter) -> LLMChoiceDecider:
 
 def build_deciders(names: list[str], args, energy_meter) -> list:
     # Jev / Kev are asked the decision point's own question (agent control by default).
-    framing = ({"question": cg.CACHE_GUARD_QUESTION, "choice_name": "cache_decision"}
-               if args.task == "cacheguard" else {})
+    task = STREAM_TASKS.get(args.task)
+    framing = {"question": task.QUESTION, "choice_name": task.CHOICE_NAME} if task else {}
     deciders = []
     for name in names:
         if name == "jev":
@@ -167,10 +172,10 @@ def local_model_info(base_url: str) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--states", type=Path, nargs="+", required=True)
-    parser.add_argument("--task", default="agent", choices=["agent", "cacheguard"],
-                        help="agent = tau2 agent-control states (arm 0); cacheguard = cache-guard streams")
-    parser.add_argument("--split", default="test", choices=["dev", "test"], help="cacheguard: which split")
-    parser.add_argument("--limit", type=int, default=None, help="cacheguard: a seeded subset of this many rows (pilot)")
+    parser.add_argument("--task", default="agent", choices=["agent", *STREAM_TASKS],
+                        help="agent = tau2 agent-control states (arm 0); cacheguard / router = their decision streams")
+    parser.add_argument("--split", default="test", choices=["dev", "test"], help="stream tasks: which split")
+    parser.add_argument("--limit", type=int, default=None, help="stream tasks: a seeded subset of this many rows (pilot)")
     parser.add_argument("--deciders", nargs="+", default=["jev", "llm"])
     parser.add_argument("--llm-model", default=DEFAULT_LLM)
     parser.add_argument("--llm-name", default=None, help="label for the LLM decider (default llm:<model>)")
@@ -203,12 +208,13 @@ def main() -> int:
     args = parser.parse_args()
 
     load_dotenv()
-    if args.task == "cacheguard":
-        states = load_cacheguard_states(args.states, args.split, args.limit)
+    if args.task in STREAM_TASKS:
+        task = STREAM_TASKS[args.task]
+        states = load_stream_states(args.states, args.split, args.limit, task)
         if not states:
             raise SystemExit(f"no {args.split} rows in {args.states}")
         domains = {s["domain"] for s in states}
-        options_by_domain = {d: cg.OPTIONS for d in domains}
+        options_by_domain = {d: task.OPTIONS for d in domains}
     else:
         from tau2.runner import build_environment
 
@@ -268,7 +274,7 @@ def main() -> int:
             {
                 "states": [str(p) for p in args.states],
                 "task": args.task,
-                "split": args.split if args.task == "cacheguard" else None,
+                "split": args.split if args.task in STREAM_TASKS else None,
                 "n_states": len(states),
                 "include_failed": args.include_failed,
                 "created": stamp,
@@ -349,7 +355,7 @@ def main() -> int:
 
     print(f"==> {len(states)} states x {len(deciders)} deciders x {args.repeats} repeats; {len(jobs)} calls to make")
 
-    rendered = ({s["state_id"]: cg.render_state(s) for s in states} if args.task == "cacheguard"
+    rendered = ({s["state_id"]: STREAM_TASKS[args.task].render_state(s) for s in states} if args.task in STREAM_TASKS
                 else {s["state_id"]: render_transcript(rebuild_messages(s)) for s in states})
     lock = threading.Lock()
     # Energy is whole-GPU: calls to a metered decider must not overlap each other. Hosted

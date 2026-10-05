@@ -66,6 +66,10 @@ def reference(row: dict[str, Any]) -> str:
     return REUSE if row["reuse_correct"] else REGENERATE
 
 
+# Framing for the shared deciders, under the names every decision-point module uses.
+QUESTION, SYSTEM, CHOICE_NAME = CACHE_GUARD_QUESTION, CACHE_GUARD_SYSTEM, "cache_decision"
+
+
 def jev_decider(**kwargs):
     """Jev asked the cache-guard question (kwargs as JevChoiceDecider)."""
     from dwg.decisions import JevChoiceDecider
