@@ -53,3 +53,7 @@ typer==0.27.2
 # TODO: VERIFY / pin once CI is set up
 pytest
 pytest-cov
+
+# --- cache-guard decision point (PLAN.md CG1) ------------------------------------
+# Reads the vCache benchmark parquet files (pandas' parquet engine); pure wheel, no deps.
+pyarrow==25.0.1

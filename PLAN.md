@@ -107,8 +107,9 @@ Router (decision point 1) comes after, on the same harness. Reasons for every ch
 
 - vCache sets ship precomputed embeddings (`emb_e5_large_v2`, `emb_gte`, OpenAI, fine-tuned) and responses with latencies.
   The parquet files are 2.4–6.6 GB: they live on Gilbreth scratch, never in git; only our sampled streams are committed.
-- **Stream, not pairs:** each dataset is a fixed-seed shuffled stream; the cache holds every earlier prompt; each query's
-  candidate is its nearest cached neighbour (e5-large-v2 cosine, the same embedding for every decider). Report on the
+- **Stream, not pairs:** each vCache set runs in its file order, as vCache's benchmark does; the cache holds every earlier prompt; each query's
+  candidate is its nearest cached neighbour (GTE-large-en-v1.5 cosine, the same embedding for every decider; vCache's
+  stored vectors for its two sets, ours for GSM-Plus; DECISIONS.md 2026-10-05). Report on the
   natural stream **and** per similarity band (the band near the threshold is where deciders differ).
 - **Splits by class** (`ID_Set` / GSM-Plus seed): a dev split (threshold tuning, cascade band, floor training) and a test
   split that no tuning sees.
@@ -142,7 +143,8 @@ Deciders see the new query, the cached prompt, and (LmArena, GSM-Plus) the cache
 
 ## Steps
 
-- [ ] **CG1. Data on Gilbreth scratch:** download the three datasets; build the dev/test streams (fixed seed) and commit
+- [x] **CG1. Data on Gilbreth scratch:** (done 2026-10-05: `scripts/build_cacheguard_streams.py`, `scripts/cacheguard_build.slurm`;
+  2,000 test + 600 dev queries per dataset; reuse correct on test: LmArena 88.8%, SearchQueries 54.1%, GSM-Plus 33.6%) download the three datasets; build the dev/test streams (fixed seed) and commit
   only the sampled streams under `results/states/cacheguard-*.jsonl`.
 - [ ] **CG2. Decider prompt + options** (`reuse` / `regenerate`) for the LLM deciders and Jev; unit tests on a few hand-made cases.
 - [ ] **CG3. Harness:** `scripts/replay_cacheguard.py` on top of the arm-0 replay (per-decider calls files, resume,
