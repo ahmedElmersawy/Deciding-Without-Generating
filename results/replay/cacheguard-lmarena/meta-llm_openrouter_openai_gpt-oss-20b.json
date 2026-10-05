@@ -1,0 +1,20 @@
+{
+  "decider": "llm:openrouter/openai/gpt-oss-20b",
+  "model": "openrouter/openai/gpt-oss-20b",
+  "cascade_fast": null,
+  "cascade_threshold": null,
+  "provider_sort": "price",
+  "llm_api_base": null,
+  "llm_extra_body": null,
+  "repeats": 1,
+  "workers": 4,
+  "started": "20261005T062451Z",
+  "host": "gilbreth-fe01.rcac.purdue.edu",
+  "kev_url": null,
+  "kev_models": null,
+  "llm_models": null,
+  "gpu": null,
+  "gpu_idle_watts": null,
+  "energy_unavailable": null,
+  "energy_block": null
+}

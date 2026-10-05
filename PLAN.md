@@ -147,9 +147,9 @@ Deciders see the new query, the cached prompt, and (LmArena, GSM-Plus) the cache
   2,000 test + 600 dev queries per dataset; reuse correct on test: LmArena 88.8%, SearchQueries 54.1%, GSM-Plus 33.6%) download the three datasets; build the dev/test streams (fixed seed) and commit
   only the sampled streams under `results/states/cacheguard-*.jsonl`.
 - [x] **CG2. Decider prompt + options** (done 2026-10-05: `src/dwg/cacheguard.py`, `tests/test_cacheguard.py`; live smoke `scripts/smoke_cacheguard.py`: Jev, GPT-OSS, GPT-5.6 all 6/6 hand-made cases, $0.006) (`reuse` / `regenerate`) for the LLM deciders and Jev; unit tests on a few hand-made cases.
-- [ ] **CG3. Harness:** `scripts/replay_cacheguard.py` on top of the arm-0 replay (per-decider calls files, resume,
+- [x] **CG3. Harness:** (done 2026-10-05 for the LLM deciders + threshold + cross-encoder: `replay_decisions.py --task cacheguard`, `scripts/cacheguard_crossencoder.py`, `scripts/analyze_cacheguard.py`; still to add: vCache's method (unmodified), the floor classifier, Qwen3 / Kev local runs, Jev on dev for the cascade band) `scripts/replay_cacheguard.py` on top of the arm-0 replay (per-decider calls files, resume,
   spending guard, `dwg.errors`), plus the non-LLM baselines (threshold, cross-encoder, vCache, floor).
-- [ ] **CG4. Pilot:** ~200 test queries per dataset, every decider, 1 repeat (~$3–4, fits the current balance). Measure
+- [x] **CG4. Pilot:** (done 2026-10-05: Jev, GPT-OSS-20B, GPT-5.6 × 200 test queries × 3 datasets, 1 repeat, $0.78; DECISIONS.md) ~200 test queries per dataset, every decider, 1 repeat (~$3–4, fits the current balance). Measure
   real $/call before sizing the full run.
 - [ ] **CG5. Full run:** ~2,000 test queries per dataset (~$40–55; load ~$60 and raise the API key's own spend limit first).
 - [ ] **CG6. Generation cost:** ~500 GPT-5.6 answers per dataset (LmArena, GSM-Plus) for the $ / latency of a regeneration.

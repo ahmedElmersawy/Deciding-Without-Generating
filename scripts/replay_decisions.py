@@ -18,9 +18,17 @@ with --max-usd and with the live OpenRouter balance; the run refuses to start if
 fit. While running, it stops submitting paid calls once --max-usd is spent, or on the first
 402 (out of credits), instead of writing thousands of billing-error rows.
 
+`--task cacheguard` replays the cache-guard streams instead (PLAN.md decision point 2,
+scripts/build_cacheguard_streams.py): one decision per stream row, `reuse` / `regenerate`, asked
+with dwg.cacheguard's question; `--split` picks dev or test and `--limit` a seeded subset (a
+pilot). The threshold -> Jev cascade and the non-LLM baselines are computed offline from these
+calls and the stream's similarity scores, so they cost nothing here.
+
 Usage:
     python3 scripts/replay_decisions.py --states results/states/mock-*.jsonl --repeats 5
     python3 scripts/analyze_decisions.py results/replay/<run>
+    python3 scripts/replay_decisions.py --task cacheguard --states results/states/cacheguard-gsmplus.jsonl \
+        --split test --limit 200 --deciders jev llm --repeats 1 --out results/replay/cacheguard-gsmplus
 """
 
 from __future__ import annotations
@@ -49,6 +57,7 @@ from dwg.decisions import (  # noqa: E402
     make_kev_decider,
     render_transcript,
 )
+from dwg import cacheguard as cg  # noqa: E402
 from dwg.energy import try_energy_meter  # noqa: E402
 from dwg.billing import check_budget  # noqa: E402
 from dwg.errors import is_infra_error, is_out_of_credits  # noqa: E402
@@ -67,6 +76,20 @@ def cost_per_call(rows: list[dict], decider_name: str) -> Optional[float]:
     costs = [r["cost_usd"] for r in rows
              if r["decider"] == decider_name and r.get("error") is None and r.get("cost_usd") is not None]
     return sum(costs) / len(costs) if len(costs) >= 20 else None
+
+
+def load_cacheguard_states(paths: list[Path], split: str, limit: Optional[int], seed: int = 0) -> list[dict]:
+    """Cache-guard stream rows as replay states: id, label (the correct decision), and the
+    query's class as `task_id` (the unit the analysis clusters CIs over)."""
+    rows = []
+    for path in paths:
+        with path.open() as fh:
+            rows.extend(json.loads(line) for line in fh if line.strip())
+    rows = [r for r in rows if r["split"] == split]
+    if limit is not None and limit < len(rows):
+        rows = random.Random(seed).sample(rows, limit)  # seeded: a pilot is reproducible and a later run extends it
+    return [dict(r, state_id=f"{r['dataset']}:{r['split']}:{r['query_id']}", task_id=str(r["query_class"]),
+                 domain=r["dataset"], label=cg.reference(r)) for r in rows]
 
 
 def load_states(paths: list[Path], include_failed: bool) -> list[dict]:
@@ -93,21 +116,25 @@ def llm_decider(args, energy_meter) -> LLMChoiceDecider:
     if args.llm_api_base:  # local OpenAI-compatible server (vLLM), e.g. Qwen3-8B on the A100
         completion_args["api_base"] = args.llm_api_base
         completion_args["api_key"] = "local"
-    return LLMChoiceDecider(model=args.llm_model, name=args.llm_name, provider_sort=args.provider_sort,
+    framing = {"system": cg.CACHE_GUARD_SYSTEM} if args.task == "cacheguard" else {}
+    return LLMChoiceDecider(model=args.llm_model, name=args.llm_name, provider_sort=args.provider_sort, **framing,
                             extra_body=json.loads(args.llm_extra_body) if args.llm_extra_body else None,
                             energy_meter=energy_meter if args.llm_api_base else None,
                             **completion_args)
 
 
 def build_deciders(names: list[str], args, energy_meter) -> list:
+    # Jev / Kev are asked the decision point's own question (agent control by default).
+    framing = ({"question": cg.CACHE_GUARD_QUESTION, "choice_name": "cache_decision"}
+               if args.task == "cacheguard" else {})
     deciders = []
     for name in names:
         if name == "jev":
-            deciders.append(JevChoiceDecider())
+            deciders.append(JevChoiceDecider(**framing))
         elif name == "llm":
             deciders.append(llm_decider(args, energy_meter))
         elif name == "kev":
-            deciders.append(make_kev_decider(base_url=args.kev_url, name=args.kev_name, energy_meter=energy_meter))
+            deciders.append(make_kev_decider(base_url=args.kev_url, name=args.kev_name, energy_meter=energy_meter, **framing))
         elif name == "cascade":
             # Jev is the project's fast stage; Kev is only a comparison next to it. No energy
             # meter on a Kev fast stage here: see CascadeDecider's docstring for why a live NVML
@@ -115,9 +142,9 @@ def build_deciders(names: list[str], args, energy_meter) -> list:
             # idle power as decision energy. Kev's own energy figure from a standalone replay is
             # reused post-hoc instead.
             if args.cascade_fast == "jev":
-                fast, fast_name = JevChoiceDecider(), "jev"
+                fast, fast_name = JevChoiceDecider(**framing), "jev"
             else:
-                fast = make_kev_decider(base_url=args.kev_url, name=args.kev_name, energy_meter=None)
+                fast = make_kev_decider(base_url=args.kev_url, name=args.kev_name, energy_meter=None, **framing)
                 fast_name = args.kev_name
             escalate = llm_decider(args, None)
             deciders.append(CascadeDecider(fast=fast, escalate=escalate, threshold=args.cascade_threshold,
@@ -140,6 +167,10 @@ def local_model_info(base_url: str) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--states", type=Path, nargs="+", required=True)
+    parser.add_argument("--task", default="agent", choices=["agent", "cacheguard"],
+                        help="agent = tau2 agent-control states (arm 0); cacheguard = cache-guard streams")
+    parser.add_argument("--split", default="test", choices=["dev", "test"], help="cacheguard: which split")
+    parser.add_argument("--limit", type=int, default=None, help="cacheguard: a seeded subset of this many rows (pilot)")
     parser.add_argument("--deciders", nargs="+", default=["jev", "llm"])
     parser.add_argument("--llm-model", default=DEFAULT_LLM)
     parser.add_argument("--llm-name", default=None, help="label for the LLM decider (default llm:<model>)")
@@ -172,13 +203,20 @@ def main() -> int:
     args = parser.parse_args()
 
     load_dotenv()
-    from tau2.runner import build_environment
+    if args.task == "cacheguard":
+        states = load_cacheguard_states(args.states, args.split, args.limit)
+        if not states:
+            raise SystemExit(f"no {args.split} rows in {args.states}")
+        domains = {s["domain"] for s in states}
+        options_by_domain = {d: cg.OPTIONS for d in domains}
+    else:
+        from tau2.runner import build_environment
 
-    states = load_states(args.states, args.include_failed)
-    if not states:
-        raise SystemExit("no states to replay (all episodes failed? try --include-failed)")
-    domains = {s["domain"] for s in states}
-    options_by_domain = {d: decision_options(build_environment(d).get_tools()) for d in domains}
+        states = load_states(args.states, args.include_failed)
+        if not states:
+            raise SystemExit("no states to replay (all episodes failed? try --include-failed)")
+        domains = {s["domain"] for s in states}
+        options_by_domain = {d: decision_options(build_environment(d).get_tools()) for d in domains}
 
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     out = args.out or Path("results/replay") / f"{'-'.join(sorted(domains))}-{stamp}"
@@ -229,6 +267,8 @@ def main() -> int:
         run_meta_path.write_text(json.dumps(
             {
                 "states": [str(p) for p in args.states],
+                "task": args.task,
+                "split": args.split if args.task == "cacheguard" else None,
                 "n_states": len(states),
                 "include_failed": args.include_failed,
                 "created": stamp,
@@ -309,7 +349,8 @@ def main() -> int:
 
     print(f"==> {len(states)} states x {len(deciders)} deciders x {args.repeats} repeats; {len(jobs)} calls to make")
 
-    rendered = {s["state_id"]: render_transcript(rebuild_messages(s)) for s in states}
+    rendered = ({s["state_id"]: cg.render_state(s) for s in states} if args.task == "cacheguard"
+                else {s["state_id"]: render_transcript(rebuild_messages(s)) for s in states})
     lock = threading.Lock()
     # Energy is whole-GPU: calls to a metered decider must not overlap each other. Hosted
     # deciders still run concurrently alongside, since they don't touch the local GPU.
