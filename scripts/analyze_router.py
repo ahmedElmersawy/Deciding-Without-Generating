@@ -11,6 +11,13 @@ model's recorded $. Each decider is scored two ways:
     rates 0..1 (RouteLLM's metric). A random mix has PGR(rate) = rate, so APGR 0.5 = no routing signal.
 The floor's P(large) comes from scripts/router_floor.py.
 
+Also (DECISIONS.md 2026-10-05, fixed before seeing results):
+  - APGR 95% CIs and paired differences (vs random 0.5, vs Jev, vs the floor) from one shared set of
+    1,000 bootstrap resamples of the test prompts, so every router is compared on the same draws;
+  - a deployable operating point per router: its threshold on P(large) is the 70th percentile of its
+    *dev* scores (so ~30% of prompts go large, near the 28% that need it), applied unchanged to test;
+    reported as test quality, share sent large, and gain over a random mix sending that share.
+
 Usage: python3 scripts/analyze_router.py results/replay/router-routerbench
 """
 
@@ -58,6 +65,33 @@ def pgr_curve(score: np.ndarray, small: np.ndarray, large: np.ndarray):
 def apgr(rates, quality, q_small, q_large, grid=np.linspace(0, 1, 101)):
     pgr = (np.interp(grid, rates, quality) - q_small) / (q_large - q_small)
     return float(pgr.mean())
+
+
+BUDGET = 0.30  # share of prompts the dev-tuned threshold sends to the large model
+N_BOOT = 1000
+
+
+def apgr_boot(scores: dict, small, large, seed=0):
+    """APGR per router on shared bootstrap resamples of prompts -> {name: array of N_BOOT APGRs}."""
+    rng = np.random.default_rng(seed)
+    n = len(small)
+    picks = rng.integers(0, n, size=(N_BOOT, n))
+    out = {k: np.empty(N_BOOT) for k in scores}
+    for b, idx in enumerate(picks):
+        s_, l_ = small[idx], large[idx]
+        if l_.mean() == s_.mean():
+            for k in scores:
+                out[k][b] = np.nan
+            continue
+        for k, sc in scores.items():
+            r_, qq = pgr_curve(sc[idx], s_, l_)
+            out[k][b] = apgr(r_, qq, s_.mean(), l_.mean())
+    return out
+
+
+def ci95(x):
+    x = x[~np.isnan(x)]
+    return float(np.quantile(x, 0.025)), float(np.quantile(x, 0.975))
 
 
 def main() -> int:
@@ -123,6 +157,64 @@ def main() -> int:
                          apgr=apgr(r_, qq, q_small, q_large), vs_random=float(q.mean() - (q_small + go_large.mean() * (q_large - q_small))),
                          fail=0))
 
+    # ---- shared-bootstrap APGR CIs and the dev-tuned operating point -------------------------
+    dev = [r for r in stream if r["split"] == "dev"]
+    dev_ids = {sid(r) for r in dev}
+    dev_calls = defaultdict(lambda: defaultdict(list))
+    for o in load_outcomes(args.run):
+        if o["state_id"] in dev_ids and o["error"] is None:
+            dev_calls[o["decider"]][o["state_id"]].append(p_large(o))
+    test_scores, dev_scores = {}, {}
+    test_ids = list(by_id)
+    for d, cs in calls.items():
+        pp = defaultdict(list)
+        for c in cs:
+            if c["error"] is None:
+                pp[c["state_id"]].append(p_large(c))
+        if all(s in pp for s in test_ids):
+            test_scores[d] = np.array([np.mean(pp[s]) for s in test_ids])
+        if dev_calls.get(d):
+            dev_scores[d] = np.array([np.mean(v) for v in dev_calls[d].values()])
+    if floor_path.exists():
+        test_scores["floor"] = np.array([fl[s] for s in test_ids])
+        dev_scores["floor"] = np.array([fl[sid(r)] for r in dev if sid(r) in fl])
+    boots = apgr_boot(test_scores, small, large)
+    sig_lines = ["", "## APGR with 95% CI and paired differences (shared bootstrap over test prompts)", "",
+                 "| router | APGR [95% CI] | − random (0.5) [95% CI] | − Jev [95% CI] | − floor [95% CI] |",
+                 "|---|---|---|---|---|"]
+    for k, b in boots.items():
+        point = next((x["apgr"] for x in rows if x.get("key") == k), float(np.nanmean(b)))
+        cells = [f"{point:.3f} [{ci95(b)[0]:.3f}, {ci95(b)[1]:.3f}]", f"{point - 0.5:+.3f} [{ci95(b - 0.5)[0]:+.3f}, {ci95(b - 0.5)[1]:+.3f}]"]
+        for ref in ("jev", "floor"):
+            if ref in boots and ref != k:
+                diff = b - boots[ref]
+                ref_pt = next(x["apgr"] for x in rows if x.get("key") == ref)
+                cells.append(f"{point - ref_pt:+.3f} [{ci95(diff)[0]:+.3f}, {ci95(diff)[1]:+.3f}]")
+            else:
+                cells.append("—")
+        sig_lines.append(f"| {LABEL.get(k, k)} | " + " | ".join(cells) + " |")
+    op_lines = ["", f"## Dev-tuned operating point (threshold = dev 70th percentile, ~{BUDGET:.0%} sent large)", "",
+                "| router | dev threshold | test: sent large | test quality [95% CI] | vs random mix at that share [95% CI] | $ / query |",
+                "|---|---|---|---|---|---|"]
+    rng = np.random.default_rng(1)
+    for k, sc in test_scores.items():
+        if k not in dev_scores or not len(dev_scores[k]):
+            continue
+        tau = float(np.quantile(dev_scores[k], 1 - BUDGET))
+        go = sc >= tau if k == "floor" else sc > tau
+        if go.mean() == 0:  # ties at tau: fall back to >= so the budget is approached, not skipped
+            go = sc >= tau
+        q = np.where(go, large, small)
+        share = go.mean()
+        gain = q - (small + share * (large - small))
+        gb = np.array([gain[i].mean() for i in rng.integers(0, len(gain), size=(N_BOOT, len(gain)))])
+        qb = bootstrap_ci(q, np.arange(len(q)))
+        own = [c for c in calls.get(k, []) if c["error"] is None and c.get("cost_usd") is not None]
+        dec_cost = float(np.mean([c["cost_usd"] for c in own])) if own else 0.0
+        usd = dec_cost + float(np.where(go, c_large, c_small).mean())
+        op_lines.append(f"| {LABEL.get(k, k)} | {tau:.3f} | {share:.1%} | {qb[0]:.3f} [{qb[1]:.3f}, {qb[2]:.3f}] | "
+                        f"{gain.mean():+.3f} [{np.quantile(gb, 0.025):+.3f}, {np.quantile(gb, 0.975):+.3f}] | {usd:.2e} |")
+
     lines = [
         f"# Router: {args.run.name} (small = Mixtral-8x7B, large = GPT-4; {len(test)} test prompts)",
         "",
@@ -139,6 +231,7 @@ def main() -> int:
         ap = "—" if r["apgr"] is None else f"{r['apgr']:.3f}"
         lines.append(f"| {r['name']} | {r['n']} | {q[0]:.3f} [{q[1]:.3f}, {q[2]:.3f}] | {r['large']:.1%} | "
                      f"{r['usd']:.2e} | {r['vs_random']:+.3f} | {ap} | {r['fail']} |")
+    lines += sig_lines + op_lines
     report = args.run / "report"
     report.mkdir(exist_ok=True)
     (report / "summary.md").write_text("\n".join(lines) + "\n")

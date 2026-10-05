@@ -73,6 +73,29 @@ def summarize(choices_reuse: np.ndarray, correct: np.ndarray, clusters: np.ndarr
     }
 
 
+def cascade_decide(calls, by_id, lo, hi):
+    """Reuse above `hi`, regenerate below `lo`, Jev's own call in between; also which calls hit the band."""
+    sim = np.array([by_id[o["state_id"]]["similarity"] for o in calls])
+    jev_reuse = np.array([o["choice"] == "reuse" for o in calls])
+    in_band = (sim >= lo) & (sim < hi)
+    return np.where(sim >= hi, True, np.where(sim < lo, False, jev_reuse)), in_band
+
+
+def cascade_band(dev_calls: list[dict], by_id: dict) -> tuple[float, float]:
+    """(lo, hi) maximizing dev accuracy over a 41-quantile similarity grid; ties: the narrower band."""
+    dev_correct = np.array([by_id[o["state_id"]]["reuse_correct"] for o in dev_calls])
+    grid = np.unique(np.quantile([by_id[o["state_id"]]["similarity"] for o in dev_calls], np.linspace(0, 1, 41)))
+    grid = np.concatenate([[-np.inf], grid, [np.inf]])
+    best = None
+    for i, lo in enumerate(grid):
+        for hi in grid[i:]:
+            reuse, band = cascade_decide(dev_calls, by_id, lo, hi)
+            key = (float(np.mean(reuse == dev_correct)), -float(band.mean()))
+            if best is None or key > best[0]:
+                best = (key, lo, hi)
+    return float(best[1]), float(best[2])
+
+
 def cascade_rows(jev_calls: list[dict], by_id: dict, dev: list[dict]) -> list[dict]:
     """Threshold -> Jev cascade, band tuned on Jev's dev calls, scored on Jev's test calls."""
     ok = [o for o in jev_calls if o["error"] is None]
@@ -81,24 +104,8 @@ def cascade_rows(jev_calls: list[dict], by_id: dict, dev: list[dict]) -> list[di
     if not dev_calls or not test_calls:
         return []
 
-    def decide(calls, lo, hi):
-        sim = np.array([by_id[o["state_id"]]["similarity"] for o in calls])
-        jev_reuse = np.array([o["choice"] == "reuse" for o in calls])
-        in_band = (sim >= lo) & (sim < hi)
-        return np.where(sim >= hi, True, np.where(sim < lo, False, jev_reuse)), in_band
-
-    dev_correct = np.array([by_id[o["state_id"]]["reuse_correct"] for o in dev_calls])
-    grid = np.unique(np.quantile([by_id[o["state_id"]]["similarity"] for o in dev_calls], np.linspace(0, 1, 41)))
-    grid = np.concatenate([[-np.inf], grid, [np.inf]])
-    best = None
-    for i, lo in enumerate(grid):
-        for hi in grid[i:]:
-            reuse, band = decide(dev_calls, lo, hi)
-            key = (float(np.mean(reuse == dev_correct)), -float(band.mean()))
-            if best is None or key > best[0]:
-                best = (key, lo, hi)
-    _, lo, hi = best
-    reuse, band = decide(test_calls, lo, hi)
+    lo, hi = cascade_band(dev_calls, by_id)
+    reuse, band = cascade_decide(test_calls, by_id, lo, hi)
     s = summarize(reuse, np.array([by_id[o["state_id"]]["reuse_correct"] for o in test_calls]),
                   np.array([by_id[o["state_id"]]["query_class"] for o in test_calls]))
     costs = [o["cost_usd"] for o in test_calls if o.get("cost_usd") is not None]
