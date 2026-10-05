@@ -182,5 +182,5 @@ APGR (share of the large-small quality gap recovered) at matched large-call rate
 - [x] **R2. Question** (done: `dwg/router.py`; deciders told who the small and large models are; prompt only) `dwg/router.py` + live smoke on hand cases.
 - [x] **R3. Harness** (done: `--task router` via the shared stream path; `router_floor.py`; `analyze_router.py` with APGR and fig 17) `replay_decisions.py --task router`; floor `scripts/router_floor.py`; `scripts/analyze_router.py`.
 - [x] **R4. Pilot** (done: 200 prompts; every LLM decider sends 0–4% to the large model; APGR Jev 0.65, GPT-5.6 0.51, GPT-OSS 0.44; $0.30) 200 test prompts, API deciders, 1 repeat.
-- [ ] **R5. Full run** 2,000 test prompts; Jev / GPT-OSS / Kev / Qwen × 5, GPT-5.6 × 3 (~$8–10).
-- [ ] **R6. Figures** cost-quality curves + table.
+- [x] **R5. Full run** (done 2026-10-05: all deciders on 1,998 test prompts; $7.5 incl. pilot; DECISIONS.md) 2,000 test prompts; Jev / GPT-OSS / Kev / Qwen × 5, GPT-5.6 × 3 (~$8–10).
+- [x] **R6. Figures** (done: `analyze_router.py` table + fig 17) cost-quality curves + table.
