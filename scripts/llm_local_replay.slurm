@@ -49,5 +49,7 @@ done
 python scripts/replay_decisions.py --states "$STATES" --out "$RUN" --deciders llm \
   --llm-model "hosted_vllm/$MODEL" --llm-name "$LLM_NAME" --llm-api-base "http://127.0.0.1:$PORT/v1" \
   --llm-extra-body '{"chat_template_kwargs": {"enable_thinking": false}}' \
-  --repeats "$REPEATS" --workers 1
-python scripts/analyze_decisions.py "$RUN"
+  --repeats "$REPEATS" --workers 1 ${EXTRA_ARGS:-}
+# EXTRA_ARGS carries other decision points' options, e.g. "--task cacheguard --split test" (PLAN.md CG5);
+# their runs are summarized by their own analysis script, not analyze_decisions.py.
+if [[ "${EXTRA_ARGS:-}" != *"--task cacheguard"* ]]; then python scripts/analyze_decisions.py "$RUN"; fi

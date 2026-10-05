@@ -43,5 +43,7 @@ done
 # workers=1: calls are serialized for energy anyway; a single stream also gives the
 # latency-oriented (not throughput-batched) number, which is what an agent loop sees.
 python scripts/replay_decisions.py --states "$STATES" --out "$RUN" --deciders kev \
-  --kev-name "$KEV_MODEL" --repeats "$REPEATS" --workers 1
-python scripts/analyze_decisions.py "$RUN"
+  --kev-name "$KEV_MODEL" --repeats "$REPEATS" --workers 1 ${EXTRA_ARGS:-}
+# EXTRA_ARGS carries other decision points' options, e.g. "--task cacheguard --split test" (PLAN.md CG5);
+# their runs are summarized by their own analysis script, not analyze_decisions.py.
+if [[ "${EXTRA_ARGS:-}" != *"--task cacheguard"* ]]; then python scripts/analyze_decisions.py "$RUN"; fi

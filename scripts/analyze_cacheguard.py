@@ -10,7 +10,11 @@ Each baseline's tau is picked on the DEV split only, two ways fixed in advance:
     the semantic-caching literature reports);
   - "max accuracy": the fewest total mistakes.
 Baselines are scored on exactly the test queries the LLM deciders saw (so a pilot subset is
-compared like for like), and also on the full test split.
+compared like for like), and also on the full test split. Also, when their inputs exist:
+  - floor: the classifier fine-tuned on dev (scripts/cacheguard_floor.py), reuse iff P >= 0.5;
+  - threshold -> Jev cascade: reuse above a similarity `hi`, regenerate below `lo`, ask Jev in
+    between. (lo, hi) maximize dev accuracy using Jev's dev calls (ties: the narrower band, i.e.
+    fewer Jev calls); test uses Jev's own test calls, so its $ is Jev's times the band share.
 
 Rates are over all queries (wrong reuse + needless regeneration + correct = 1), with 95%
 bootstrap CIs clustered by the query's class. "reuse precision" = share of reuses that were right.
@@ -69,6 +73,41 @@ def summarize(choices_reuse: np.ndarray, correct: np.ndarray, clusters: np.ndarr
     }
 
 
+def cascade_rows(jev_calls: list[dict], by_id: dict, dev: list[dict]) -> list[dict]:
+    """Threshold -> Jev cascade, band tuned on Jev's dev calls, scored on Jev's test calls."""
+    ok = [o for o in jev_calls if o["error"] is None]
+    dev_calls = [o for o in ok if by_id[o["state_id"]]["split"] == "dev"]
+    test_calls = [o for o in ok if by_id[o["state_id"]]["split"] == "test"]
+    if not dev_calls or not test_calls:
+        return []
+
+    def decide(calls, lo, hi):
+        sim = np.array([by_id[o["state_id"]]["similarity"] for o in calls])
+        jev_reuse = np.array([o["choice"] == "reuse" for o in calls])
+        in_band = (sim >= lo) & (sim < hi)
+        return np.where(sim >= hi, True, np.where(sim < lo, False, jev_reuse)), in_band
+
+    dev_correct = np.array([by_id[o["state_id"]]["reuse_correct"] for o in dev_calls])
+    grid = np.unique(np.quantile([by_id[o["state_id"]]["similarity"] for o in dev_calls], np.linspace(0, 1, 41)))
+    grid = np.concatenate([[-np.inf], grid, [np.inf]])
+    best = None
+    for i, lo in enumerate(grid):
+        for hi in grid[i:]:
+            reuse, band = decide(dev_calls, lo, hi)
+            key = (float(np.mean(reuse == dev_correct)), -float(band.mean()))
+            if best is None or key > best[0]:
+                best = (key, lo, hi)
+    _, lo, hi = best
+    reuse, band = decide(test_calls, lo, hi)
+    s = summarize(reuse, np.array([by_id[o["state_id"]]["reuse_correct"] for o in test_calls]),
+                  np.array([by_id[o["state_id"]]["query_class"] for o in test_calls]))
+    costs = [o["cost_usd"] for o in test_calls if o.get("cost_usd") is not None]
+    s.update(decider=f"threshold -> Jev cascade (band [{lo:.3f}, {hi:.3f}); Jev asked {band.mean():.0%})",
+             failures=len([o for o in jev_calls if o["error"] is not None and by_id[o["state_id"]]["split"] == "test"]),
+             usd=float(np.mean(costs)) * float(band.mean()) if costs else None, p50_s=None)
+    return [s]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("run", type=Path)
@@ -84,14 +123,19 @@ def main() -> int:
     by_decider = defaultdict(list)
     for o in outcomes:
         by_decider[o["decider"]].append(o)
-    seen = sorted({o["state_id"] for o in outcomes})  # the test queries the deciders answered
+    # The test queries the deciders answered (dev calls exist only to tune the cascade band).
+    seen = sorted({o["state_id"] for o in outcomes if by_id[o["state_id"]]["split"] == "test"})
     seen_rows = [by_id[s] for s in seen] if seen else test
 
     xenc_path = args.run / "scores-crossencoder.jsonl"
     xenc = {json.loads(line)["state_id"]: json.loads(line)["score"] for line in open(xenc_path)} if xenc_path.exists() else {}
 
     table = []
+    test_ids = {state_id(r) for r in test}
     for d, rows in sorted(by_decider.items()):
+        rows = [o for o in rows if o["state_id"] in test_ids]  # dev calls only tune the cascade
+        if not rows:
+            continue
         ok = [o for o in rows if o["error"] is None]
         reuse = np.array([o["choice"] == "reuse" for o in ok])
         correct = np.array([by_id[o["state_id"]]["reuse_correct"] for o in ok])
@@ -110,7 +154,7 @@ def main() -> int:
         dev_s = np.array([score[state_id(r)] for r in dev])
         taus = pick_tau(dev_s, np.array([r["reuse_correct"] for r in dev]))
         for rule, tau in taus.items():
-            for label, rows in (("", seen_rows), (" (full test)", test if seen else [])):
+            for label, rows in (("", seen_rows), (" (full test)", test if seen and len(seen) < len(test) else [])):
                 if not rows:
                     continue
                 sc = np.array([score[state_id(r)] for r in rows])
@@ -118,6 +162,35 @@ def main() -> int:
                               np.array([r["query_class"] for r in rows]))
                 s.update(decider=f"{name} {rule}{label} (tau {tau:.3f})", failures=0, usd=0.0, p50_s=None)
                 table.append(s)
+
+    floor_path = args.run / "scores-floor.jsonl"
+    if floor_path.exists():
+        floor = {json.loads(line)["state_id"]: json.loads(line)["score"] for line in open(floor_path)}
+        for label, rows in (("", seen_rows), (" (full test)", test if seen and len(seen) < len(test) else [])):
+            rows = [r for r in rows if state_id(r) in floor]
+            if rows:
+                s = summarize(np.array([floor[state_id(r)] >= 0.5 for r in rows]),
+                              np.array([r["reuse_correct"] for r in rows]), np.array([r["query_class"] for r in rows]))
+                s.update(decider=f"floor (trained on dev){label}", failures=0, usd=0.0, p50_s=None)
+                table.append(s)
+
+    vcache_path = args.run / "scores-vcache.jsonl"
+    if vcache_path.exists():
+        # vCache only stores prompts it missed, so it is scored as a system: a hit is right iff the
+        # answer it served was right; a miss is needless iff a correct earlier answer existed.
+        vc = {json.loads(line)["state_id"]: json.loads(line) for line in open(vcache_path)}
+        for label, rows in (("", seen_rows), (" (full test)", test if seen and len(seen) < len(test) else [])):
+            rows = [r for r in rows if state_id(r) in vc]
+            if rows:
+                reuse = np.array([vc[state_id(r)]["reuse"] for r in rows])
+                right = np.array([vc[state_id(r)]["served_correct"] if vc[state_id(r)]["reuse"] else r["reuse_correct"]
+                                  for r in rows])
+                s = summarize(reuse, right, np.array([r["query_class"] for r in rows]))
+                delta = next(iter(vc.values()))["delta"]
+                s.update(decider=f"vCache (delta {delta}){label}", failures=0, usd=0.0, p50_s=None)
+                table.append(s)
+
+    table.extend(cascade_rows(by_decider.get("jev", []), by_id, dev))
 
     def ci(x):
         return f"{x[0]:.3f} [{x[1]:.3f}, {x[2]:.3f}]"
