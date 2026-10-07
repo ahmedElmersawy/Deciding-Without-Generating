@@ -12,7 +12,7 @@
 #        DATASETS="lmarena" bash scripts/cacheguard_v2_submit.sh
 set -euo pipefail
 cd "$(dirname "$0")/.."
-: "${DATASETS:=lmarena searchqueries gsmplus}" "${LOCAL_TIME:=08:00:00}"
+: "${DATASETS:=lmarena searchqueries gsmplus}" "${LOCAL_TIME:=04:00:00}"
 mkdir -p results/logs
 jobs=()
 submit() { local id; id=$(sbatch --parsable "$@"); jobs+=("$id"); echo "  submitted $id: $*"; }
