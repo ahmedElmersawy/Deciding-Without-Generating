@@ -1,0 +1,465 @@
+{"id": "searchqueries:dev:10145252", "verdict": "same", "confidence": "high", "reason": "official site = online"}
+{"id": "searchqueries:dev:10167928", "verdict": "same", "confidence": "high", "reason": "plural only"}
+{"id": "searchqueries:dev:10213619", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:dev:10267739", "verdict": "same", "confidence": "high", "reason": "plural only"}
+{"id": "searchqueries:dev:10427470", "verdict": "same", "confidence": "low", "reason": "same banana republic card (comenity issuer)"}
+{"id": "searchqueries:dev:10648993", "verdict": "same", "confidence": "high", "reason": "convert implied"}
+{"id": "searchqueries:dev:10705384", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:dev:10749902", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:dev:10896132", "verdict": "same", "confidence": "high", "reason": "seniors=elderly"}
+{"id": "searchqueries:dev:10948192", "verdict": "different", "confidence": "high", "reason": "Canadian crude vs crude price generally"}
+{"id": "searchqueries:dev:10976646", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:dev:11108384", "verdict": "different", "confidence": "high", "reason": "characteristics vs famous people"}
+{"id": "searchqueries:dev:11166501", "verdict": "different", "confidence": "high", "reason": "mychart patient login vs careers login"}
+{"id": "searchqueries:dev:11269597", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:dev:11394474", "verdict": "same", "confidence": "high", "reason": "mi=michigan"}
+{"id": "searchqueries:dev:11534336", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:dev:11739587", "verdict": "same", "confidence": "high", "reason": "same station"}
+{"id": "searchqueries:dev:11838796", "verdict": "same", "confidence": "high", "reason": "added state only"}
+{"id": "searchqueries:dev:11884701", "verdict": "different", "confidence": "high", "reason": "for hills specific"}
+{"id": "searchqueries:dev:12241929", "verdict": "same", "confidence": "high", "reason": "rewording"}
+{"id": "searchqueries:dev:12307518", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:dev:12308862", "verdict": "same", "confidence": "high", "reason": "punctuation"}
+{"id": "searchqueries:dev:12312651", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:dev:12495732", "verdict": "same", "confidence": "high", "reason": "crossword solver"}
+{"id": "searchqueries:dev:12652422", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:dev:12689399", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:dev:2043778", "verdict": "same", "confidence": "high", "reason": "recipes implied"}
+{"id": "searchqueries:dev:2134489", "verdict": "different", "confidence": "high", "reason": "usc average vs national average"}
+{"id": "searchqueries:dev:2147667", "verdict": "same", "confidence": "high", "reason": "ac = air conditioning"}
+{"id": "searchqueries:dev:2222336", "verdict": "different", "confidence": "low", "reason": "2018 vs 2019 year"}
+{"id": "searchqueries:dev:2259121", "verdict": "same", "confidence": "high", "reason": "ifsc lookup gives bank and branch"}
+{"id": "searchqueries:dev:2377393", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:dev:2481139", "verdict": "different", "confidence": "high", "reason": "supreme vs superior court"}
+{"id": "searchqueries:dev:2485476", "verdict": "same", "confidence": "high", "reason": "duties = job description"}
+{"id": "searchqueries:dev:2499704", "verdict": "same", "confidence": "high", "reason": "specific filler"}
+{"id": "searchqueries:dev:2689119", "verdict": "different", "confidence": "high", "reason": "price vs via prime video"}
+{"id": "searchqueries:dev:2769079", "verdict": "different", "confidence": "high", "reason": "export messages vs download app"}
+{"id": "searchqueries:dev:2799486", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:dev:2826502", "verdict": "same", "confidence": "high", "reason": "game implied"}
+{"id": "searchqueries:dev:2911569", "verdict": "same", "confidence": "high", "reason": "prepared/delivered diet meals"}
+{"id": "searchqueries:dev:2960005", "verdict": "same", "confidence": "low", "reason": "uk qualifier adds little"}
+{"id": "searchqueries:dev:2963939", "verdict": "same", "confidence": "high", "reason": "synonyms"}
+{"id": "searchqueries:dev:2982363", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:dev:3037244", "verdict": "same", "confidence": "high", "reason": "today=current date"}
+{"id": "searchqueries:dev:3097079", "verdict": "different", "confidence": "high", "reason": "Cleveland TN vs Greenville NC"}
+{"id": "searchqueries:dev:3294410", "verdict": "same", "confidence": "high", "reason": "same gbp-euro rate, typo"}
+{"id": "searchqueries:dev:3307170", "verdict": "same", "confidence": "high", "reason": "punctuation only"}
+{"id": "searchqueries:dev:3322658", "verdict": "different", "confidence": "high", "reason": "government website vs public records"}
+{"id": "searchqueries:dev:3456648", "verdict": "same", "confidence": "high", "reason": "cities=places"}
+{"id": "searchqueries:dev:3500041", "verdict": "different", "confidence": "high", "reason": "best product vs benefits"}
+{"id": "searchqueries:dev:3502607", "verdict": "same", "confidence": "high", "reason": "abbreviation"}
+{"id": "searchqueries:dev:3640297", "verdict": "different", "confidence": "high", "reason": "transfer partners vs booking travel"}
+{"id": "searchqueries:dev:3641163", "verdict": "different", "confidence": "high", "reason": "definition vs benefits"}
+{"id": "searchqueries:dev:3708711", "verdict": "different", "confidence": "high", "reason": "Ebola hospital guidance vs general infection control"}
+{"id": "searchqueries:dev:3762970", "verdict": "same", "confidence": "high", "reason": "ca = california"}
+{"id": "searchqueries:dev:3797811", "verdict": "different", "confidence": "high", "reason": "ICD code vs diagnosis process"}
+{"id": "searchqueries:dev:3841990", "verdict": "same", "confidence": "high", "reason": "citi card = citibank credit card"}
+{"id": "searchqueries:dev:3891407", "verdict": "different", "confidence": "low", "reason": "best product vs treatment info"}
+{"id": "searchqueries:dev:4076352", "verdict": "different", "confidence": "high", "reason": "Myrtle Beach vs South Carolina"}
+{"id": "searchqueries:dev:4171043", "verdict": "different", "confidence": "high", "reason": "indiana vs us"}
+{"id": "searchqueries:dev:4258121", "verdict": "same", "confidence": "high", "reason": "same licence check code service"}
+{"id": "searchqueries:dev:4342065", "verdict": "same", "confidence": "high", "reason": "preposition only"}
+{"id": "searchqueries:dev:4799465", "verdict": "different", "confidence": "high", "reason": "locations vs headquarters"}
+{"id": "searchqueries:dev:5090282", "verdict": "same", "confidence": "low", "reason": "best days vs best times to visit"}
+{"id": "searchqueries:dev:5236714", "verdict": "same", "confidence": "high", "reason": "sheriff = jail inmate search"}
+{"id": "searchqueries:dev:5271124", "verdict": "same", "confidence": "high", "reason": "plural only"}
+{"id": "searchqueries:dev:5276124", "verdict": "same", "confidence": "high", "reason": "pc=computer rewording"}
+{"id": "searchqueries:dev:5293109", "verdict": "different", "confidence": "low", "reason": "brisket specifically vs any beef"}
+{"id": "searchqueries:dev:5392898", "verdict": "same", "confidence": "high", "reason": "credit one login"}
+{"id": "searchqueries:dev:5433353", "verdict": "different", "confidence": "high", "reason": "amex fees vs cards without fees"}
+{"id": "searchqueries:dev:5571254", "verdict": "same", "confidence": "high", "reason": "filler word"}
+{"id": "searchqueries:dev:5662564", "verdict": "same", "confidence": "high", "reason": "plural"}
+{"id": "searchqueries:dev:5822219", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:dev:5835031", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:dev:6085556", "verdict": "different", "confidence": "low", "reason": "delaware-specific routing number"}
+{"id": "searchqueries:dev:6238692", "verdict": "different", "confidence": "high", "reason": "2018 vs 2019"}
+{"id": "searchqueries:dev:6353560", "verdict": "different", "confidence": "low", "reason": "cached specifies maine station"}
+{"id": "searchqueries:dev:6415852", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:dev:6608768", "verdict": "different", "confidence": "high", "reason": "title services vs title loans"}
+{"id": "searchqueries:dev:6645729", "verdict": "same", "confidence": "low", "reason": "joint pain ~ arthritis"}
+{"id": "searchqueries:dev:6727711", "verdict": "same", "confidence": "high", "reason": "baking bacon in oven"}
+{"id": "searchqueries:dev:6753951", "verdict": "same", "confidence": "high", "reason": "rewording"}
+{"id": "searchqueries:dev:6826159", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:dev:6911565", "verdict": "different", "confidence": "high", "reason": "reversed direction"}
+{"id": "searchqueries:dev:7017535", "verdict": "different", "confidence": "high", "reason": "texas-specific dui"}
+{"id": "searchqueries:dev:7147478", "verdict": "same", "confidence": "high", "reason": "rewording"}
+{"id": "searchqueries:dev:7254039", "verdict": "same", "confidence": "high", "reason": "fl = florida"}
+{"id": "searchqueries:dev:7290163", "verdict": "same", "confidence": "high", "reason": "plural"}
+{"id": "searchqueries:dev:7384387", "verdict": "same", "confidence": "high", "reason": "employee email login"}
+{"id": "searchqueries:dev:7423593", "verdict": "different", "confidence": "low", "reason": "died today vs deaths on this date in history"}
+{"id": "searchqueries:dev:7532803", "verdict": "same", "confidence": "low", "reason": "both baked pork chop recipes"}
+{"id": "searchqueries:dev:7658199", "verdict": "same", "confidence": "high", "reason": "plural only"}
+{"id": "searchqueries:dev:7709764", "verdict": "different", "confidence": "high", "reason": "ecu vs eecu different credit unions"}
+{"id": "searchqueries:dev:7772337", "verdict": "same", "confidence": "low", "reason": "cached adds 2018 year"}
+{"id": "searchqueries:dev:7909523", "verdict": "same", "confidence": "high", "reason": "same tracking"}
+{"id": "searchqueries:dev:7961344", "verdict": "different", "confidence": "high", "reason": "sous vide specific temperature"}
+{"id": "searchqueries:dev:7998219", "verdict": "same", "confidence": "high", "reason": "multiple filler"}
+{"id": "searchqueries:dev:8061528", "verdict": "different", "confidence": "low", "reason": "florida specific vs by state"}
+{"id": "searchqueries:dev:8070146", "verdict": "different", "confidence": "high", "reason": "prepaid cards vs credit cards"}
+{"id": "searchqueries:dev:8285863", "verdict": "same", "confidence": "high", "reason": "punctuation"}
+{"id": "searchqueries:dev:8287774", "verdict": "different", "confidence": "low", "reason": "general doctor search vs HMO doctors"}
+{"id": "searchqueries:dev:8289947", "verdict": "different", "confidence": "high", "reason": "block incoming calls vs hide own number"}
+{"id": "searchqueries:dev:8368517", "verdict": "different", "confidence": "high", "reason": "application vs statement"}
+{"id": "searchqueries:dev:8551413", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:dev:8637946", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:dev:8700222", "verdict": "same", "confidence": "high", "reason": "county assessor site"}
+{"id": "searchqueries:dev:8712873", "verdict": "same", "confidence": "high", "reason": "rent=rentals"}
+{"id": "searchqueries:dev:8731506", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:dev:8758663", "verdict": "same", "confidence": "high", "reason": "fires near me reworded"}
+{"id": "searchqueries:dev:8795122", "verdict": "different", "confidence": "low", "reason": "DirecTV Now specific service vs DirecTV"}
+{"id": "searchqueries:dev:8902830", "verdict": "same", "confidence": "high", "reason": "cd = certificate of deposit"}
+{"id": "searchqueries:dev:9029858", "verdict": "different", "confidence": "high", "reason": "fayette county vs all georgia"}
+{"id": "searchqueries:dev:9071442", "verdict": "same", "confidence": "high", "reason": "uk licence codes, dvla implied"}
+{"id": "searchqueries:dev:9080451", "verdict": "same", "confidence": "high", "reason": "plural only"}
+{"id": "searchqueries:dev:9362070", "verdict": "same", "confidence": "high", "reason": "store bought=to buy"}
+{"id": "searchqueries:dev:9457715", "verdict": "different", "confidence": "high", "reason": "letter t vs a"}
+{"id": "searchqueries:dev:9463853", "verdict": "same", "confidence": "high", "reason": "both facebook login in portuguese"}
+{"id": "searchqueries:dev:9503859", "verdict": "same", "confidence": "high", "reason": "parish implied"}
+{"id": "searchqueries:dev:9794665", "verdict": "different", "confidence": "high", "reason": "Illinois vs Wisconsin"}
+{"id": "searchqueries:test:10041475", "verdict": "different", "confidence": "low", "reason": "specific character vs full cast list"}
+{"id": "searchqueries:test:10050500", "verdict": "same", "confidence": "high", "reason": "espn college basketball scores"}
+{"id": "searchqueries:test:10109854", "verdict": "different", "confidence": "low", "reason": "existence of recycle bin vs how to empty it"}
+{"id": "searchqueries:test:10126591", "verdict": "same", "confidence": "high", "reason": "typo"}
+{"id": "searchqueries:test:10145511", "verdict": "same", "confidence": "high", "reason": "ships by age = newest to oldest"}
+{"id": "searchqueries:test:10193440", "verdict": "different", "confidence": "high", "reason": "army war games vs any downloadable games"}
+{"id": "searchqueries:test:10233073", "verdict": "same", "confidence": "high", "reason": "rewording"}
+{"id": "searchqueries:test:10244110", "verdict": "same", "confidence": "high", "reason": "spelling"}
+{"id": "searchqueries:test:10272099", "verdict": "same", "confidence": "high", "reason": "same topic, month filler"}
+{"id": "searchqueries:test:10324049", "verdict": "same", "confidence": "high", "reason": "meat=cut for carne asada"}
+{"id": "searchqueries:test:10351389", "verdict": "same", "confidence": "high", "reason": "filler word"}
+{"id": "searchqueries:test:10395751", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:10402027", "verdict": "same", "confidence": "low", "reason": "create Outlook contact group"}
+{"id": "searchqueries:test:10446980", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:10459599", "verdict": "same", "confidence": "high", "reason": "auto = car"}
+{"id": "searchqueries:test:10503416", "verdict": "same", "confidence": "high", "reason": "best buy online bill pay"}
+{"id": "searchqueries:test:10511337", "verdict": "same", "confidence": "high", "reason": "typo"}
+{"id": "searchqueries:test:10522507", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:10543746", "verdict": "same", "confidence": "high", "reason": "buy and download music"}
+{"id": "searchqueries:test:10562715", "verdict": "same", "confidence": "low", "reason": "full episode list includes season 2"}
+{"id": "searchqueries:test:10616207", "verdict": "same", "confidence": "high", "reason": "british currency=pound conversion"}
+{"id": "searchqueries:test:10619112", "verdict": "different", "confidence": "high", "reason": "specific college vs general calendar"}
+{"id": "searchqueries:test:10625559", "verdict": "different", "confidence": "high", "reason": "payment locations vs paying online"}
+{"id": "searchqueries:test:10653447", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:10735824", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:10801049", "verdict": "different", "confidence": "high", "reason": "reversed transmission direction"}
+{"id": "searchqueries:test:10876433", "verdict": "same", "confidence": "high", "reason": "texas implied"}
+{"id": "searchqueries:test:10883922", "verdict": "different", "confidence": "high", "reason": "personal check vs certified check"}
+{"id": "searchqueries:test:10885526", "verdict": "same", "confidence": "high", "reason": "playback = player"}
+{"id": "searchqueries:test:10896596", "verdict": "different", "confidence": "high", "reason": "download music from iTunes vs download iTunes app"}
+{"id": "searchqueries:test:10904770", "verdict": "different", "confidence": "high", "reason": "negation not growing"}
+{"id": "searchqueries:test:10908732", "verdict": "same", "confidence": "high", "reason": "same calculator"}
+{"id": "searchqueries:test:10932004", "verdict": "same", "confidence": "high", "reason": "punctuation"}
+{"id": "searchqueries:test:10942083", "verdict": "different", "confidence": "high", "reason": "ravioli sauce vs spaghetti sauce recipe"}
+{"id": "searchqueries:test:10965450", "verdict": "different", "confidence": "high", "reason": "hotels vs restaurants"}
+{"id": "searchqueries:test:11011498", "verdict": "different", "confidence": "high", "reason": "expansion vs fall"}
+{"id": "searchqueries:test:11082632", "verdict": "same", "confidence": "high", "reason": "synonyms"}
+{"id": "searchqueries:test:11150749", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:11180341", "verdict": "same", "confidence": "high", "reason": "google implied"}
+{"id": "searchqueries:test:11209866", "verdict": "different", "confidence": "high", "reason": "for sale vs best marine batteries"}
+{"id": "searchqueries:test:11245393", "verdict": "same", "confidence": "high", "reason": "reduce = lose"}
+{"id": "searchqueries:test:11264253", "verdict": "same", "confidence": "high", "reason": "filler"}
+{"id": "searchqueries:test:11269519", "verdict": "same", "confidence": "high", "reason": "plural"}
+{"id": "searchqueries:test:11309461", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:11314920", "verdict": "different", "confidence": "high", "reason": "rural development vs food and agriculture dept"}
+{"id": "searchqueries:test:11333620", "verdict": "same", "confidence": "low", "reason": "cached adds pdf format"}
+{"id": "searchqueries:test:11369379", "verdict": "same", "confidence": "high", "reason": "us = american"}
+{"id": "searchqueries:test:11387719", "verdict": "same", "confidence": "high", "reason": "best is implied"}
+{"id": "searchqueries:test:11406347", "verdict": "different", "confidence": "high", "reason": "nearest 50 vs 5"}
+{"id": "searchqueries:test:11434188", "verdict": "same", "confidence": "high", "reason": "by = with"}
+{"id": "searchqueries:test:11448267", "verdict": "same", "confidence": "high", "reason": "settings ~ time"}
+{"id": "searchqueries:test:11460152", "verdict": "different", "confidence": "high", "reason": "laundromat business in Boise vs laundromat near me"}
+{"id": "searchqueries:test:11518495", "verdict": "same", "confidence": "high", "reason": "filler"}
+{"id": "searchqueries:test:11560072", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:11561715", "verdict": "same", "confidence": "high", "reason": "typo"}
+{"id": "searchqueries:test:11619202", "verdict": "same", "confidence": "low", "reason": "by-month page covers February"}
+{"id": "searchqueries:test:11677602", "verdict": "different", "confidence": "low", "reason": "copy selected vs select visible cells"}
+{"id": "searchqueries:test:11690593", "verdict": "same", "confidence": "high", "reason": "adobe implied"}
+{"id": "searchqueries:test:11805494", "verdict": "different", "confidence": "high", "reason": "coccidiosis specific vs dog zoonoses"}
+{"id": "searchqueries:test:11842955", "verdict": "same", "confidence": "low", "reason": "property tax search vs property search"}
+{"id": "searchqueries:test:11857846", "verdict": "different", "confidence": "low", "reason": "Navient vs Dept of Education loan payment"}
+{"id": "searchqueries:test:11897967", "verdict": "same", "confidence": "high", "reason": "today implied"}
+{"id": "searchqueries:test:11907410", "verdict": "different", "confidence": "high", "reason": "places to eat vs things to do"}
+{"id": "searchqueries:test:11920890", "verdict": "same", "confidence": "high", "reason": "hcl implied"}
+{"id": "searchqueries:test:12047845", "verdict": "different", "confidence": "high", "reason": "specific museum vs art museums list"}
+{"id": "searchqueries:test:12049118", "verdict": "different", "confidence": "high", "reason": "nclex review vs continuing education"}
+{"id": "searchqueries:test:12049888", "verdict": "different", "confidence": "high", "reason": "cars 2018 vs any vehicle"}
+{"id": "searchqueries:test:12063197", "verdict": "same", "confidence": "high", "reason": "play store = app store"}
+{"id": "searchqueries:test:12080165", "verdict": "same", "confidence": "high", "reason": "take out = to go"}
+{"id": "searchqueries:test:12117182", "verdict": "same", "confidence": "high", "reason": "plural"}
+{"id": "searchqueries:test:12127098", "verdict": "same", "confidence": "low", "reason": "coin machine = coin counting machine"}
+{"id": "searchqueries:test:12161867", "verdict": "same", "confidence": "high", "reason": "discount = cheap"}
+{"id": "searchqueries:test:12200455", "verdict": "same", "confidence": "high", "reason": "hyphen only"}
+{"id": "searchqueries:test:12222480", "verdict": "same", "confidence": "high", "reason": "ET to CT conversion"}
+{"id": "searchqueries:test:12240837", "verdict": "same", "confidence": "high", "reason": "Kohl's 30% coupon code"}
+{"id": "searchqueries:test:12262185", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:12289807", "verdict": "different", "confidence": "high", "reason": "named person vs pay bill"}
+{"id": "searchqueries:test:12371447", "verdict": "same", "confidence": "high", "reason": "climate ~ weather"}
+{"id": "searchqueries:test:12391186", "verdict": "different", "confidence": "high", "reason": "health benefits vs salad recipe"}
+{"id": "searchqueries:test:12432642", "verdict": "different", "confidence": "low", "reason": "check version vs check for updates"}
+{"id": "searchqueries:test:12439025", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:12483993", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:12495169", "verdict": "different", "confidence": "high", "reason": "tsh specific vs blood results general"}
+{"id": "searchqueries:test:12506100", "verdict": "same", "confidence": "high", "reason": "typo cheap, best price tickets"}
+{"id": "searchqueries:test:12551079", "verdict": "different", "confidence": "high", "reason": "specific college vs general calendar"}
+{"id": "searchqueries:test:12574097", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:12650338", "verdict": "same", "confidence": "high", "reason": "car=auto"}
+{"id": "searchqueries:test:12665512", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:12668621", "verdict": "same", "confidence": "high", "reason": "filler word"}
+{"id": "searchqueries:test:12792104", "verdict": "different", "confidence": "high", "reason": "by state vs national average"}
+{"id": "searchqueries:test:12811953", "verdict": "same", "confidence": "high", "reason": "non resident=out of state"}
+{"id": "searchqueries:test:2011574", "verdict": "different", "confidence": "high", "reason": "blue mountain vs blue wilderness"}
+{"id": "searchqueries:test:2031055", "verdict": "different", "confidence": "high", "reason": "insurance vs best rentals"}
+{"id": "searchqueries:test:2047173", "verdict": "different", "confidence": "low", "reason": "per ounce vs per pound"}
+{"id": "searchqueries:test:2058461", "verdict": "different", "confidence": "high", "reason": "mucus vs phlegm difference vs cough symptom"}
+{"id": "searchqueries:test:2104974", "verdict": "different", "confidence": "high", "reason": "ICD-10 code vs causes"}
+{"id": "searchqueries:test:2114114", "verdict": "same", "confidence": "high", "reason": "year filler"}
+{"id": "searchqueries:test:2158087", "verdict": "different", "confidence": "high", "reason": "eligibility vs inductees"}
+{"id": "searchqueries:test:2167556", "verdict": "same", "confidence": "low", "reason": "minor account vs minor savings account"}
+{"id": "searchqueries:test:2258998", "verdict": "same", "confidence": "high", "reason": "word order typo"}
+{"id": "searchqueries:test:2369512", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:2376004", "verdict": "same", "confidence": "high", "reason": "season=series"}
+{"id": "searchqueries:test:2438325", "verdict": "different", "confidence": "high", "reason": "series 2 vs series 5"}
+{"id": "searchqueries:test:2449425", "verdict": "different", "confidence": "high", "reason": "flag history vs buying flags"}
+{"id": "searchqueries:test:2483391", "verdict": "different", "confidence": "high", "reason": "valencia campus vs online"}
+{"id": "searchqueries:test:2509284", "verdict": "same", "confidence": "high", "reason": "bp card payment"}
+{"id": "searchqueries:test:2516114", "verdict": "same", "confidence": "high", "reason": "help desk = contact"}
+{"id": "searchqueries:test:2548582", "verdict": "different", "confidence": "high", "reason": "personal property vs real estate tax"}
+{"id": "searchqueries:test:2573306", "verdict": "same", "confidence": "high", "reason": "same need, driving distance calculator"}
+{"id": "searchqueries:test:2582346", "verdict": "same", "confidence": "high", "reason": "mission=mission statement"}
+{"id": "searchqueries:test:2616775", "verdict": "same", "confidence": "high", "reason": "easy peel hard boiled eggs"}
+{"id": "searchqueries:test:2625401", "verdict": "different", "confidence": "high", "reason": "management guidelines vs list of drugs"}
+{"id": "searchqueries:test:2628537", "verdict": "same", "confidence": "high", "reason": "Duval County is Florida"}
+{"id": "searchqueries:test:2630506", "verdict": "different", "confidence": "low", "reason": "corporate vs retail net banking"}
+{"id": "searchqueries:test:2664827", "verdict": "different", "confidence": "high", "reason": "hiking vs vacation"}
+{"id": "searchqueries:test:2667872", "verdict": "same", "confidence": "high", "reason": "same digital banking"}
+{"id": "searchqueries:test:2670037", "verdict": "different", "confidence": "low", "reason": "El Paso County ambiguous (TX) vs Colorado"}
+{"id": "searchqueries:test:2705822", "verdict": "different", "confidence": "high", "reason": "cherries vs grapes"}
+{"id": "searchqueries:test:2706944", "verdict": "different", "confidence": "high", "reason": "poblano specific vs stuffed peppers"}
+{"id": "searchqueries:test:2728158", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:2748879", "verdict": "different", "confidence": "high", "reason": "troubleshoot opening vs download"}
+{"id": "searchqueries:test:2790725", "verdict": "different", "confidence": "high", "reason": "breast augmentation vs lip filler"}
+{"id": "searchqueries:test:2799546", "verdict": "different", "confidence": "low", "reason": "review vs seats"}
+{"id": "searchqueries:test:2821688", "verdict": "same", "confidence": "low", "reason": "editable/writable document conversion"}
+{"id": "searchqueries:test:2821975", "verdict": "different", "confidence": "low", "reason": "free constraint added"}
+{"id": "searchqueries:test:2857695", "verdict": "same", "confidence": "high", "reason": "string beans=green beans"}
+{"id": "searchqueries:test:2860367", "verdict": "different", "confidence": "high", "reason": "daughter sailor vs couple billy joel"}
+{"id": "searchqueries:test:2895717", "verdict": "same", "confidence": "high", "reason": "auto owners claims number"}
+{"id": "searchqueries:test:2916305", "verdict": "same", "confidence": "high", "reason": "website = official site"}
+{"id": "searchqueries:test:2976954", "verdict": "different", "confidence": "high", "reason": "stew/soup vs stock/broth"}
+{"id": "searchqueries:test:3011623", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:3030863", "verdict": "different", "confidence": "high", "reason": "cheapest island vs cheapest way to get there"}
+{"id": "searchqueries:test:3087612", "verdict": "same", "confidence": "low", "reason": "off duty employment = second job memo"}
+{"id": "searchqueries:test:3122956", "verdict": "different", "confidence": "low", "reason": "Custer/battle vs battlefield site"}
+{"id": "searchqueries:test:3154377", "verdict": "different", "confidence": "high", "reason": "july vs march"}
+{"id": "searchqueries:test:3173431", "verdict": "same", "confidence": "high", "reason": "ii = 2"}
+{"id": "searchqueries:test:3270302", "verdict": "different", "confidence": "high", "reason": "college station vs austin"}
+{"id": "searchqueries:test:3313952", "verdict": "same", "confidence": "high", "reason": "otc=over the counter"}
+{"id": "searchqueries:test:3323757", "verdict": "same", "confidence": "high", "reason": "walking distance=close to"}
+{"id": "searchqueries:test:3355546", "verdict": "same", "confidence": "high", "reason": "usa=america"}
+{"id": "searchqueries:test:3414970", "verdict": "different", "confidence": "high", "reason": "2019 vs 2018 tax year"}
+{"id": "searchqueries:test:3431621", "verdict": "different", "confidence": "high", "reason": "cb&s vs cb&t bank"}
+{"id": "searchqueries:test:3441938", "verdict": "different", "confidence": "high", "reason": "tarp certificate vs atcts system"}
+{"id": "searchqueries:test:3448146", "verdict": "different", "confidence": "high", "reason": "oregon vs arkansas"}
+{"id": "searchqueries:test:3458441", "verdict": "same", "confidence": "high", "reason": "options=systems"}
+{"id": "searchqueries:test:3496326", "verdict": "different", "confidence": "high", "reason": "rental registration vs property tax"}
+{"id": "searchqueries:test:3499128", "verdict": "same", "confidence": "high", "reason": "Chase Freedom card bill pay"}
+{"id": "searchqueries:test:3705901", "verdict": "same", "confidence": "high", "reason": "nearest chili's"}
+{"id": "searchqueries:test:3728462", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:3740958", "verdict": "different", "confidence": "high", "reason": "in house vs on dogs"}
+{"id": "searchqueries:test:3807735", "verdict": "same", "confidence": "high", "reason": "verb form only"}
+{"id": "searchqueries:test:3815602", "verdict": "same", "confidence": "low", "reason": "same comma placement question"}
+{"id": "searchqueries:test:3938196", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:3959959", "verdict": "same", "confidence": "high", "reason": "easy egg peeling"}
+{"id": "searchqueries:test:3968283", "verdict": "different", "confidence": "high", "reason": "late filing vs whether filing open yet"}
+{"id": "searchqueries:test:3998201", "verdict": "same", "confidence": "high", "reason": "same login"}
+{"id": "searchqueries:test:4000083", "verdict": "same", "confidence": "high", "reason": "DQ ice cream is soft serve"}
+{"id": "searchqueries:test:4030485", "verdict": "same", "confidence": "high", "reason": "radeon driver=ati driver"}
+{"id": "searchqueries:test:4080403", "verdict": "same", "confidence": "high", "reason": "text translator is default translator"}
+{"id": "searchqueries:test:4119683", "verdict": "same", "confidence": "high", "reason": "visits = views"}
+{"id": "searchqueries:test:4127486", "verdict": "same", "confidence": "high", "reason": "rewording"}
+{"id": "searchqueries:test:4145588", "verdict": "same", "confidence": "high", "reason": "plural"}
+{"id": "searchqueries:test:4158398", "verdict": "different", "confidence": "high", "reason": "cast to Fire TV vs cast from Kindle Fire tablet"}
+{"id": "searchqueries:test:4168649", "verdict": "same", "confidence": "high", "reason": "free credit report"}
+{"id": "searchqueries:test:4176517", "verdict": "same", "confidence": "high", "reason": "article only"}
+{"id": "searchqueries:test:4186125", "verdict": "same", "confidence": "high", "reason": "burst=rupture"}
+{"id": "searchqueries:test:4294502", "verdict": "different", "confidence": "high", "reason": "fares generally vs train tickets"}
+{"id": "searchqueries:test:4312746", "verdict": "same", "confidence": "high", "reason": "vacancies = jobs"}
+{"id": "searchqueries:test:4371176", "verdict": "same", "confidence": "high", "reason": "cows = cattle"}
+{"id": "searchqueries:test:4380467", "verdict": "different", "confidence": "high", "reason": "definition vs example"}
+{"id": "searchqueries:test:4384180", "verdict": "different", "confidence": "low", "reason": "specific proverb/phrase origin vs golden rule wording"}
+{"id": "searchqueries:test:4395824", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:4443929", "verdict": "same", "confidence": "high", "reason": "same application"}
+{"id": "searchqueries:test:4447778", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:4475514", "verdict": "same", "confidence": "high", "reason": "plural only"}
+{"id": "searchqueries:test:4498710", "verdict": "different", "confidence": "high", "reason": "heating fuel oil vs fuel generally"}
+{"id": "searchqueries:test:4552560", "verdict": "same", "confidence": "high", "reason": "concerts ~ shows"}
+{"id": "searchqueries:test:4579899", "verdict": "different", "confidence": "high", "reason": "iPhone 5 vs 7"}
+{"id": "searchqueries:test:4595583", "verdict": "same", "confidence": "high", "reason": "added city only"}
+{"id": "searchqueries:test:4601848", "verdict": "same", "confidence": "high", "reason": "comcast email sign in"}
+{"id": "searchqueries:test:4619256", "verdict": "different", "confidence": "high", "reason": "fee waiver application vs license fee"}
+{"id": "searchqueries:test:4628587", "verdict": "different", "confidence": "high", "reason": "brockville vs ottawa"}
+{"id": "searchqueries:test:4677488", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:4750745", "verdict": "different", "confidence": "high", "reason": "colleges vs city government"}
+{"id": "searchqueries:test:4800270", "verdict": "same", "confidence": "high", "reason": "coupon code = coupons"}
+{"id": "searchqueries:test:4949415", "verdict": "different", "confidence": "high", "reason": "temperature vs cabins"}
+{"id": "searchqueries:test:4969267", "verdict": "different", "confidence": "high", "reason": "plain vs chocolate frosting"}
+{"id": "searchqueries:test:4982998", "verdict": "different", "confidence": "high", "reason": "outlook web app 2010 vs outlook windows 10"}
+{"id": "searchqueries:test:5045207", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:5081889", "verdict": "different", "confidence": "high", "reason": "short ribs vs country ribs"}
+{"id": "searchqueries:test:5119975", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:5143092", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:5193648", "verdict": "different", "confidence": "high", "reason": "Saskatchewan vs Canada"}
+{"id": "searchqueries:test:5274739", "verdict": "same", "confidence": "high", "reason": "examples implied"}
+{"id": "searchqueries:test:5295131", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:5297460", "verdict": "same", "confidence": "high", "reason": "prices = fares"}
+{"id": "searchqueries:test:5354041", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:5364277", "verdict": "same", "confidence": "high", "reason": "same page"}
+{"id": "searchqueries:test:5381133", "verdict": "same", "confidence": "high", "reason": "create=design"}
+{"id": "searchqueries:test:5399348", "verdict": "same", "confidence": "high", "reason": "facebook login typo"}
+{"id": "searchqueries:test:5573863", "verdict": "different", "confidence": "low", "reason": "new includes tv shows"}
+{"id": "searchqueries:test:5634309", "verdict": "different", "confidence": "high", "reason": "uncooked vs cooked"}
+{"id": "searchqueries:test:5669105", "verdict": "different", "confidence": "high", "reason": "Michigan insurance vs bank"}
+{"id": "searchqueries:test:5690121", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:5692686", "verdict": "different", "confidence": "high", "reason": "all baseball vs Astros only"}
+{"id": "searchqueries:test:5696027", "verdict": "same", "confidence": "high", "reason": "bootable usb implied"}
+{"id": "searchqueries:test:5719008", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:5756314", "verdict": "different", "confidence": "high", "reason": "season 3 cast vs overall cast"}
+{"id": "searchqueries:test:5861208", "verdict": "same", "confidence": "low", "reason": "online sales may mean deals vs shopping"}
+{"id": "searchqueries:test:5901254", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:5913998", "verdict": "same", "confidence": "high", "reason": "plural only"}
+{"id": "searchqueries:test:5922667", "verdict": "same", "confidence": "high", "reason": "plural"}
+{"id": "searchqueries:test:5945771", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:5956576", "verdict": "same", "confidence": "high", "reason": "filler words"}
+{"id": "searchqueries:test:5990117", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:5994392", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:6060387", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:6065567", "verdict": "same", "confidence": "high", "reason": "filler word"}
+{"id": "searchqueries:test:6079311", "verdict": "different", "confidence": "high", "reason": "origin denver specified"}
+{"id": "searchqueries:test:6102323", "verdict": "same", "confidence": "low", "reason": "domestic rates included in parcel rates"}
+{"id": "searchqueries:test:6107506", "verdict": "different", "confidence": "low", "reason": "any product vs specifically hair gel"}
+{"id": "searchqueries:test:6110144", "verdict": "same", "confidence": "high", "reason": "binge worthy shows 2018 rewording"}
+{"id": "searchqueries:test:6134014", "verdict": "different", "confidence": "high", "reason": "reversed conversion direction"}
+{"id": "searchqueries:test:6225502", "verdict": "different", "confidence": "high", "reason": "iron vs steel"}
+{"id": "searchqueries:test:6244285", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:6315420", "verdict": "same", "confidence": "high", "reason": "list implied"}
+{"id": "searchqueries:test:6482194", "verdict": "different", "confidence": "high", "reason": "frequency vs benefits"}
+{"id": "searchqueries:test:6527367", "verdict": "same", "confidence": "low", "reason": "certificates vs records, same gro need"}
+{"id": "searchqueries:test:6549846", "verdict": "same", "confidence": "high", "reason": "phone=contact number"}
+{"id": "searchqueries:test:6550669", "verdict": "same", "confidence": "high", "reason": "best = best rated"}
+{"id": "searchqueries:test:6609897", "verdict": "same", "confidence": "high", "reason": "best filler"}
+{"id": "searchqueries:test:6626226", "verdict": "same", "confidence": "high", "reason": "ii = 2"}
+{"id": "searchqueries:test:6685793", "verdict": "different", "confidence": "high", "reason": "mailing address vs instructions"}
+{"id": "searchqueries:test:6725503", "verdict": "same", "confidence": "high", "reason": "i and d = i&d"}
+{"id": "searchqueries:test:6742938", "verdict": "different", "confidence": "low", "reason": "tincture vs infused oil"}
+{"id": "searchqueries:test:6744065", "verdict": "different", "confidence": "high", "reason": "1978 vs 1980"}
+{"id": "searchqueries:test:6787192", "verdict": "same", "confidence": "high", "reason": "mot history check"}
+{"id": "searchqueries:test:6797766", "verdict": "different", "confidence": "high", "reason": "by state vs near me"}
+{"id": "searchqueries:test:6896427", "verdict": "same", "confidence": "high", "reason": "same patient portal"}
+{"id": "searchqueries:test:6909408", "verdict": "different", "confidence": "high", "reason": "thyroid condition vs medication"}
+{"id": "searchqueries:test:6946599", "verdict": "same", "confidence": "high", "reason": "belly = stomach fat"}
+{"id": "searchqueries:test:6958127", "verdict": "same", "confidence": "high", "reason": "bed bug bite pictures"}
+{"id": "searchqueries:test:6981320", "verdict": "same", "confidence": "high", "reason": "uk implied"}
+{"id": "searchqueries:test:7032657", "verdict": "same", "confidence": "low", "reason": "both seek home insurance quotes online"}
+{"id": "searchqueries:test:7092445", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:7102288", "verdict": "same", "confidence": "high", "reason": "find person by name"}
+{"id": "searchqueries:test:7133730", "verdict": "different", "confidence": "high", "reason": "revolution context vs author"}
+{"id": "searchqueries:test:7173686", "verdict": "same", "confidence": "high", "reason": "combined Disney+Universal tickets"}
+{"id": "searchqueries:test:7176686", "verdict": "same", "confidence": "high", "reason": "plural only"}
+{"id": "searchqueries:test:7187322", "verdict": "different", "confidence": "high", "reason": "national vs California rates"}
+{"id": "searchqueries:test:7196558", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:7206347", "verdict": "same", "confidence": "high", "reason": "typos bed bath beyond"}
+{"id": "searchqueries:test:7221191", "verdict": "same", "confidence": "high", "reason": "typo"}
+{"id": "searchqueries:test:7247369", "verdict": "same", "confidence": "high", "reason": "rewording"}
+{"id": "searchqueries:test:7260753", "verdict": "same", "confidence": "high", "reason": "article only"}
+{"id": "searchqueries:test:7288279", "verdict": "same", "confidence": "high", "reason": "phone = smartphone"}
+{"id": "searchqueries:test:7317398", "verdict": "same", "confidence": "high", "reason": "bttf toyota is the pickup"}
+{"id": "searchqueries:test:7322457", "verdict": "different", "confidence": "high", "reason": "monarch specifically vs butterflies for kids"}
+{"id": "searchqueries:test:7323171", "verdict": "different", "confidence": "low", "reason": "band vs song"}
+{"id": "searchqueries:test:7379690", "verdict": "different", "confidence": "high", "reason": "shelling beaches all fl vs south fl beaches"}
+{"id": "searchqueries:test:7379703", "verdict": "same", "confidence": "high", "reason": "make=cook"}
+{"id": "searchqueries:test:7395826", "verdict": "same", "confidence": "high", "reason": "visa = credit card"}
+{"id": "searchqueries:test:7410138", "verdict": "same", "confidence": "high", "reason": "synonyms"}
+{"id": "searchqueries:test:7416360", "verdict": "same", "confidence": "high", "reason": "word order only"}
+{"id": "searchqueries:test:7428599", "verdict": "same", "confidence": "high", "reason": "country style=country pork ribs"}
+{"id": "searchqueries:test:7442638", "verdict": "different", "confidence": "high", "reason": "utah vs united states"}
+{"id": "searchqueries:test:7472182", "verdict": "same", "confidence": "low", "reason": "ISO is the 64-bit download"}
+{"id": "searchqueries:test:7477056", "verdict": "same", "confidence": "low", "reason": "app vs apps; both download itunes free"}
+{"id": "searchqueries:test:7526568", "verdict": "different", "confidence": "high", "reason": "wiki vs yesterday's episode"}
+{"id": "searchqueries:test:7547079", "verdict": "different", "confidence": "high", "reason": "tax rates vs tax form"}
+{"id": "searchqueries:test:7589685", "verdict": "same", "confidence": "high", "reason": "airline = flight tickets"}
+{"id": "searchqueries:test:7615241", "verdict": "same", "confidence": "high", "reason": "customer = member services"}
+{"id": "searchqueries:test:7628088", "verdict": "same", "confidence": "low", "reason": "cached adds 2018 year; same uk dash cam reviews"}
+{"id": "searchqueries:test:7689280", "verdict": "same", "confidence": "high", "reason": "health club = gym"}
+{"id": "searchqueries:test:7751346", "verdict": "different", "confidence": "high", "reason": "window screens vs whole window"}
+{"id": "searchqueries:test:7820134", "verdict": "different", "confidence": "high", "reason": "car seats vs cars"}
+{"id": "searchqueries:test:7822191", "verdict": "different", "confidence": "high", "reason": "retirement savings credit vs education credits"}
+{"id": "searchqueries:test:7825207", "verdict": "different", "confidence": "high", "reason": "chapter 11 vs 13 vs chapter 7 vs 11"}
+{"id": "searchqueries:test:7863804", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:7866934", "verdict": "different", "confidence": "high", "reason": "DC comic event vs Arrowverse crossover"}
+{"id": "searchqueries:test:7904533", "verdict": "different", "confidence": "high", "reason": "IHSS vs behavioral health"}
+{"id": "searchqueries:test:7922597", "verdict": "different", "confidence": "low", "reason": "specific Blue Essentials plan vs BCBS SC general"}
+{"id": "searchqueries:test:7940802", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:7963526", "verdict": "different", "confidence": "high", "reason": "adds Italy"}
+{"id": "searchqueries:test:8071421", "verdict": "same", "confidence": "high", "reason": "plural only"}
+{"id": "searchqueries:test:8081024", "verdict": "different", "confidence": "high", "reason": "specific age 70 vs general average"}
+{"id": "searchqueries:test:8096267", "verdict": "different", "confidence": "high", "reason": "bone in vs boneless"}
+{"id": "searchqueries:test:8100065", "verdict": "same", "confidence": "high", "reason": "synonyms"}
+{"id": "searchqueries:test:8102790", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:8148747", "verdict": "same", "confidence": "high", "reason": "edd boa debit card"}
+{"id": "searchqueries:test:8200471", "verdict": "different", "confidence": "high", "reason": "hours vs online banking"}
+{"id": "searchqueries:test:8214334", "verdict": "same", "confidence": "high", "reason": "IL abbreviation"}
+{"id": "searchqueries:test:8271365", "verdict": "same", "confidence": "high", "reason": "same comparison"}
+{"id": "searchqueries:test:8329794", "verdict": "different", "confidence": "low", "reason": "direct deposit address vs general mailing address"}
+{"id": "searchqueries:test:8425387", "verdict": "same", "confidence": "high", "reason": "CA DMV sample tests"}
+{"id": "searchqueries:test:8433541", "verdict": "different", "confidence": "high", "reason": "disadvantages vs benefits"}
+{"id": "searchqueries:test:8437987", "verdict": "same", "confidence": "high", "reason": "supplement = supplemental"}
+{"id": "searchqueries:test:8457454", "verdict": "same", "confidence": "low", "reason": "video maker=movie maker (possibly windows movie maker)"}
+{"id": "searchqueries:test:8462333", "verdict": "different", "confidence": "low", "reason": "el paso (likely tx) 2018 vs colorado county"}
+{"id": "searchqueries:test:8482053", "verdict": "same", "confidence": "high", "reason": "price vs money synonym"}
+{"id": "searchqueries:test:8500099", "verdict": "same", "confidence": "high", "reason": "charter customer service number"}
+{"id": "searchqueries:test:8520600", "verdict": "same", "confidence": "high", "reason": "Carson City is in Nevada"}
+{"id": "searchqueries:test:8550106", "verdict": "same", "confidence": "high", "reason": "see ~ do, AZ abbreviation"}
+{"id": "searchqueries:test:8585676", "verdict": "different", "confidence": "high", "reason": "side effects vs best medication"}
+{"id": "searchqueries:test:8627733", "verdict": "different", "confidence": "high", "reason": "long island vs near me location"}
+{"id": "searchqueries:test:8677098", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:8759192", "verdict": "different", "confidence": "high", "reason": "initiative overall vs math standards"}
+{"id": "searchqueries:test:8790419", "verdict": "same", "confidence": "high", "reason": "same recipe need"}
+{"id": "searchqueries:test:8844515", "verdict": "same", "confidence": "low", "reason": "group likely contact group email"}
+{"id": "searchqueries:test:8902733", "verdict": "different", "confidence": "high", "reason": "specific terminal 2e vs all terminals"}
+{"id": "searchqueries:test:8903378", "verdict": "different", "confidence": "high", "reason": "staff vs news"}
+{"id": "searchqueries:test:8925864", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:8929774", "verdict": "different", "confidence": "high", "reason": "meal vs burger only"}
+{"id": "searchqueries:test:8967072", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:8976843", "verdict": "same", "confidence": "high", "reason": "typo"}
+{"id": "searchqueries:test:9008432", "verdict": "same", "confidence": "high", "reason": "is donation painful"}
+{"id": "searchqueries:test:9025768", "verdict": "same", "confidence": "high", "reason": "docks implies boat docks"}
+{"id": "searchqueries:test:9042440", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:9234768", "verdict": "same", "confidence": "high", "reason": "cities=locations"}
+{"id": "searchqueries:test:9240393", "verdict": "different", "confidence": "high", "reason": "create list vs add items to existing list"}
+{"id": "searchqueries:test:9266718", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:9268280", "verdict": "different", "confidence": "high", "reason": "carmel valley san diego vs carmel by the sea"}
+{"id": "searchqueries:test:9293606", "verdict": "different", "confidence": "high", "reason": "specific player vs general mlb rumors"}
+{"id": "searchqueries:test:9304123", "verdict": "same", "confidence": "high", "reason": "word order"}
+{"id": "searchqueries:test:9310172", "verdict": "same", "confidence": "high", "reason": "places to stay ~ hotels"}
+{"id": "searchqueries:test:9311042", "verdict": "same", "confidence": "high", "reason": "filler word"}
+{"id": "searchqueries:test:9315202", "verdict": "different", "confidence": "high", "reason": "pdf guide vs ewtn site"}
+{"id": "searchqueries:test:9366546", "verdict": "same", "confidence": "high", "reason": "computer ~ laptop"}
+{"id": "searchqueries:test:9372987", "verdict": "same", "confidence": "high", "reason": "plural only"}
+{"id": "searchqueries:test:9464050", "verdict": "different", "confidence": "low", "reason": "reversed conversion direction"}
+{"id": "searchqueries:test:9476179", "verdict": "same", "confidence": "high", "reason": "army corps campgrounds list"}
+{"id": "searchqueries:test:9477198", "verdict": "same", "confidence": "high", "reason": "play=play store"}
+{"id": "searchqueries:test:9478090", "verdict": "same", "confidence": "high", "reason": "cowboys = dallas cowboys"}
+{"id": "searchqueries:test:9543128", "verdict": "different", "confidence": "high", "reason": "trailblazer model vs any chevy"}
+{"id": "searchqueries:test:9564533", "verdict": "same", "confidence": "high", "reason": "plural only"}
+{"id": "searchqueries:test:9583138", "verdict": "same", "confidence": "low", "reason": "hand baggage covered by allowance page"}
+{"id": "searchqueries:test:9628604", "verdict": "different", "confidence": "high", "reason": "ohio vs florida"}
+{"id": "searchqueries:test:9664221", "verdict": "different", "confidence": "high", "reason": "steadfast love specific vs love generally"}
+{"id": "searchqueries:test:9674606", "verdict": "same", "confidence": "high", "reason": "synonyms"}
+{"id": "searchqueries:test:9730547", "verdict": "different", "confidence": "high", "reason": "ottawa vs kingston"}
+{"id": "searchqueries:test:9784095", "verdict": "different", "confidence": "high", "reason": "character deaths vs movie"}
+{"id": "searchqueries:test:9794152", "verdict": "same", "confidence": "high", "reason": "bank branch lookup by sort code"}
+{"id": "searchqueries:test:9836129", "verdict": "same", "confidence": "high", "reason": "reworded"}
+{"id": "searchqueries:test:9928545", "verdict": "different", "confidence": "high", "reason": "blank vs non blank"}
+{"id": "searchqueries:test:9934494", "verdict": "different", "confidence": "high", "reason": "car crash death vs recent deaths generally"}
+{"id": "searchqueries:test:9938347", "verdict": "different", "confidence": "high", "reason": "episode 50 vs season 1"}

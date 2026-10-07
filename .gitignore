@@ -6,6 +6,7 @@ results/*
 !results/states/
 !results/replay/
 !results/inloop/
+!results/label-corrections/
 # GAIA text must never be committed — the repo is public and GAIA's terms forbid crawlable
 # re-sharing (CHECKS.md #5). Name any GAIA-derived states/runs with "gaia" in the path.
 results/**/*gaia*

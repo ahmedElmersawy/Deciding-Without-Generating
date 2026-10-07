@@ -14,6 +14,23 @@
     "test": 2000
   },
   "reuse_correct_rate": {
+    "dev": 0.6216666666666667,
+    "test": 0.5825
+  },
+  "label_corrections": {
+    "corrector": "claude-opus-5-5",
+    "guideline": "results/label-corrections/GUIDELINE.md",
+    "reviewed": 2600,
+    "flip_candidates": 465,
+    "changed": 409,
+    "changed_by_split": {
+      "dev": 104,
+      "test": 305
+    },
+    "to_reuse": 267,
+    "to_regenerate": 142
+  },
+  "reuse_correct_rate_original": {
     "dev": 0.5516666666666666,
     "test": 0.541
   }

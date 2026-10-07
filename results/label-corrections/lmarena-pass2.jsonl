@@ -1,0 +1,174 @@
+{"id": "lmarena:dev:19973", "verdict": "same", "confidence": "high", "reason": "same riddle reworded"}
+{"id": "lmarena:dev:20114", "verdict": "same", "confidence": "high", "reason": "reworded instruction"}
+{"id": "lmarena:dev:20882", "verdict": "same", "confidence": "high", "reason": "same content-warning instruction"}
+{"id": "lmarena:dev:26010", "verdict": "same", "confidence": "high", "reason": "same marble/mug puzzle reworded"}
+{"id": "lmarena:dev:29105", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:dev:29109", "verdict": "same", "confidence": "high", "reason": "lowest vs least"}
+{"id": "lmarena:dev:29764", "verdict": "different", "confidence": "high", "reason": "boat holds both vs only one at a time"}
+{"id": "lmarena:dev:30731", "verdict": "same", "confidence": "high", "reason": "same puzzle"}
+{"id": "lmarena:dev:35456", "verdict": "different", "confidence": "high", "reason": "boat carries one vs both shepherd and sheep"}
+{"id": "lmarena:dev:40671", "verdict": "different", "confidence": "low", "reason": "new forbids answering magical or metaphysical damage"}
+{"id": "lmarena:dev:41269", "verdict": "same", "confidence": "low", "reason": "same 16 words, cached phrasing garbled but same task"}
+{"id": "lmarena:dev:4221", "verdict": "same", "confidence": "low", "reason": "Paris Olympics implicitly 2024"}
+{"id": "lmarena:dev:4375", "verdict": "same", "confidence": "high", "reason": "same mental image request"}
+{"id": "lmarena:dev:44362", "verdict": "different", "confidence": "high", "reason": "new omits the $1,200,000 business income"}
+{"id": "lmarena:dev:4595", "verdict": "same", "confidence": "low", "reason": "cached adds plot twists requirement, its answer still fits new"}
+{"id": "lmarena:dev:4858", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:dev:49645", "verdict": "different", "confidence": "high", "reason": "different slogan texts"}
+{"id": "lmarena:dev:50407", "verdict": "different", "confidence": "high", "reason": "Mark stays vs Felix exits, different scenario"}
+{"id": "lmarena:dev:52420", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:dev:52442", "verdict": "different", "confidence": "low", "reason": "top 50 languages generally vs languages you are proficient in"}
+{"id": "lmarena:dev:60313", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:dev:62555", "verdict": "same", "confidence": "high", "reason": "same conditions reordered"}
+{"id": "lmarena:dev:63018", "verdict": "same", "confidence": "high", "reason": "same items reordered"}
+{"id": "lmarena:dev:65202", "verdict": "same", "confidence": "high", "reason": "same poker spot reworded"}
+{"id": "lmarena:dev:69232", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:dev:74218", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:dev:74229", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:dev:81102", "verdict": "same", "confidence": "high", "reason": "same languages request with filler"}
+{"id": "lmarena:dev:83710", "verdict": "same", "confidence": "high", "reason": "spacing only"}
+{"id": "lmarena:dev:9204", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:dev:9622", "verdict": "different", "confidence": "high", "reason": "Bob plus two other brothers vs Bob plus three"}
+{"id": "lmarena:test:10027", "verdict": "different", "confidence": "high", "reason": "different lyrics lines 3-4"}
+{"id": "lmarena:test:10115", "verdict": "same", "confidence": "high", "reason": "same languages request with filler"}
+{"id": "lmarena:test:10739", "verdict": "same", "confidence": "high", "reason": "reworded instruction"}
+{"id": "lmarena:test:11705", "verdict": "same", "confidence": "high", "reason": "same problem, trailing fragment"}
+{"id": "lmarena:test:1222", "verdict": "different", "confidence": "high", "reason": "new requires yes/no answer format"}
+{"id": "lmarena:test:12301", "verdict": "different", "confidence": "low", "reason": "compares \"an\" vs \"a\" ruthless efficiency, different alternative"}
+{"id": "lmarena:test:12752", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:12797", "verdict": "different", "confidence": "high", "reason": "shortest vector vs Hermite factor"}
+{"id": "lmarena:test:13618", "verdict": "same", "confidence": "high", "reason": "same bird puzzle reworded"}
+{"id": "lmarena:test:15226", "verdict": "same", "confidence": "high", "reason": "consumed vs ate"}
+{"id": "lmarena:test:15581", "verdict": "same", "confidence": "low", "reason": "both ask sprinkler count for same space; step-by-step emphasis only"}
+{"id": "lmarena:test:16059", "verdict": "same", "confidence": "high", "reason": "near identical"}
+{"id": "lmarena:test:1720", "verdict": "different", "confidence": "high", "reason": "rephrase the question vs answer it"}
+{"id": "lmarena:test:17367", "verdict": "same", "confidence": "low", "reason": "both ask to describe imagined curved/circular triangle"}
+{"id": "lmarena:test:17383", "verdict": "same", "confidence": "high", "reason": "wrapper only"}
+{"id": "lmarena:test:19480", "verdict": "same", "confidence": "high", "reason": "same riddle reworded"}
+{"id": "lmarena:test:19904", "verdict": "same", "confidence": "high", "reason": "same trivia request reworded"}
+{"id": "lmarena:test:20978", "verdict": "same", "confidence": "high", "reason": "reworded instruction"}
+{"id": "lmarena:test:21299", "verdict": "different", "confidence": "low", "reason": "truncated grid prompts with differing/unknown questions"}
+{"id": "lmarena:test:22825", "verdict": "same", "confidence": "high", "reason": "same puzzle, added step-by-step filler"}
+{"id": "lmarena:test:22921", "verdict": "different", "confidence": "high", "reason": "new limits response to 2 words"}
+{"id": "lmarena:test:22923", "verdict": "same", "confidence": "high", "reason": "same stats and routine reworded"}
+{"id": "lmarena:test:23422", "verdict": "different", "confidence": "high", "reason": "different roleplay passages to continue"}
+{"id": "lmarena:test:23816", "verdict": "same", "confidence": "high", "reason": "same self-referential word count question"}
+{"id": "lmarena:test:23847", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:2394", "verdict": "different", "confidence": "high", "reason": "cached adds 57 children with Jane, changed setup"}
+{"id": "lmarena:test:25046", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:25524", "verdict": "same", "confidence": "high", "reason": "same numbers reworded"}
+{"id": "lmarena:test:25586", "verdict": "same", "confidence": "high", "reason": "same word, dialect and outputs"}
+{"id": "lmarena:test:25595", "verdict": "same", "confidence": "high", "reason": "showing vs illustrating, same request"}
+{"id": "lmarena:test:26098", "verdict": "different", "confidence": "low", "reason": "new query lacks the list of values the cached one supplies"}
+{"id": "lmarena:test:26425", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:26438", "verdict": "same", "confidence": "high", "reason": "reworded clock puzzle, same setup"}
+{"id": "lmarena:test:27358", "verdict": "same", "confidence": "high", "reason": "same clock puzzle reworded"}
+{"id": "lmarena:test:27367", "verdict": "same", "confidence": "high", "reason": "same boat setup reworded"}
+{"id": "lmarena:test:27578", "verdict": "same", "confidence": "high", "reason": "casing only"}
+{"id": "lmarena:test:27597", "verdict": "same", "confidence": "high", "reason": "casing only"}
+{"id": "lmarena:test:27598", "verdict": "same", "confidence": "high", "reason": "casing only"}
+{"id": "lmarena:test:28544", "verdict": "same", "confidence": "high", "reason": "same text, quote mark only"}
+{"id": "lmarena:test:28905", "verdict": "different", "confidence": "high", "reason": "cached says door 2 is guaranteed goat, changed setup"}
+{"id": "lmarena:test:28912", "verdict": "same", "confidence": "low", "reason": "same Monty Hall setup, both truncated"}
+{"id": "lmarena:test:29551", "verdict": "different", "confidence": "high", "reason": "count of \"rs\" combination vs count of letter R"}
+{"id": "lmarena:test:30015", "verdict": "different", "confidence": "high", "reason": "new lacks the error details"}
+{"id": "lmarena:test:30275", "verdict": "same", "confidence": "high", "reason": "same candle puzzle reworded"}
+{"id": "lmarena:test:31371", "verdict": "same", "confidence": "low", "reason": "both ask info, employees and most fair one"}
+{"id": "lmarena:test:32234", "verdict": "same", "confidence": "high", "reason": "reworded instruction"}
+{"id": "lmarena:test:32236", "verdict": "same", "confidence": "high", "reason": "same instruction reworded"}
+{"id": "lmarena:test:32237", "verdict": "same", "confidence": "high", "reason": "use vs utilize"}
+{"id": "lmarena:test:32912", "verdict": "same", "confidence": "high", "reason": "train vs trolley, same dilemma"}
+{"id": "lmarena:test:35258", "verdict": "same", "confidence": "high", "reason": "added \"ever\" only"}
+{"id": "lmarena:test:37063", "verdict": "same", "confidence": "high", "reason": "same instruction reworded"}
+{"id": "lmarena:test:37129", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:37137", "verdict": "same", "confidence": "high", "reason": "same question reworded"}
+{"id": "lmarena:test:37612", "verdict": "same", "confidence": "high", "reason": "same puzzle reworded"}
+{"id": "lmarena:test:37618", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:37904", "verdict": "different", "confidence": "low", "reason": "different day puzzle setup, same answer"}
+{"id": "lmarena:test:38323", "verdict": "same", "confidence": "low", "reason": "same ghoul outline request, minor emphasis differences"}
+{"id": "lmarena:test:39555", "verdict": "same", "confidence": "high", "reason": "same question, option order swapped"}
+{"id": "lmarena:test:3970", "verdict": "different", "confidence": "high", "reason": "total hours vs average hours per day"}
+{"id": "lmarena:test:40089", "verdict": "same", "confidence": "high", "reason": "same hexagram, same request"}
+{"id": "lmarena:test:40101", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:40281", "verdict": "same", "confidence": "high", "reason": "same frog puzzle reworded"}
+{"id": "lmarena:test:40284", "verdict": "same", "confidence": "high", "reason": "same frog puzzle reworded"}
+{"id": "lmarena:test:41281", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:41316", "verdict": "same", "confidence": "high", "reason": "same boat puzzle reworded"}
+{"id": "lmarena:test:41327", "verdict": "same", "confidence": "high", "reason": "same boat setup reworded"}
+{"id": "lmarena:test:42410", "verdict": "different", "confidence": "high", "reason": "rephrase the prompt vs help write the abstract"}
+{"id": "lmarena:test:44329", "verdict": "same", "confidence": "high", "reason": "same question reworded"}
+{"id": "lmarena:test:45293", "verdict": "same", "confidence": "high", "reason": "punctuation only"}
+{"id": "lmarena:test:45579", "verdict": "different", "confidence": "high", "reason": "different riddle text"}
+{"id": "lmarena:test:46379", "verdict": "same", "confidence": "high", "reason": "same marble puzzle reworded"}
+{"id": "lmarena:test:46521", "verdict": "different", "confidence": "high", "reason": "pole behind you (walking south) vs facing east"}
+{"id": "lmarena:test:46536", "verdict": "same", "confidence": "high", "reason": "1 km from North Pole facing east, same setup"}
+{"id": "lmarena:test:47452", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:47460", "verdict": "same", "confidence": "high", "reason": "one brother vs a brother"}
+{"id": "lmarena:test:47463", "verdict": "same", "confidence": "high", "reason": "added consistent detail"}
+{"id": "lmarena:test:4768", "verdict": "different", "confidence": "high", "reason": "E3 started vs ended in 507 BC"}
+{"id": "lmarena:test:4775", "verdict": "different", "confidence": "high", "reason": "E3 started vs ended in 507 BC"}
+{"id": "lmarena:test:47871", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:48966", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:49421", "verdict": "different", "confidence": "high", "reason": "currently have 3 and 2 vs start with them then eat"}
+{"id": "lmarena:test:49466", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:50035", "verdict": "same", "confidence": "high", "reason": "question vs imperative, same constraint"}
+{"id": "lmarena:test:50233", "verdict": "same", "confidence": "high", "reason": "same SAP DI API C# task"}
+{"id": "lmarena:test:5169", "verdict": "same", "confidence": "high", "reason": "same Sally puzzle"}
+{"id": "lmarena:test:54125", "verdict": "different", "confidence": "low", "reason": "synonym for remoteness vs synonym for distance"}
+{"id": "lmarena:test:54925", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:56774", "verdict": "same", "confidence": "high", "reason": "same numbers reworded"}
+{"id": "lmarena:test:56855", "verdict": "different", "confidence": "high", "reason": "different riddles"}
+{"id": "lmarena:test:58080", "verdict": "different", "confidence": "high", "reason": "countable vs finite number of times"}
+{"id": "lmarena:test:59767", "verdict": "different", "confidence": "high", "reason": "paraphrase vs explain the joke"}
+{"id": "lmarena:test:59838", "verdict": "same", "confidence": "low", "reason": "same truncated proficiency-ranking request"}
+{"id": "lmarena:test:60097", "verdict": "different", "confidence": "high", "reason": "new includes full letter text to edit, cached has none"}
+{"id": "lmarena:test:60176", "verdict": "same", "confidence": "high", "reason": "same joke request reworded"}
+{"id": "lmarena:test:62018", "verdict": "same", "confidence": "high", "reason": "same roleplay and question"}
+{"id": "lmarena:test:62119", "verdict": "different", "confidence": "high", "reason": "code snippet (20% threshold) vs request to exclude bottom 10%"}
+{"id": "lmarena:test:62301", "verdict": "same", "confidence": "high", "reason": "answer vs response synonym"}
+{"id": "lmarena:test:6501", "verdict": "same", "confidence": "high", "reason": "same question reworded"}
+{"id": "lmarena:test:65017", "verdict": "different", "confidence": "high", "reason": "new has 20 quiz questions, cached only first 3"}
+{"id": "lmarena:test:65857", "verdict": "different", "confidence": "high", "reason": "different day offsets: two days after day before tomorrow vs day after day after tomorrow; eight days vs a week ago"}
+{"id": "lmarena:test:66001", "verdict": "same", "confidence": "high", "reason": "same riddle with typos"}
+{"id": "lmarena:test:6604", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:66285", "verdict": "different", "confidence": "low", "reason": "create a prompt variation vs the cities coding task itself"}
+{"id": "lmarena:test:66481", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:66486", "verdict": "same", "confidence": "high", "reason": "same claim, accurate vs valid"}
+{"id": "lmarena:test:67601", "verdict": "same", "confidence": "high", "reason": "same Java question"}
+{"id": "lmarena:test:67879", "verdict": "same", "confidence": "high", "reason": "same marble puzzle reworded"}
+{"id": "lmarena:test:68359", "verdict": "same", "confidence": "high", "reason": "same snacks and task reworded"}
+{"id": "lmarena:test:70501", "verdict": "same", "confidence": "high", "reason": "same witty response request"}
+{"id": "lmarena:test:70949", "verdict": "same", "confidence": "high", "reason": "same puzzle reworded"}
+{"id": "lmarena:test:70950", "verdict": "same", "confidence": "high", "reason": "same puzzle reworded"}
+{"id": "lmarena:test:71049", "verdict": "same", "confidence": "high", "reason": "same shapes reworded"}
+{"id": "lmarena:test:71214", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:71365", "verdict": "same", "confidence": "high", "reason": "same frog puzzle reworded"}
+{"id": "lmarena:test:71432", "verdict": "different", "confidence": "high", "reason": "options c and d differ in content"}
+{"id": "lmarena:test:72137", "verdict": "different", "confidence": "high", "reason": "SY0-501 vs SY0-701 exam"}
+{"id": "lmarena:test:72634", "verdict": "different", "confidence": "high", "reason": "new requires answer in 2 words"}
+{"id": "lmarena:test:72699", "verdict": "same", "confidence": "high", "reason": "reworded instruction"}
+{"id": "lmarena:test:73062", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:73600", "verdict": "same", "confidence": "high", "reason": "same puzzle reworded"}
+{"id": "lmarena:test:74094", "verdict": "same", "confidence": "high", "reason": "punctuation only"}
+{"id": "lmarena:test:75986", "verdict": "same", "confidence": "high", "reason": "same numbers and target"}
+{"id": "lmarena:test:7670", "verdict": "same", "confidence": "high", "reason": "line formula answers both"}
+{"id": "lmarena:test:76876", "verdict": "same", "confidence": "high", "reason": "reworded instruction"}
+{"id": "lmarena:test:78320", "verdict": "same", "confidence": "high", "reason": "box vs bag irrelevant, all 20 pounds"}
+{"id": "lmarena:test:78324", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:78328", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:78828", "verdict": "same", "confidence": "low", "reason": "same chest puzzle reworded, both truncated"}
+{"id": "lmarena:test:80456", "verdict": "same", "confidence": "high", "reason": "same clock puzzle reworded"}
+{"id": "lmarena:test:80546", "verdict": "same", "confidence": "high", "reason": "same puzzle reworded"}
+{"id": "lmarena:test:80563", "verdict": "same", "confidence": "high", "reason": "same puzzle reworded"}
+{"id": "lmarena:test:8058", "verdict": "same", "confidence": "high", "reason": "same puzzle reworded"}
+{"id": "lmarena:test:81769", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:81770", "verdict": "same", "confidence": "high", "reason": "same instruction reworded"}
+{"id": "lmarena:test:82131", "verdict": "same", "confidence": "high", "reason": "same frog puzzle reworded"}
+{"id": "lmarena:test:82460", "verdict": "different", "confidence": "high", "reason": "different premises (erasers cheaper vs more expensive than pens)"}
+{"id": "lmarena:test:82495", "verdict": "same", "confidence": "high", "reason": "same three asks reworded"}
+{"id": "lmarena:test:83219", "verdict": "same", "confidence": "high", "reason": "same question reworded"}
+{"id": "lmarena:test:8794", "verdict": "same", "confidence": "high", "reason": "same boat setup reworded"}
+{"id": "lmarena:test:8815", "verdict": "same", "confidence": "high", "reason": "boat holds both in both, same puzzle"}
+{"id": "lmarena:test:9740", "verdict": "same", "confidence": "high", "reason": "same request reworded"}
+{"id": "lmarena:test:9807", "verdict": "same", "confidence": "high", "reason": "identical"}
+{"id": "lmarena:test:9809", "verdict": "same", "confidence": "high", "reason": "identical"}

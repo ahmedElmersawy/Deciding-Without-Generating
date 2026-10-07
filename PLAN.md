@@ -153,7 +153,7 @@ Deciders see the new query, the cached prompt, and (LmArena, GSM-Plus) the cache
   real $/call before sizing the full run.
 - [x] **CG5. Full run:** (done 2026-10-05: 2,000 test queries × 3 datasets; Jev, GPT-OSS ×5, GPT-5.6 ×3, Kev-4B and Qwen3-8B ×5 on Gilbreth, Jev ×5 on dev for the cascade; $23.7; DECISIONS.md) ~2,000 test queries per dataset (~$40–55; load ~$60 and raise the API key's own spend limit first).
 - [x] **CG6. Generation cost:** (done 2026-10-05 with 200, not 500, answers per dataset to fit the balance: GSM-Plus $0.0016 / 4.3 s, LmArena $0.0084 / 13.8 s; `scripts/cacheguard_regen_cost.py`) ~500 GPT-5.6 answers per dataset (LmArena, GSM-Plus) for the $ / latency of a regeneration.
-- [ ] **CG7. Label audit:** (sheet built 2026-10-05: `results/replay/cacheguard-label-audit.csv`, 100 cases; waiting on the hand verdicts) ~100 decider-vs-label disagreements hand-checked.
+- [x] **CG7. Label audit:** (superseded 2026-10-07 by a full correction: every LmArena + SearchQueries dev/test pair re-judged blind by Claude Opus 5.5 in two passes, 156 + 409 labels changed; `results/label-corrections/`. Human spot-check still to do.) ~100 decider-vs-label disagreements hand-checked.
 - [x] **CG8. Analysis + figures:** (done 2026-10-05: `analyze_cacheguard.py` per-dataset tables, `make_cacheguard_figures.py` figs 15–16; label-audit correction still to apply after CG7) per-dataset tables, wrong-reuse vs reuse-rate curves, cost per query, paired differences.
 
 ---
