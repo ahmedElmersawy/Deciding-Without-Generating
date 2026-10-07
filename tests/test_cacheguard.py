@@ -21,18 +21,11 @@ HAND_CASES = [
 ]
 
 
-def test_render_state_shows_both_queries_and_answer():
-    s = cg.render_state(HAND_CASES[1])
-    assert "New query:\nWhat is 15% of 90?" in s and "Cached query:\nWhat is 15% of 80?" in s
-    assert "Cached answer:\n15% of 80 is 12." in s
-    assert "similar" not in s.lower().split("cached answer")[0].replace("semantic", "")  # no similarity score leaks in
-
-
-def test_render_state_skips_placeholder_answers_and_truncates_long_ones():
-    assert "Cached answer" not in cg.render_state(HAND_CASES[-1])
-    long = dict(HAND_CASES[0], cand_response="x" * (cg.MAX_ANSWER_CHARS + 500))
-    s = cg.render_state(long)
-    assert s.endswith(" [...]") and len(s.split("Cached answer:\n")[1]) == cg.MAX_ANSWER_CHARS + len(" [...]")
+def test_render_state_shows_only_the_two_queries():
+    for case in HAND_CASES:
+        s = cg.render_state(case)
+        assert s == f"New query:\n{case['query']}\n\nCached query:\n{case['cand_prompt']}"
+        assert case["cand_response"] not in s  # the cached answer is never shown (DECISIONS.md 2026-10-07)
 
 
 def test_reference_and_options():
