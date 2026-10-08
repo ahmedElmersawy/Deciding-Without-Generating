@@ -1,0 +1,10 @@
+{
+  "states": [
+    "results/states/cacheguard-lmarena.jsonl"
+  ],
+  "task": "cacheguard",
+  "split": "test",
+  "n_states": 2000,
+  "include_failed": false,
+  "created": "20261007T214116Z"
+}
