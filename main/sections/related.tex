@@ -11,7 +11,7 @@ Later systems improve the matcher: MeanCache~\cite{gill2025meancache} trains the
 vCache~\cite{schroeder2025vcache} learns a threshold per cached prompt with a user-set error bound.
 All of these still decide a hit by similarity, which recent work shows is not the same as validity~\cite{zhang2026similarity}.
 Closest to our guard, Krites~\cite{singh2026asynchronous} sends near-miss neighbours to an LLM judge, off the serving path to hide its latency.
-We evaluate a judge that reads both queries inline and find that a non-generative decision model is cheap and fast enough for that role, while a frontier LLM costs more than the answers it saves.
+We evaluate a judge that reads both queries inline and find that a non-generative decision model is cheap and fast enough for that role, while a frontier LLM can cost more than the answers it saves.
 
 \textbf{Model routing and cascades.}
 FrugalGPT~\cite{chen2023frugalgpt} cascades models with a learned scorer, AutoMix~\cite{aggarwal2023automix} lets a small model verify itself, and Hybrid LLM~\cite{ding2024hybrid}, RouteLLM~\cite{ong2024routellm} and RouterDC~\cite{chen2024routerdc} train routers on quality or preference labels.
@@ -34,7 +34,7 @@ Fine-tuned small classifiers still beat zero-shot generative models on text clas
 
 \textbf{Calibration of stated confidence.}
 LMs are fairly well calibrated in their token probabilities on multiple-choice questions~\cite{kadavath2022language}, and verbalized confidence can be trained~\cite{lin2022teaching} or elicited~\cite{tian2023just}, but off-the-shelf verbalized confidence is typically overconfident~\cite{xiong2024can} and good uncertainty tends to need training~\cite{kapoor2024large}.
-We see the same: the small LLMs' stated confidences are the worst calibrated deciders in our study (ECE 0.29 and 0.60 in agent control), while the decision model's probabilities are the best (0.029).
+We see the same: the small LLMs' stated confidences are the worst calibrated deciders in our study (ECE 0.286 and 0.599 in agent control), while the decision model's probabilities are the best (0.029).
 
 \textbf{Energy of inference.}
 Per-query energy has been measured for generative LLM inference~\cite{samsi2023words}, across task-specific and general-purpose models~\cite{luccioni2024power}, in benchmarks built on NVML energy counters~\cite{you2023zeus,chung2025mlenergy}, and at production scale with full-stack accounting~\cite{elsworth2025measuring}; serving systems lower it by reconfiguring clusters~\cite{stojkovic2024dynamollm}.

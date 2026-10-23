@@ -43,9 +43,9 @@ POINT = {  # decider key -> (label, color)
     "llm:local/qwen3-8b": ("Qwen3-8B", "#a8431c"),
     "kev-4b": ("Kev-4B", "#1baf7a"),
     "cascade": ("Threshold→Jev", "#cf3f8a"),
-    "floor": ("Floor (trained)", "#7d5fd6"),
+    "floor": ("Trained classifier", "#7d5fd6"),
     "vcache": ("vCache δ=0.05", "#4a4946"),
-    "threshold": ("Threshold (dev-tuned)", "#8a8984"),
+    "threshold": ("Similarity threshold", "#8a8984"),
 }
 # Marker shape per decider too, so identity never rests on color alone (points cluster closely).
 MARKER = {"jev": "o", "llm:openrouter/openai/gpt-5.6-sol": "D", "llm:openrouter/openai/gpt-oss-20b": "s",

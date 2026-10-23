@@ -16,7 +16,7 @@ Sweeping a threshold on its probability gives a curve, summarized by APGR, the a
 We also report one operating point fixed in advance: the threshold at the 70th percentile of each router's dev scores, applied unchanged to test.
 
 \begin{table}[t]
-\caption{Routing on 1,998 RouterBench prompts. ``Own choice'' = share sent to the large model when the decider simply answers. Gain = quality over a random mix sending the same share, at the dev-tuned operating point (about 30\% sent to the large model), in points.}
+\caption{Routing on 1,998 RouterBench prompts. ``Own choice'' = share sent to the large model when the decider simply answers. Gain = quality over a random mix sending the same share, at the dev-tuned operating point (30\% of dev prompts sent to the large model; 23--30\% on test), in points.}
 \label{tab:router}
 \centering
 \small
@@ -25,13 +25,13 @@ We also report one operating point fixed in advance: the threshold at the 70th p
 \toprule
 Router & APGR [95\% CI] & Own choice & Gain \\
 \midrule
-Trained classifier & 0.649 {\scriptsize[.621, .678]} & 3.9\% & $+4.5$ \\
-\jev & 0.609 {\scriptsize[.585, .642]} & 0.0\% & $+2.7$ \\
-\kev-4B & 0.582 {\scriptsize[.553, .609]} & 0.0\% & $+3.0$ \\
-\goss & 0.546 {\scriptsize[.516, .576]} & 4.7\% & $+1.8$ \\
-\qwen & 0.531 {\scriptsize[.488, .540]} & 20.6\% & $-1.1$ \\
-\gbig & 0.529 {\scriptsize[.510, .568]} & 2.3\% & $+1.2$ \\
-Random mix & 0.500 & -- & 0 \\
+Trained classifier & 0.649 {\scriptsize[0.621, 0.678]} & 3.9\% & $+4.5$ \\
+\jev & 0.609 {\scriptsize[0.585, 0.642]} & 0.0\% & $+2.7$ \\
+\kev-4B & 0.582 {\scriptsize[0.553, 0.609]} & 0.0\% & $+3.0$ \\
+\goss & 0.546 {\scriptsize[0.516, 0.576]} & 4.7\% & $+1.8$ \\
+\qwen & 0.531 {\scriptsize[0.488, 0.540]} & 20.6\% & $-1.1$ \\
+\gbig & 0.529 {\scriptsize[0.510, 0.568]} & 2.3\% & $+1.2$ \\
+Random mix & 0.500 & -- & 0.0 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -50,7 +50,7 @@ First, asked directly, no decider routes.
 At those points, quality is within 1.6 points of a random mix sending the same share.
 
 Second, as rankers the general deciders carry a weak signal, and the frontier model is among the weakest.
-\jev's probabilities rank prompts best among the untrained deciders (APGR 0.609), ahead of \gbig\ by 0.080 [0.045, 0.106].
+\jev's probabilities rank prompts best among the general deciders (APGR 0.609), ahead of \gbig\ by 0.080 [0.045, 0.106].
 
 Third, the trained classifier beats every general decider, \jev\ included, by a small margin: $+0.040$ APGR [$+0.001$, $+0.070$].
 At the fixed operating point it gains 4.5 points of quality over a random mix [3.3, 5.8], against 2.7 for \jev\ [1.5, 3.9].

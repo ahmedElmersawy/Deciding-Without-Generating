@@ -12,7 +12,7 @@
 \section{Label Correction for the Two vCache Datasets}
 \label{app:labels}
 
-On our first run, every decider, the frontier model included, reached only 70--72\% on LMArena and SearchQueries, against 93--97\% on GSM-Plus.
+On our first run, every decider reached only 70--72\% on SearchQueries, and \jev\ and the frontier model 71\% on LMArena, against 93--97\% for the API deciders on GSM-Plus.
 Samples of the disagreements put the fault in the labels: ``best workout plans for women'' and ``best workout plan for women'' were labelled different, while ``count blank cells'' and ``count non blank cells'' were labelled the same.
 
 In SearchQueries, classes are transitive closures of pairwise LLM judgements within embedding clusters.
@@ -23,14 +23,14 @@ That is valid only if ``same'' is a strict equivalence, and three things break i
 
 In LMArena, a class is ``generated from the same seed prompt''.
 An LLM wrote the variants and nothing checked that a variant still asks the same thing; some reverse a premise or change an exam code or a number.
-In the other direction, identical prompts that came from different seeds are labelled different (37 such pairs in our sample).
+In the other direction, identical prompts that came from different seeds are labelled different (37 of the 2,600 pairs).
 
 \textbf{Correction.} We label the pair directly: the new query and the cached query it would be served from.
 A written guideline, fixed in advance, defines the same request strictly (rewording is the same; any change of entity, number, direction, task, scope or output constraint is different).
 A frontier LLM (Claude Opus 5.5) judged all 5,200 dev and test pairs blind, seeing neither the original label nor the similarity nor any decider's output.
 Pairs where a confident verdict disagreed with the original label were judged again, blind, by a separate instance, and a label changed only when both agreed with high confidence.
 This changed 156 of 2,600 LMArena labels (6.0\%) and 409 of 2,600 SearchQueries labels (15.7\%).
-On the corrected labels SearchQueries accuracy rose by 11 to 14 points for every decider, and the similarity threshold improved as well.
+On the corrected labels SearchQueries accuracy rose by 10 to 14 points for every decider, and the similarity threshold improved as well.
 
 \textbf{Limits.} The corrector is an LLM, and no person checked its labels, so the corrected labels may sit closer to an LLM decider's idea of the same request than human labels would.
 It judged every pair, not only those where deciders disagreed with the label, so that the correction could not steer toward any decider.

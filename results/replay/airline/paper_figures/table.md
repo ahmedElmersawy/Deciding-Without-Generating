@@ -10,6 +10,5 @@
 | Kev-0.8B | 27.3% | [24.7%, 30.0%] | 217.6 | 384.4 | local (no API $) | 0.088 |
 | Kev-4B | 32.1% | [29.4%, 35.0%] | 438.7 | 831.9 | local (no API $) | 0.124 |
 | Kev-9B | 40.1% | [37.1%, 43.1%] | 547.5 | 1053.3 | local (no API $) | 0.179 |
-| Kev-4B→GPT-OSS | 64.7% | [62.3%, 67.2%] | 2879.4 | 8746.6 | 2.11e-04 | 0.311 |
 
 † Graded against its own reference trajectories (the airline labels are GPT-5.6's actions), so its accuracy is an upper bound.

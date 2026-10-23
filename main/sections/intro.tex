@@ -28,20 +28,19 @@ Our findings are as follows.
 \taubench~\cite{barres2025tau2} simulates airline customer-service conversations in which an agent must look up and change bookings through tools while following a written policy.
 At saved points in such conversations, \jev\ picks the same next action as a frontier model's successful run 81.4\% of the time, at $1/22$ of the frontier model's cost and latency.
 Inside a live agent loop, however, the standard design, in which the generating model decides and acts in one call, is the cheapest of all and matches the best reward.
-Splitting the decision out either costs more (the generator asked twice) or loses about five points of reward (\jev\ deciding), a gap at the edge of significance.
+Splitting the decision out either costs more (the generator asked twice) or, with \jev\ deciding, loses about five points of reward against both, a gap at the edge of significance.
 
 \textbf{Cache guard: the decision model pays off.}
 GSM-Plus~\cite{li2024gsmplus} rewrites grade-school math questions into variants: some only reword the question and keep its answer, others change a number and so change the answer.
-Used as cache traffic, a new question and its nearest cached neighbour often differ by that one number, so embedding similarity cannot tell a safe reuse from a wrong one, and the best similarity cut-off, tuned on held-out queries, reuses almost nothing (66.1\% accuracy).
-\jev\ reaches 93.3\%, within 2.6 points of the frontier model, at about 2\% of its price per decision.
+Used as cache traffic, a new question and its nearest cached neighbour often differ by that one number, so embedding similarity cannot tell a safe reuse from a wrong one, and the best similarity threshold, tuned on held-out queries, reuses almost nothing (66.1\% accuracy).
+\jev\ reaches 93.3\%, within 2.6 points of the frontier model, at about 2\% of its cost per decision.
 On GSM-Plus a frontier model used as the guard is self-defeating: paying for its decision on every query raises total cost to 138\% of running without a cache.
-On two datasets of real traffic, chat prompts and web search queries, \jev\ ties the similarity cut-off on chat, where similarity works, and beats it by 4.4 points on search, where it does not.
+On LMArena (chat prompts) and SearchQueries (web search queries), two datasets released with vCache (labels corrected, Appendix~\ref{app:labels}), \jev\ ties the similarity threshold on chat, where similarity works, and beats it by 4.4 points on search, where it does not.
 A cascade that uses the free similarity score for clear cases and calls \jev\ only when the score is ambiguous is best or tied for best on the two traffic datasets and matches \jev\ on GSM-Plus.
-(On the two traffic datasets every decider, the frontier model included, first stalled near 71\% accuracy; we traced this to errors in the datasets' labels, relabeled the pairs we use, and report results on the corrected labels, Appendix~\ref{app:labels}.)
 
 \textbf{Routing: a trained classifier wins.}
-RouterBench~\cite{hu2024routerbench} records which prompts a cheap model (Mixtral-8x7B) and an expensive one (GPT-4) answered correctly.
-Asked to send each prompt to one of the two, no general decider, frontier LLM included, routes usefully from the prompt alone.
+RouterBench~\cite{hu2024routerbench} records which prompts a small, cheap model (Mixtral-8x7B) and a large, expensive one (GPT-4) answered correctly.
+Asked to send each prompt to one of the two, no general decider, frontier LLM included, routes from the prompt alone when asked directly, and as rankers they carry only a weak signal.
 A small classifier trained on the cheap model's record of right and wrong answers beats all of them, and even it recovers little.
 
 \textbf{The pattern.}

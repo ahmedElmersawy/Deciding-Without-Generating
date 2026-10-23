@@ -22,11 +22,11 @@ import numpy as np
 
 INK, INK_2, GRID, BG = "#0b0b0b", "#52514e", "#e4e3df", "#fcfcfb"
 ARM_NAME = {
-    "A": "A: Jev → G",
-    "B": "B: G decides → G",
+    "A": "A: Jev + G",
+    "B": "B: G + G",
     "C": "C: G alone",
-    "D": "D: GPT-OSS → G",
-    "E": "E: Kev-4B → G",
+    "D": "D: GPT-OSS-20B + G",
+    "E": "E: Kev-4B + G",
 }
 ARM_COLOR = {"A": "#2a78d6", "B": "#c9a000", "C": "#4a4946", "D": "#eb6834", "E": "#1baf7a"}
 # Stacked cost parts: one sequential hue (part of one whole), dark -> light.
@@ -102,12 +102,13 @@ def fig_cost_vs_reward(summary, costs, out, plt) -> None:
         off, ha = ((-10, -14), "right") if arm == "D" else ((10, 6), "left")
         ax.annotate(ARM_NAME[arm], (x, m), xytext=off, textcoords="offset points", ha=ha, fontsize=9, color=INK)
     ax.set_xscale("log")
-    from matplotlib.ticker import FuncFormatter, LogLocator, NullFormatter
+    from matplotlib.ticker import FuncFormatter, LogLocator, NullFormatter, PercentFormatter
 
     ax.xaxis.set_major_locator(LogLocator(base=10, subs=(1.0, 2.0, 5.0)))
     ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"${v:.3f}".rstrip("0")))
     ax.xaxis.set_minor_formatter(NullFormatter())
     ax.set_ylim(-0.05, 1.1)
+    ax.yaxis.set_major_formatter(PercentFormatter(xmax=1, decimals=0))  # % like the paper's tables
     _style(ax, xlabel="Agent $ per episode (decision + execution, log scale)", ylabel="Mean task reward")
     ax.set_title("Figure 12. Reward vs. agent cost per episode (up-left is better)", loc="left", fontsize=11,
                  color=INK)
@@ -135,6 +136,9 @@ def fig_pass_k(summary, out, plt) -> None:
         ax.annotate(ARM_NAME[arm], (k_end, y_line), xytext=(k_end + 0.12, y_label), textcoords="data",
                     va="center", fontsize=9, color=INK)
     ax.set_ylim(0, 1.02)
+    from matplotlib.ticker import PercentFormatter
+
+    ax.yaxis.set_major_formatter(PercentFormatter(xmax=1, decimals=0))  # % like the paper's tables
     ax.set_xticks(range(1, max(len(s["pass_k"]) for s in summary.values()) + 1))
     _style(ax, xlabel="k (trials of the same task that must all succeed)", ylabel="pass^k")
     ax.set_title("Figure 13. Reliability: pass^k per arm", loc="left", fontsize=11, color=INK)

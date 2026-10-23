@@ -37,7 +37,7 @@ from dwg.runfiles import load_outcomes  # noqa: E402
 from dwg.stats import bootstrap_ci  # noqa: E402
 
 LABEL = {"jev": "Jev", "llm:openrouter/openai/gpt-5.6-sol": "GPT-5.6", "llm:openrouter/openai/gpt-oss-20b": "GPT-OSS-20B",
-         "llm:local/qwen3-8b": "Qwen3-8B", "kev-4b": "Kev-4B", "floor": "Floor (trained on RouterBench)"}
+         "llm:local/qwen3-8b": "Qwen3-8B", "kev-4b": "Kev-4B", "floor": "Trained classifier"}
 COLOR = {"jev": "#2a78d6", "llm:openrouter/openai/gpt-5.6-sol": "#c9a000", "llm:openrouter/openai/gpt-oss-20b": "#eb6834",
          "llm:local/qwen3-8b": "#a8431c", "kev-4b": "#1baf7a", "floor": "#7d5fd6"}
 MARKER = {"jev": "o", "llm:openrouter/openai/gpt-5.6-sol": "D", "llm:openrouter/openai/gpt-oss-20b": "s",

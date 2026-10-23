@@ -4,7 +4,6 @@
 \textbf{Decision models.}
 A decision model takes a \emph{state} (any text) and one or more typed \emph{questions}.
 The question type we use is a choice: a set of named options, each with a short description, plus instructions.
-The model returns the chosen option and a probability for every option.
 Nothing is generated token by token, so latency and cost depend on the input length only.
 
 \jev~\cite{typesafe2026jev} is proprietary and reachable only through an API; its weights, architecture and training data are not public.
@@ -27,7 +26,7 @@ In agent control, a generative model must run after the decision whatever it is,
 \setlength{\tabcolsep}{4pt}
 \begin{tabular}{@{}lllll@{}}
 \toprule
-Decision point & Options & Benchmark (test size) & Replaces generation? & Cheap alternative \\
+Decision point & Options & Dataset (test size) & Replaces generation? & Cheap alternative \\
 \midrule
 Agent control & next tool, or reply & \taubench\ airline (1,076 states; 50 tasks) & No & generator's own call \\
 Cache guard & reuse / regenerate & GSM-Plus, LMArena, SearchQueries (2,000 each) & Yes & similarity threshold \\

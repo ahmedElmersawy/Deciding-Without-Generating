@@ -1,6 +1,6 @@
 {
-  "fig1": "Pareto-optimal: Jev, Jev\u2192GPT-5.6, GPT-5.6\u2020. Dominated (another decider is both faster and more accurate): GPT-OSS-20B, Qwen3-8B, Kev-0.8B, Kev-4B, Kev-9B, Kev-4B\u2192GPT-OSS.",
-  "fig4": "Accuracy-per-joule: Qwen3-8B 0.188 %/J, Kev-0.8B 0.578 %/J, Kev-4B 0.243 %/J, Kev-9B 0.235 %/J. No energy measurement: GPT-5.6\u2020, Jev\u2192GPT-5.6, Jev, GPT-OSS-20B, Kev-4B\u2192GPT-OSS (hosted deciders have no local GPU; the cascade isn't re-metered live; a laptop GPU counter that failed validation is not reported).",
+  "fig1": "Pareto-optimal: Jev, Jev\u2192GPT-5.6, GPT-5.6\u2020. Dominated (another decider is both faster and more accurate): GPT-OSS-20B, Qwen3-8B, Kev-0.8B, Kev-4B, Kev-9B.",
+  "fig4": "Accuracy-per-joule: Qwen3-8B 0.188 %/J, Kev-0.8B 0.578 %/J, Kev-4B 0.243 %/J, Kev-9B 0.235 %/J. No energy measurement: GPT-5.6\u2020, Jev\u2192GPT-5.6, Jev, GPT-OSS-20B (hosted deciders have no local GPU; the cascade isn't re-metered live; a laptop GPU counter that failed validation is not reported).",
   "fig8": {
     "GPT-5.6\u2020": {
       "total_incorrect": 620,
@@ -80,16 +80,6 @@
         "Called tool instead of replying": 1285,
         "Repeated tool call": 1075,
         "Wrong tool selected": 150
-      }
-    },
-    "Kev-4B\u2192GPT-OSS": {
-      "total_incorrect": 1686,
-      "dominant": "Reply instead of tool call",
-      "counts": {
-        "Reply instead of tool call": 1131,
-        "Wrong tool selected": 323,
-        "Called tool instead of replying": 215,
-        "Repeated tool call": 17
       }
     }
   }

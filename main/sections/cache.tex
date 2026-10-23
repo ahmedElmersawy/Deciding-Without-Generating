@@ -1,5 +1,5 @@
 \begin{table*}[t]
-\caption{Cache guard on 2,000 test queries per dataset. Acc.\ = share of correct decisions; WR = wrong-reuse rate (a wrong cached answer was served), both in \%. Thresholds are tuned for accuracy on dev. \$ and p50 latency are per decision, averaged over the three datasets. vCache runs unmodified as a whole system: it learns its thresholds online from the datasets' original class labels and caches only the prompts it missed, so its row is a reference point and not a like-for-like decider.}
+\caption{Cache guard on 2,000 test queries per dataset. Acc.\ = share of correct decisions; WR = wrong-reuse rate, both in \%. Thresholds are tuned for accuracy on dev. \$ and p50 latency are per decision, averaged over the three datasets; local = self-hosted, no API cost; free = no model call; -- = not measured. vCache runs unmodified as a whole system: it learns its thresholds online from the datasets' original class labels and caches only the prompts it missed, so its row is a reference point and not a like-for-like decider.}
 \label{tab:cache}
 \centering
 \small
@@ -7,14 +7,14 @@
 \toprule
  & \multicolumn{2}{c}{GSM-Plus} & \multicolumn{2}{c}{LMArena} & \multicolumn{2}{c}{SearchQueries} & & \\
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
-Decider & Acc. & WR & Acc. & WR & Acc. & WR & \$/decision & p50 \\
+Decider & Acc. & WR & Acc. & WR & Acc. & WR & \$/decision & p50 (ms) \\
 \midrule
-\jev & 93.3 & 1.1 & 96.3 & 1.2 & 85.6 & 3.8 & $2.1\times10^{-5}$ & 0.18\,s \\
-Threshold $\rightarrow$ \jev & 93.3 & 1.1 & 97.4 & 2.5 & 85.7 & 3.8 & $\le 2.3\times10^{-5}$ & -- \\
-\gbig & 96.0 & 0.9 & 91.2 & 0.4 & 85.2 & 1.5 & $1.0\times10^{-3}$ & 1.25\,s \\
-\goss & 95.0 & 1.3 & 93.3 & 1.0 & 83.6 & 3.4 & $4.1\times10^{-5}$ & 1.31\,s \\
-\kev-4B (local) & 88.1 & 5.3 & 96.9 & 1.9 & 85.4 & 8.6 & local & 0.07\,s \\
-\qwen\ (local) & 86.3 & 2.5 & 95.7 & 1.8 & 84.8 & 6.5 & local & 0.39\,s \\
+\jev & 93.3 & 1.1 & 96.3 & 1.2 & 85.6 & 3.8 & $2.1\times10^{-5}$ & 180 \\
+Threshold $\rightarrow$ \jev & 93.3 & 1.1 & 97.4 & 2.5 & 85.7 & 3.8 & $1.2\times10^{-5}$ & -- \\
+\gbig & 96.0 & 0.9 & 91.2 & 0.4 & 85.2 & 1.5 & $1.0\times10^{-3}$ & 1,250 \\
+\goss & 95.0 & 1.3 & 93.3 & 1.0 & 83.6 & 3.4 & $4.1\times10^{-5}$ & 1,310 \\
+\kev-4B (local) & 88.1 & 5.3 & 96.9 & 1.9 & 85.4 & 8.6 & local & 70 \\
+\qwen\ (local) & 86.3 & 2.5 & 95.7 & 1.8 & 84.8 & 6.5 & local & 390 \\
 Trained classifier & 81.7 & 2.9 & 95.7 & 2.5 & 77.1 & 12.6 & local & -- \\
 Similarity threshold & 66.1 & 0.3 & 96.9 & 2.9 & 81.2 & 14.4 & free & -- \\
 Cross-encoder & 66.3 & 0.3 & 96.5 & 3.3 & 78.4 & 17.1 & local & -- \\
@@ -36,18 +36,18 @@ An earlier version of our question asked deciders to check the stored answer; th
 
 \subsection{Data}
 
-We use three public sets and build nothing ourselves, so that we cannot choose the hard cases.
+We use three public datasets and build nothing ourselves, so that we cannot choose the hard cases.
 Each is a stream: the cache holds every earlier prompt, and each query's candidate is its nearest cached neighbour under GTE-large~\cite{li2023gte}, an open text-embedding model, the same for every method.
-Each set is split by class into 600 dev queries (for tuning thresholds, bands and the trained classifier) and 2,000 test queries.
+Each dataset is split by class into 600 dev queries (for tuning thresholds, bands and the trained classifier) and 2,000 test queries.
 
 \textbf{GSM-Plus}~\cite{li2024gsmplus}: variants of grade-school math questions from GSM8K~\cite{cobbe2021gsm8k}, for example a rewording, an added distractor, or a changed number; the original questions fill the cache.
-Rephrasings keep the answer and number changes do not, so reuse is correct for 33.6\% of queries.
+Reuse is correct for 33.6\% of queries.
 Labels are exact numeric answers.
 Here wrong reuses are \emph{more} similar to their neighbour than correct ones (median cosine 0.966 against 0.955), so no threshold can separate them.
 
 \textbf{LMArena} and \textbf{SearchQueries}: two datasets released with vCache~\cite{schroeder2025vcache}.
 LMArena takes user prompts from Chatbot Arena~\cite{chiang2024chatbotarena} and adds LLM-written rewordings of each; SearchQueries takes real web search queries from Bing's ORCAS log~\cite{craswell2020orcas} and groups those that ask the same thing.
-Their labels assign each query a \emph{class} and count any two queries of a class as a correct hit, so nobody judged the pair a cache actually meets.
+Their labels assign each query a \emph{class} and count any two queries of a class as a correct reuse, so nobody judged the pair a cache actually meets.
 We relabeled each pair directly with an LLM (Claude Opus 5.5) under a written guideline fixed in advance, which changed 6.0\% of LMArena and 15.7\% of SearchQueries labels (Appendix~\ref{app:labels}).
 On the corrected labels, which all results below use and which we release with the reason for each change, reuse is correct for 92.5\% and 58.2\% of queries.
 
@@ -63,21 +63,21 @@ On the corrected labels, which all results below use and which we release with t
 Table~\ref{tab:cache} and Figure~\ref{fig:cache} give the results.
 
 \textbf{Where similarity is blind, the decision model wins by a wide margin.}
-On GSM-Plus the dev-tuned threshold, the cross-encoder and vCache all reuse almost nothing, because no cut-off gives acceptable precision; their accuracy is the regenerate-always rate.
+On GSM-Plus the dev-tuned threshold, the cross-encoder and vCache all reuse almost nothing, because no threshold gives acceptable precision; their accuracy is the regenerate-always rate.
 \jev\ reaches 93.3\%, which is 27.2 points above the threshold [25.5, 29.1] and 11.7 points above a classifier trained on this dataset's own dev split [10.1, 13.3], with a 1.1\% wrong-reuse rate.
-\gbig\ is 2.6 points better [1.9, 3.4] at 48 times the price per decision.
+\gbig\ is 2.6 points better [1.9, 3.4] at 48 times the cost per decision.
 
-\textbf{On the two traffic sets, the decision model ties similarity or beats it.}
+\textbf{On the two traffic datasets, the decision model ties similarity or beats it.}
 On LMArena the threshold and \jev\ are statistically tied on accuracy ($+0.6$ for the threshold [$-0.4$, $+1.6$]), and \jev\ serves fewer wrong answers ($-1.7$ points [$-2.3$, $-1.2$]).
 On SearchQueries \jev\ is 4.4 points more accurate [2.3, 6.4] and cuts wrong reuses from 14.4\% to 3.8\%.
-\gbig\ is not better than \jev\ on either set; on LMArena it is the weakest LLM decider, because it regenerates on 8.4\% of queries that could have been reused.
-vCache keeps its error bound on every dataset, and pays for it on the two traffic sets by regenerating on 45--48\% of queries that could have been reused.
+\gbig\ is not better than \jev\ on either dataset; on LMArena it is the weakest LLM decider, because it regenerates 8.4\% of all queries although reuse was correct.
+vCache keeps its error bound on every dataset, and pays for it on the two traffic datasets by regenerating 45--48\% of all queries although reuse was correct.
 
 \textbf{A cascade gets the best of both.}
-Calling \jev\ only when the similarity falls in an ambiguous band chosen on dev (3\% of LMArena queries, 72\% of SearchQueries, all of GSM-Plus) is best or tied for best on the two traffic sets and matches \jev\ on GSM-Plus, and on LMArena costs \$$6\times10^{-7}$ per query.
+Calling \jev\ only when the similarity falls in an ambiguous band chosen on dev (3\% of LMArena queries, 72\% of SearchQueries, all of GSM-Plus) is best or tied for best on the two traffic datasets and matches \jev\ on GSM-Plus, and on LMArena costs \$$6\times10^{-7}$ per query.
 
 \textbf{The open decision model is competitive here.}
-Unlike in agent control, \kev-4B is within a point of \jev\ on the two traffic sets and 5.2 points behind on GSM-Plus, at 70\,ms per decision on a local GPU, though it serves 1.6 to 5 times as many wrong answers.
+Unlike in agent control, \kev-4B is within a point of \jev\ on the two traffic datasets and 5.2 points behind on GSM-Plus, at 70\,ms per decision on a local GPU, though it serves 1.6 to 5 times as many wrong answers.
 
 \subsection{What the decision is worth}
 
@@ -88,6 +88,6 @@ The expected cost of a query is then the decision's cost plus the regeneration c
 On GSM-Plus, where only a third of queries can be reused, \jev\ as the guard brings the cost to 72\% of running without a cache; the similarity methods stay at about 100\%.
 \gbig\ as the guard raises it to 138\%: the decision alone costs \$0.0011, two thirds of the answer it is deciding about.
 On LMArena, where most queries can be reused, the free threshold brings the cost to 5\% of no-cache, the cascade to 5\%, \jev\ on every query to 9\%, and \gbig\ to 28\%.
-These figures do not price a wrong answer; with any positive price for one, the comparison on LMArena and SearchQueries moves further toward \jev\ and the cascade, which serve fewer.
+These figures assign no cost to a wrong answer; with any positive cost for one, the comparison on LMArena and SearchQueries moves further toward \jev\ and the cascade, which serve fewer.
 
 \textbf{Takeaway.} When one outcome of the decision skips a generation and the two queries hold all the evidence, a cheap decision model is the guard to use: it ties or beats similarity on every dataset, while a frontier model's decision can cost two thirds of the answer it may save.

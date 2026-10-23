@@ -8,8 +8,7 @@ dwg.stats for every statistic (bootstrap CIs, ECE, Brier, reliability bins) so n
 here never diverge from the run's own report/summary.md.
 
 Deciders: every one in ORDER that has replay data in the run (GPT-5.6-sol ceiling, the live
-Jev -> GPT-5.6 cascade, Jev, GPT-OSS-20B, Qwen3-8B, Kev 0.8B/4B/9B, the Kev-4B -> GPT-OSS
-cascade); a decider without data is simply absent. GPT-5.6 is graded against its own
+Jev -> GPT-5.6 cascade, Jev, GPT-OSS-20B, Qwen3-8B, Kev 0.8B/4B/9B); a decider without data is simply absent. GPT-5.6 is graded against its own
 reference trajectories on airline, so its accuracy is an upper bound (marked with a dagger).
 
 Usage:
@@ -36,7 +35,7 @@ RESPOND = "respond_to_user"
 # Fixed order and display names, used identically across every figure and the table.
 GPT56 = "llm:openrouter/openai/gpt-5.6-sol"
 ORDER = [GPT56, "cascade-jev-t0.65", "jev", "llm:openrouter/openai/gpt-oss-20b", "llm:local/qwen3-8b",
-         "kev-0.8b", "kev-4b", "kev-9b", "cascade-kev-4b-t0.9"]
+         "kev-0.8b", "kev-4b", "kev-9b"]
 DISPLAY = {
     GPT56: "GPT-5.6†",  # † graded against its own reference actions: an upper bound
     "cascade-jev-t0.65": "Jev→GPT-5.6",
@@ -46,14 +45,12 @@ DISPLAY = {
     "kev-0.8b": "Kev-0.8B",
     "kev-4b": "Kev-4B",
     "kev-9b": "Kev-9B",
-    "cascade-kev-4b-t0.9": "Kev-4B→GPT-OSS",
 }
 # Family color rule carried over from analyze_decisions.py (hue = family, never position):
 # blue = Jev, orange = generative LLM (dark orange = the local one on the A100), green shades = local Kev sizes (light->dark = small->large),
-# purple = the hybrid cascade (its own family: neither pure-local nor pure-hosted), magenta = the
-# Jev-led cascade (the headline one), gold = the frontier ceiling. Nine series exceed what hue
-# alone separates (blue/purple fail all-pairs CVD), so every figure also names each decider on
-# its axis or with a direct label; the Jev cascade sits beside Jev, never the Kev cascade.
+# magenta = the Jev-led cascade, gold = the frontier ceiling. Eight series exceed what hue alone
+# separates, so every figure also names each decider on its axis or with a direct label; the Jev
+# cascade sits beside Jev.
 COLOR = {
     GPT56: "#c9a000",
     "cascade-jev-t0.65": "#cf3f8a",
@@ -63,7 +60,6 @@ COLOR = {
     "kev-0.8b": "#8fd9c4",
     "kev-4b": "#1baf7a",
     "kev-9b": "#0b7d54",
-    "cascade-kev-4b-t0.9": "#7d5fd6",
 }
 
 INK, INK_2, GRID, BG = "#0b0b0b", "#52514e", "#e4e3df", "#fcfcfb"

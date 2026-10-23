@@ -1,7 +1,7 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-We measured a non-generative decision model against LLMs and trained baselines at three decision points of an LLM system.
+We measured a non-generative decision model, \jev, against LLMs and trained baselines at three decision points of an LLM system.
 It is a strong and very cheap semantic-cache guard, a poor trade inside an agent loop that must generate anyway, and no substitute for a trained router.
 The rule we draw is simple to apply before building: add a standalone decider where its decision can skip a generation and the input contains what the decision depends on, and make sure the decision costs far less than the generation it may save.
 The harness, all run records, the open baselines and the corrected labels for the two vCache datasets are available in an anonymized repository for review.
