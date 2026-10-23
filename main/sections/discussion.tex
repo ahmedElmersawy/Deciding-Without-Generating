@@ -12,8 +12,7 @@ At the cache guard and the router, one outcome of the decision skips the expensi
 Whether two queries ask the same thing can be read off the two queries.
 Whether a particular small model will answer a prompt correctly cannot be read off the prompt.
 
-The cache guard meets both conditions and is where the decision model wins.
-Agent control fails the first and routing the second.
+Agent control fails the first condition; the cache guard meets both and is where the decision model wins; routing fails the second.
 We expect the conditions to transfer to other decision points: input guardrails and intent classification meet both, while ``should the agent retry?'' sits in front of a generation and likely does not.
 
 \textbf{The decision must be much cheaper than what it saves.}
@@ -24,10 +23,10 @@ The relevant quantity is the price of a decision relative to the price of the ge
 The price claim holds: \jev\ cost 22 to 48 times less per decision than the frontier model in our runs, and its latency was a steady 0.18\,s.
 The quality claim holds at the cache guard and partly for single agent decisions (7 points below the frontier model).
 The implied claim that it can replace an LLM at any decision does not hold: in the agent loop and at the router, a cheaper or better alternative existed.
-Its probabilities were the best calibrated of any decider we measured, which is what makes cascades around it work.
+Its probabilities were the best calibrated in the agent replay (ECE 0.029, Table~\ref{tab:arm0}), which is what makes the agent cascade work.
 
 \textbf{Open decision models.}
-\kev\ shows that the paradigm is reproducible but not uniformly: it matched \jev\ on judging whether two queries are the same request and collapsed on multi-step airline policy.
+\kev\ shows that the paradigm is reproducible but not uniformly: it came within a point of \jev\ on judging whether two traffic queries are the same request (5.2 points behind on GSM-Plus) and collapsed on multi-step airline policy.
 On equal hardware its energy advantage over a same-size generative LLM making a constrained choice was about 20\%, not an order of magnitude.
 A constrained LLM call emits very few tokens, so most of the work in both cases is reading the input.
 

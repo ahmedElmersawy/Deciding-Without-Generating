@@ -12,7 +12,8 @@
 \section{Label Correction for the Two vCache Datasets}
 \label{app:labels}
 
-This appendix details the side finding of Section~\ref{sec:labels}.
+On our first run, every decider, the frontier model included, reached only 70--72\% on LMArena and SearchQueries, against 93--97\% on GSM-Plus.
+Samples of the disagreements put the fault in the labels: ``best workout plans for women'' and ``best workout plan for women'' were labelled different, while ``count blank cells'' and ``count non blank cells'' were labelled the same.
 
 In SearchQueries, classes are transitive closures of pairwise LLM judgements within embedding clusters.
 That is valid only if ``same'' is a strict equivalence, and three things break it.

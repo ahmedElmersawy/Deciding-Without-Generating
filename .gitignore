@@ -24,3 +24,4 @@ main/*.bbl
 main/*.blg
 main/*.log
 main/*.out
+main/main_diff.pdf
