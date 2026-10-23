@@ -18,3 +18,9 @@ __pycache__/
 *.egg-info/
 .venv/
 *.sif
+# LaTeX build files
+main/*.aux
+main/*.bbl
+main/*.blg
+main/*.log
+main/*.out
