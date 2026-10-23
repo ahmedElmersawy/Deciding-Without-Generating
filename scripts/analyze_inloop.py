@@ -5,7 +5,9 @@ the decider failed and G decided instead.
 pass^k is tau-bench's reliability metric: for a task with n trials and c successes,
 C(c, k) / C(n, k) is the chance that k trials drawn from the n all succeed; averaged over tasks.
 Success = reward 1. Each (arm, task, trial) counts once, as its first attempt that was not an
-infra error (dwg.errors), like the arm-0 analysis.
+infra error (dwg.errors), like the arm-0 analysis. An episode that crashed for a non-infra
+reason (e.g. G returned an empty message) is scored as reward 0, not dropped, the same policy
+as a decider failure; its $ and latency are not recorded, so they stay out of the cost columns.
 
 Usage: python3 scripts/analyze_inloop.py results/inloop/<domain>
 """
@@ -54,11 +56,17 @@ def pass_hat_k(successes_by_task: dict[str, list[bool]], k: int) -> float:
     return float(np.mean(vals)) if vals else float("nan")
 
 
+def scored(rows: list[dict]) -> list[dict]:
+    """Every resolved episode with a reward: crashed (non-infra) episodes count as reward 0."""
+    return [r if r.get("error") is None and r.get("reward") is not None else {**r, "reward": 0.0} for r in rows]
+
+
 def summarize_arm(rows: list[dict]) -> dict:
     ok = [r for r in rows if r.get("error") is None and r.get("reward") is not None]
     failed = [r for r in rows if r not in ok]
+    graded = scored(rows)
     by_task = defaultdict(list)
-    for r in ok:
+    for r in graded:
         by_task[r["task_id"]].append(r["reward"] >= 1 - 1e-6)
     n_trials = min((len(v) for v in by_task.values()), default=0)
     succ = sum(s for v in by_task.values() for s in v)
@@ -70,10 +78,10 @@ def summarize_arm(rows: list[dict]) -> dict:
     dec_lat, exe_lat = s("decision_latency_s"), s("exec_latency_s")
     turns = s("n_turns")
     return {
-        "episodes": len(ok),
+        "episodes": len(graded),
         "episode_errors": len(failed),
         "tasks": len(by_task),
-        "reward": bootstrap_ci([r["reward"] for r in ok], [r["task_id"] for r in ok]) if ok else (float("nan"),) * 3,
+        "reward": bootstrap_ci([r["reward"] for r in graded], [r["task_id"] for r in graded]) if graded else (float("nan"),) * 3,
         "pass_k": {k: pass_hat_k(by_task, k) for k in range(1, n_trials + 1)},
         "successes": succ,
         "agent_cost_usd": dec_cost + exe_cost,
@@ -100,7 +108,7 @@ def paired_task_diff(rows_a: list[dict], rows_b: list[dict], value, n_boot: int 
     a = {(r["task_id"], r["trial"]): value(r) for r in rows_a}
     b = {(r["task_id"], r["trial"]): value(r) for r in rows_b}
     by_task = defaultdict(list)
-    for key in a.keys() & b.keys():
+    for key in sorted(a.keys() & b.keys()):  # sorted: set order varies per process, and so would the bootstrap
         if a[key] is not None and b[key] is not None:
             by_task[key[0]].append(a[key] - b[key])
     diffs = np.array([np.mean(v) for v in by_task.values()])
@@ -165,8 +173,7 @@ def main() -> int:
             f"{f(s['decision_share_latency'], '{:.1%}')} | {f(s['agent_latency_per_turn_s'], '{:.2f}')} | "
             f"{f(s['turns_per_episode'], '{:.1f}')} | {f(s['decider_fallback_rate'], '{:.1%}')} |"
         )
-    ok = {arm: [r for r in rows if r["arm"] == arm and r.get("error") is None and r.get("reward") is not None]
-          for arm in summary}
+    ok = {arm: scored([r for r in rows if r["arm"] == arm]) for arm in summary}
     paired = {}
     for a, b in PAIRS:
         if a in ok and b in ok:
