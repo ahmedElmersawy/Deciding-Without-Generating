@@ -5,11 +5,11 @@
 As with the cache guard, the decision replaces a generation: the expensive call is skipped when the small model would have been right.
 
 \textbf{Data.} RouterBench~\cite{hu2024routerbench} records graded answers and API costs of eleven models on the same prompts, so quality and model cost need no new calls.
-We use the pairing of the routing literature~\cite{ong2024routellm}, Mixtral-8x7B as the small model and GPT-4 as the large one, on the six task families whose answers are graded exactly (MMLU, GSM8K, ARC, HellaSwag, WinoGrande and MBPP), split by family into 1,998 test and 594 dev prompts, with the remaining 32,106 for training.
+We use the pairing of the routing literature~\cite{ong2024routellm}, Mixtral-8x7B as the small model and GPT-4 as the large one, on the six task families whose answers are graded exactly (MMLU, GSM8K, ARC, HellaSwag, WinoGrande and MBPP), stratified by family into 1,998 test and 594 dev prompts, with the remaining 32,106 for training.
 The small model scores 0.589 on the test set and the large one 0.792; 28\% of prompts need the large model.
 
 \textbf{Deciders.} Each decider sees the prompt only, is told which two models it is choosing between, and returns small or large with a probability.
-The trained baseline is a DistilRoBERTa classifier~\cite{sanh2019distilbert} fine-tuned on the training split to predict whether the small model is wrong and the large one right.
+The trained baseline is a DistilRoBERTa classifier~\cite{sanh2019distilbert} fine-tuned on 20,000 prompts sampled from the training split to predict whether the small model is wrong and the large one right.
 
 \textbf{Metrics.} A decider's own choice gives one cost-quality point.
 Sweeping a threshold on its probability gives a curve, summarized by APGR, the average performance gap recovered~\cite{ong2024routellm}: the share of the small-to-large quality gap recovered, averaged over all shares of prompts sent to the large model. A random mix scores 0.5.
@@ -45,19 +45,19 @@ Random mix & 0.500 & -- & 0.0 \\
 
 \textbf{Results.} Table~\ref{tab:router} and Figure~\ref{fig:router} show three things.
 
-First, asked directly, no decider routes.
+First, asked directly, no decider routes better than a random mix.
 \jev\ and \kev\ send nothing to the large model, and \gbig\ sends 2.3\%.
 At those points, quality is within 1.6 points of a random mix sending the same share.
 
 Second, as rankers the general deciders carry a weak signal, and the frontier model is among the weakest.
 \jev's probabilities rank prompts best among the general deciders (APGR 0.609), ahead of \gbig\ by 0.080 [0.045, 0.106].
 
-Third, the trained classifier beats every general decider, \jev\ included, by a small margin: $+0.040$ APGR [$+0.001$, $+0.070$].
+Third, the trained classifier beats every general decider, \jev\ included, by a small margin: $+0.040$ APGR [$+0.001$,~$+0.070$].
 At the fixed operating point it gains 4.5 points of quality over a random mix [3.3, 5.8], against 2.7 for \jev\ [1.5, 3.9].
-Even so, it recovers little of the gap, which matches the routing literature's experience that learned routers are hard to separate from a random mix.
+Even so, its APGR is only 0.149 above a random mix, which matches the routing literature's experience that learned routers are hard to separate from a random mix.
 
 \textbf{Why.} The routing question is ``will \emph{this} small model get \emph{this} prompt right?''.
-The answer depends on that model's particular strengths, which the prompt does not show and a general decider has no way to know.
+The answer likely depends on that model's particular strengths, which the prompt does not show and a general decider has no way to know.
 A classifier trained on the model's record has seen that information; a decision model reading the prompt has not.
 
 \textbf{Takeaway.} Avoiding a generation is not sufficient. The decider must also be able to see what the decision depends on.

@@ -9,7 +9,7 @@ We evaluate the following deciders.
 
 \textbf{Decision models.} \jev\ 1.13 through its hosted API; \kev\ (4B by default, also 0.8B and 9B for agent control) served locally.
 
-\textbf{LLMs.} \gbig\ as the frontier ceiling; \goss\ as a small hosted LLM; \qwen~\cite{yang2025qwen3} served locally with vLLM~\cite{kwon2023vllm}, with thinking turned off.
+\textbf{LLMs.} \gbig\ as the frontier model; \goss\ as a small hosted LLM; \qwen~\cite{yang2025qwen3} served locally with vLLM~\cite{kwon2023vllm}, with thinking turned off.
 An LLM decides through one constrained call: the options are the only permitted outputs (a forced tool choice), and its confidence is the one it states.
 
 \textbf{Baselines specific to a decision point.}
@@ -25,12 +25,12 @@ Every cascade threshold or band is chosen on data the reported number does not u
 All intervals are 95\% cluster bootstraps: over states or tasks for agent control, over classes for the cache guard, over prompts for the router.
 Comparisons between two deciders are paired on the same items.
 
-\textbf{Cost.} For hosted models we record the cost the API gateway reports for each call, not a token count multiplied by a list price; the two differed by about $3\times$ for one model because of upstream provider selection.
+\textbf{Cost.} For hosted models we record the cost the API gateway reports for each call, not a token count multiplied by a list price; the two differed by about $3\times$ for \goss\ because of upstream provider selection.
 All hosted calls go through one gateway and one key.
 Calls from different deciders are interleaved so that network conditions affect them equally.
 
 \textbf{Latency.} Wall-clock time per call at the client.
-For local deciders we also record server-side model time, which isolates HTTP overhead (7--8\,ms).
+For \kev\ we also record server-side model time, which isolates the median HTTP overhead (7--8\,ms).
 
 \textbf{Energy.} For local deciders we read the GPU's cumulative energy counter (NVML) around a contiguous block of calls on a dedicated A100-80GB, with one request in flight, prefix caching off, and warm-up calls discarded.
 We report gross joules per decision and the value net of the idle baseline.

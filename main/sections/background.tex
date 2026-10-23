@@ -4,7 +4,7 @@
 \textbf{Decision models.}
 A decision model takes a \emph{state} (any text) and one or more typed \emph{questions}.
 The question type we use is a choice: a set of named options, each with a short description, plus instructions.
-Nothing is generated token by token, so latency and cost depend on the input length only.
+Nothing is generated token by token, so there are no output tokens to pay for or wait on.
 
 \jev~\cite{typesafe2026jev} is proprietary and reachable only through an API; its weights, architecture and training data are not public.
 We pin version 1.13 and treat every vendor claim about it as a hypothesis to test.
@@ -14,7 +14,7 @@ We include it for two reasons: it lets every experiment run without an API key, 
 
 \textbf{Three decision points.}
 Table~\ref{tab:design} lists the three decision points we study and how they differ.
-What matters for the economics is the column ``decision replaces generation''.
+What matters for the economics is the column ``Replaces generation?''.
 In routing and cache guarding, one outcome of the decision skips an expensive call.
 In agent control, a generative model must run after the decision whatever it is, because tool arguments and user-facing replies are free text.
 
