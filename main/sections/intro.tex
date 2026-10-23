@@ -1,0 +1,53 @@
+\section{Introduction}
+\label{sec:intro}
+
+A deployed LLM system makes many small decisions around each answer it writes.
+A router decides which model should handle a prompt~\cite{chen2023frugalgpt,ong2024routellm}.
+A semantic cache decides whether a stored answer can be served instead of a new one~\cite{bang2023gptcache,schroeder2025vcache}.
+An agent decides which tool to call next, or whether to stop and reply~\cite{yao2024taubench}.
+Each of these decisions has a small, fixed set of outcomes (which model, reuse or regenerate, which tool), yet the usual way to make one is to ask a generative model and parse its text: the system pays for a full autoregressive call when all it needs back is one choice among a handful of options.
+
+A recent class of models targets exactly this gap.
+These \emph{decision models}, which their vendors call ``System One'' models after the fast mode of dual-process theory~\cite{kahneman2011thinking}, are not autoregressive: given a state and a typed question (pick one of these options, score on this scale, yes or no), they return the answer with a probability for each option in a single pass.
+The first commercial one, \jev~\cite{typesafe2026jev}, is priced at a small fraction of a frontier LLM per input token with no output cost, and is advertised as a drop-in replacement for an LLM wherever the output is a decision.
+An open-weights reproduction, \kev~\cite{palmer2026kev}, followed within weeks.
+
+Whether this replacement pays is an empirical systems question, and it has two parts that vendor numbers do not separate.
+The first is quality: is the cheap decision as good as the expensive one?
+The second is structure: what does the decision buy?
+A cache guard's decision can remove a generation entirely, so a cheap, accurate guard saves nearly the whole call.
+An agent's tool choice sits in front of a generation that happens anyway, because some model must still write the tool's arguments, so a separate decider adds a call instead of removing one.
+
+We study both parts on one harness.
+Every decider implements the same interface (a state, a set of options, a returned choice with a confidence), so the same code path scores a frontier LLM, a small hosted LLM, a self-hosted LLM, \jev, \kev, and trained classifiers.
+We run them at three decision points on public datasets, with repeated calls, clustered confidence intervals, measured cost per call, and measured GPU energy for the self-hosted deciders.
+
+Our findings are as follows.
+
+\textbf{Cache guard: the decision model pays off.}
+GSM-Plus~\cite{li2024gsmplus} rewrites grade-school math questions into variants: some only reword the question and keep its answer, others change a number and so change the answer.
+Used as cache traffic, a new question and its nearest cached neighbour often differ by that one number, so embedding similarity cannot tell a safe reuse from a wrong one, and the best similarity cut-off, tuned on held-out queries, reuses almost nothing (66.1\% accuracy).
+\jev\ reaches 93.3\%, within 2.6 points of the frontier model, at about 2\% of its price per decision.
+A frontier model used as the guard is self-defeating: its decision costs more than the answer it might save.
+On two datasets of real traffic, chat prompts and web search queries, \jev\ ties the similarity cut-off on chat, where similarity works, and beats it by 4.4 points on search, where it does not.
+A cascade that uses the free similarity score for clear cases and calls \jev\ only when the score is ambiguous is best or tied for best on all three datasets.
+(On the two traffic datasets every decider, the frontier model included, first stalled near 71\% accuracy; we traced this to errors in the datasets' labels, relabeled the pairs we use, and report results on the corrected labels, Section~\ref{sec:labels}.)
+
+\textbf{Agent control: it does not.}
+\taubench~\cite{barres2025tau2} simulates airline customer-service conversations in which an agent must look up and change bookings through tools while following a written policy.
+At saved points in such conversations, \jev\ picks the same next action as a frontier model's successful run 81.4\% of the time, at $1/22$ of the frontier model's cost and latency.
+Inside a live agent loop, however, the standard design, in which the generating model decides and acts in one call, is the cheapest of all and matches the best reward.
+Splitting the decision out either costs more (the generator asked twice) or loses about five points of reward (\jev\ deciding), a gap at the edge of significance.
+
+\textbf{Routing: a trained classifier wins.}
+RouterBench~\cite{hu2024routerbench} records which prompts a cheap model (Mixtral-8x7B) and an expensive one (GPT-4) answered correctly.
+Asked to send each prompt to one of the two, no general decider, frontier LLM included, routes usefully from the prompt alone.
+A small classifier trained on the cheap model's record of right and wrong answers beats all of them, and even it recovers little.
+
+\textbf{The pattern.}
+A standalone decider is worth its call when two conditions hold: the decision avoids a generation, and the evidence it needs is visible in its input.
+Cache guarding meets both. Agent control fails the first and routing fails the second.
+
+We make two contributions:
+(1) an independent measurement of the decision-model paradigm at three LLM decision points, in cost, latency and energy, against open baselines that run without any API; and
+(2) a decider interface and harness that make a typed-output decision model interchangeable with chat LLMs and classifiers.

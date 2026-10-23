@@ -1,0 +1,76 @@
+% The wide figure is set at the top of the appendix's first page, not floated, so figure numbers
+% follow page order (a figure* can only float to the page after the one it is written on).
+\makeatletter
+\twocolumn[{\centering
+\resultfig{0.13}{\textwidth}{fig16_cacheguard_accuracy}
+\def\@captype{figure}\caption{Cache-guard accuracy per decider and dataset with 95\% CIs clustered by class. vCache runs as a whole system on the datasets' original class labels (see Table~\ref{tab:cache}).}\label{fig:cacheacc}
+\vskip 1.5em}]
+\makeatother
+
+\raggedbottom % no stretched gaps between the pinned figures below
+
+\section{Label Correction for the Two vCache Datasets}
+\label{app:labels}
+
+This appendix details the side finding of Section~\ref{sec:labels}.
+
+In SearchQueries, classes are transitive closures of pairwise LLM judgements within embedding clusters.
+That is valid only if ``same'' is a strict equivalence, and three things break it.
+(1) A cached answer is written for its own query: a general query may be judged close enough to two specific ones, but the answer stored for one specific query is wrong for the other.
+(2) Tolerance accumulates along a chain of individually acceptable links.
+(3) One mistaken link merges two whole classes, labelling pairs no model ever compared.
+
+In LMArena, a class is ``generated from the same seed prompt''.
+An LLM wrote the variants and nothing checked that a variant still asks the same thing; some reverse a premise or change an exam code or a number.
+In the other direction, identical prompts that came from different seeds are labelled different (37 such pairs in our sample).
+
+\textbf{Correction.} We label the pair directly: the new query and the cached query it would be served from.
+A written guideline, fixed in advance, defines the same request strictly (rewording is the same; any change of entity, number, direction, task, scope or output constraint is different).
+A frontier LLM (Claude Opus 5.5) judged all 5,200 dev and test pairs blind, seeing neither the original label nor the similarity nor any decider's output.
+Pairs where a confident verdict disagreed with the original label were judged again, blind, by a separate instance, and a label changed only when both agreed with high confidence.
+This changed 156 of 2,600 LMArena labels (6.0\%) and 409 of 2,600 SearchQueries labels (15.7\%).
+On the corrected labels SearchQueries accuracy rose by 11 to 14 points for every decider, and the similarity threshold improved as well.
+
+\textbf{Limits.} The corrector is an LLM, and no person checked its labels, so the corrected labels may sit closer to an LLM decider's idea of the same request than human labels would.
+It judged every pair, not only those where deciders disagreed with the label, so that the correction could not steer toward any decider.
+GSM-Plus labels are exact numeric answers and were not touched.
+We release both label sets and the reasons for every change.
+
+\section{Additional Results}
+\label{app:results}
+
+% TODO(authors): further candidates, all already in results/: latency distribution and error breakdown
+% (replay figs 7-8), in-loop cost breakdown (fig 14) and the local-G run, cache-guard paired-difference
+% tables, router dev-tuned operating points for every decider, mock-domain pilot (as a pilot only).
+% The replay calibration figure (fig 6) needs its bubble sizes fixed before it can go in.
+
+Figure~\ref{fig:cacheacc} gives the cache-guard accuracies of Table~\ref{tab:cache} with their confidence intervals, Figures~\ref{fig:pareto}--\ref{fig:cascade} add detail to the decision-only replay of Section~\ref{sec:agent}, and Figure~\ref{fig:passk} to the in-loop arms.
+
+
+\begin{figure}[H]
+\centering
+\resultfig{0.07}{\columnwidth}{fig1_pareto_accuracy_latency}
+\caption{Decision-only replay: accuracy against mean latency per decision (log scale). Stars mark the accuracy--latency frontier.}
+\label{fig:pareto}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\resultfig{0.08}{\columnwidth}{fig4_accuracy_vs_energy}
+\caption{Decision-only replay: accuracy against gross GPU energy per decision for the local deciders on one A100-80GB. Hosted deciders have no energy measurement.}
+\label{fig:energy}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\resultfig{0.075}{\columnwidth}{fig10_cascade_threshold_sweep}
+\caption{The \jev\ $\rightarrow$ \gbig\ cascade as its confidence threshold varies (escalate below it). Filled points are simulated from the standalone replays, outlined ones are on the accuracy--latency--cost frontier, the open ring is the live run at the chosen threshold of 0.65, and the dotted line marks that threshold.}
+\label{fig:cascade}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\resultfig{0.07}{\columnwidth}{fig13_inloop_pass_k}
+\caption{In-loop reliability: pass$^k$, the chance that $k$ trials of the same task all succeed, per arm.}
+\label{fig:passk}
+\end{figure}

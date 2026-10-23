@@ -1,0 +1,106 @@
+\section{Agent Control}
+\label{sec:agent}
+
+\textbf{Task.} At each agent turn, choose the next tool or choose to reply to the user.
+We use the airline domain of \taubench~\cite{barres2025tau2}: 50 customer-service tasks (booking, changing and cancelling flights) in which an LLM-simulated customer talks to the agent, the agent calls the airline's tools and must follow a written policy, and the benchmark grades the outcome. We pin release v1.0.1.
+
+We run two experiments.
+The first scores the decision in isolation; the second places each decider inside the agent loop.
+
+\subsection{Decision-only replay}
+
+We collect agent states from \gbig\ acting as a normal single-call agent (50 tasks $\times$ 3 episodes) and keep the 1,076 states from episodes that succeeded.
+Each decider is then asked, at each saved state, for the next action; nothing is executed.
+The label is the action the reference agent took.
+This is a lower bound on quality, since other valid actions exist, and it favours \gbig, which is graded against its own behaviour.
+
+\begin{table}[t]
+\caption{Decision-only replay on 1,076 airline states, 5 repeats. Accuracy = agreement with the reference action. $^\dagger$Graded against its own trajectories, so an upper bound.}
+\label{tab:arm0}
+\centering
+\small
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Decider & Acc.\ (\%) & p50 (ms) & \$/decision & ECE \\
+\midrule
+\gbig$^\dagger$ & 88.5 & 3,909 & $3.83\times10^{-3}$ & 0.103 \\
+\jev\ $\rightarrow$ \gbig & 84.9 & 162 & $8.16\times10^{-4}$ & 0.063 \\
+\jev & 81.4 & 176 & $1.73\times10^{-4}$ & 0.029 \\
+\goss & 67.0 & 1,299 & $3.11\times10^{-4}$ & 0.286 \\
+\kev-9B & 40.1 & 548 & local & 0.179 \\
+\qwen & 39.6 & 656 & local & 0.599 \\
+\kev-4B & 32.1 & 439 & local & 0.124 \\
+\kev-0.8B & 27.3 & 218 & local & 0.088 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:arm0} shows the result.
+\jev\ agrees with the reference on 81.4\% of states [79.1, 83.6], 7.1 points below \gbig\ [5.2, 9.1], while being 22 times cheaper and 22 times faster at the median, and the best calibrated decider (ECE 0.029).
+It is 14 points more accurate than the small hosted LLM at about half its cost.
+The vendor's efficiency claim therefore holds for the single decision, at a measured quality cost.
+
+A cascade that escalates to \gbig\ when \jev's confidence is below 0.65 (a threshold chosen on held-out tasks) recovers half of the gap: 84.9\% [82.8, 86.9], with 16.7\% of calls escalated, at 21\% of \gbig's cost and \jev's median latency.
+
+The open deciders are far behind on this domain.
+\kev\ reaches 27--40\% depending on size and \qwen\ 39.6\%.
+\kev\ also rejects 34 states (3\%) that exceed a hard input limit in its encoder; we count these as failures.
+\qwen\ is almost always certain (mean confidence 0.996) and often wrong.
+
+\textbf{Energy.} On the same A100-80GB, a decision costs 47\,J with \kev-0.8B, 132\,J with \kev-4B, 170\,J with \kev-9B and 211\,J with \qwen\ (gross; 29, 100, 130 and 167\,J net of idle).
+At similar accuracy (\kev-9B versus \qwen), the decision model uses about 20\% less energy and is 17\% faster; the gap is real but far from the order-of-magnitude difference seen in API prices.
+
+\subsection{In the agent loop}
+
+A decision model cannot write tool arguments or a reply, so in a real agent a generator $G$ must act after every decision.
+We compare five designs, which we call arms, on the same tasks, with the same user simulator and seeds, and $G$ = \gbig:
+
+\textbf{A}: \jev\ decides, then $G$ executes the chosen action.
+\textbf{B}: $G$ decides in a constrained call, then $G$ executes.
+\textbf{C}: $G$ decides and executes in a single call, the standard agent.
+\textbf{D}: \goss\ decides, then $G$ executes.
+\textbf{E}: \kev-4B decides, then $G$ executes.
+
+If a decider fails on a turn, $G$ decides that turn and we report the fallback rate.
+Each arm runs 50 tasks $\times$ 5 trials.
+
+\begin{table}[t]
+\caption{Airline tasks in the agent loop ($G$ = \gbig, 250 episodes per arm; 6 E episodes that crashed when $G$ returned an empty message count as failures). Reward with 95\% CI over tasks; pass$^5$ = all five trials of a task succeed; decision share = decider's part of the agent's cost.}
+\label{tab:inloop}
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Arm & Reward & pass$^5$ & \$/success & Dec.\ share \\
+\midrule
+A: \jev\ + $G$ & .744 {\scriptsize[.636, .844]} & 0.600 & 0.048 & 5.3\% \\
+B: $G$ + $G$ & .796 {\scriptsize[.696, .888]} & 0.660 & 0.176 & 74.5\% \\
+C: $G$ alone & .792 {\scriptsize[.696, .884]} & 0.640 & 0.033 & 0\% \\
+D: GPT-OSS + $G$ & .692 {\scriptsize[.572, .804]} & 0.540 & 0.043 & 4.9\% \\
+E: \kev-4B + $G$ & .044 {\scriptsize[.012, .088]} & 0.000 & 0.476 & 0\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\resultfig{0.075}{\columnwidth}{fig12_inloop_cost_vs_reward}
+\caption{Task reward against agent cost per episode for the five arms (log cost axis; error bars are 95\% CIs over tasks). The single-call agent C is cheapest at the top reward.}
+\label{fig:inloop}
+\end{figure}
+
+Table~\ref{tab:inloop} and Figure~\ref{fig:inloop} show that the single-call agent (C) is the cheapest arm and ties for the best reward.
+Asking $G$ for the decision separately (B) changes reward by $+0.4$ points [$-2.8$, $+3.6$] and adds \$0.114 per episode, because the long conversation is now sent twice per turn.
+Replacing that decision with \jev\ (A) removes almost all of the added cost, so A is \$0.105 per episode cheaper than B, but A still costs \$0.009 more per episode than C and loses 4.8 points of reward against it [$-10.8$, $+0.8$], and 5.2 points against B [$-10.8$, $0.0$], at the edge of significance.
+The single-decision gap of Table~\ref{tab:arm0} carries into the loop almost unchanged.
+
+Arm E fails: \kev-4B asks for user details before the user has given an identifier, and repeats the call until the episode is cut off.
+The same behaviour appears with a local \qwen\ as $G$ (reward 0.048), so it belongs to the decider and not to the generator.
+
+One caveat runs the other way.
+With a weak generator ($G$ = \qwen, all local), separating the decision appears to help: arm B reaches 0.308 [0.196, 0.428] against 0.196 [0.116, 0.284] for C.
+A split may help a small model structure its work; it does not help a frontier one.
+
+\textbf{Takeaway.} When a generation follows every decision, the decision is nearly free inside that generation, and a separate decider can only add cost or lose quality.

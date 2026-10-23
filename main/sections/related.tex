@@ -1,0 +1,45 @@
+\section{Related Work}
+\label{sec:related}
+
+\textbf{Decision points in compound systems.}
+LLM applications are increasingly built as systems of models, retrievers and tools rather than as one model call~\cite{zaharia2024compound}, and each junction in such a system is a decision.
+Prior work optimizes each junction on its own terms; we compare one class of component, a standalone decider, across three junctions on one harness and ask when it earns its call.
+
+\textbf{Semantic caching.}
+GPTCache~\cite{bang2023gptcache} serves a stored answer when the embedding similarity of two prompts passes a threshold.
+Later systems improve the matcher: MeanCache~\cite{gill2025meancache} trains the similarity model with federated learning and tracks conversational context, LangCache-style embedders are fine-tuned on domain paraphrase pairs~\cite{gill2025advancing}, ensembles combine several embedding models~\cite{ghaffari2025ensemble}, and SCALM~\cite{li2024scalm} clusters real chat logs to decide what to cache.
+vCache~\cite{schroeder2025vcache} learns a threshold per cached prompt with a user-set error bound.
+All of these still decide a hit by similarity, which recent work shows is not the same as validity~\cite{zhang2026similarity}.
+Closest to our guard, Krites~\cite{singh2026asynchronous} sends near-miss neighbours to an LLM judge, off the serving path to hide its latency.
+We evaluate a judge that reads both queries inline and find that a non-generative decision model is cheap and fast enough for that role, while a frontier LLM costs more than the answers it saves.
+
+\textbf{Model routing and cascades.}
+FrugalGPT~\cite{chen2023frugalgpt} cascades models with a learned scorer, AutoMix~\cite{aggarwal2023automix} lets a small model verify itself, and Hybrid LLM~\cite{ding2024hybrid}, RouteLLM~\cite{ong2024routellm} and RouterDC~\cite{chen2024routerdc} train routers on quality or preference labels.
+Shnitzer et al.~\cite{shnitzer2023large} frame routing as per-model correctness prediction from benchmark records, the recipe our trained baseline follows, and Dekoninck et al.~\cite{dekoninck2025unified} unify routing and cascading and identify the quality estimator as the deciding factor.
+Cascade deferral by confidence is well understood for classifiers~\cite{jitkrittum2023when} and has been extended to token-level uncertainty in LMs~\cite{gupta2024language}.
+Benchmarks and evaluations, from RouterBench~\cite{hu2024routerbench} to RouterEval~\cite{huang2025routereval}, RouterArena~\cite{lu2025routerarena} and LLMRouterBench~\cite{li2026llmrouterbench}, repeatedly find a large gap to the oracle and routers that struggle to beat simple baselines: a tuned kNN matches complex learned routers~\cite{li2025rethinking}, many routers level off at a common plateau~\cite{lu2026routing}, and the small model's own uncertainty often beats a separate router~\cite{ramirez2024optimising}; see~\cite{varangotreille2026doing} for a survey.
+We add general, untrained deciders to this comparison: none replaces a classifier trained on the target model's record, and even that classifier recovers little.
+
+\textbf{Tool use and split agents.}
+Tool-using LLMs decide when and which tool to call inside their own generation~\cite{schick2023toolformer,patil2024gorilla,qin2024toolllm}, and are evaluated on BFCL~\cite{patil2025bfcl} and the $\tau$-bench family~\cite{yao2024taubench,barres2025tau2}.
+A line of work splits the agent into roles: a planner and workers that avoid re-reading observations~\cite{xu2023rewoo}, a planner, caller and summarizer built from small models~\cite{shen2024small}, a planner that emits a DAG of parallel calls~\cite{kim2024llmcompiler}, a separately trained planner for long-horizon tasks~\cite{erdogan2025planandact}, and small models for tool selection with a larger model for execution~\cite{erdogan2024tinyagent,chen2024octopus}, a direction recently argued for in general~\cite{belcak2025small}.
+These splits pay through parallelism, shorter contexts or weak executors.
+Our in-loop arms test the narrowest split, a per-turn tool decision in front of a frontier generator, and find it never beats the single call; with a weak generator it helps, consistent with~\cite{shen2024small}.
+Following~\cite{kapoor2025agents}, we report agent results as cost against reward.
+
+\textbf{Getting a discrete decision from an LLM.}
+Constrained decoding makes generated choices well formed~\cite{willard2023efficient,zheng2024sglang,dong2025xgrammar}, but the model still prefills the full context and decodes, and format restrictions can cost accuracy~\cite{tam2024speak}.
+Fine-tuned small classifiers still beat zero-shot generative models on text classification~\cite{bucher2024finetuned}, and a classification head on an LLM backbone can replace generation for labels~\cite{li2023label}, the design \kev\ follows with a pointer head over a variable option set.
+\jev~\cite{typesafe2026jev} and \kev~\cite{palmer2026kev} package this as a general decision model; to our knowledge this is the first independent measurement of either across decision points with cost, latency and energy.
+
+\textbf{Calibration of stated confidence.}
+LMs are fairly well calibrated in their token probabilities on multiple-choice questions~\cite{kadavath2022language}, and verbalized confidence can be trained~\cite{lin2022teaching} or elicited~\cite{tian2023just}, but off-the-shelf verbalized confidence is typically overconfident~\cite{xiong2024can} and good uncertainty tends to need training~\cite{kapoor2024large}.
+We see the same: the small LLMs' stated confidences are the worst calibrated deciders in our study (ECE 0.29 and 0.60 in agent control), while the decision model's probabilities are the best (0.029), which is what makes cascades around it work.
+
+\textbf{Energy of inference.}
+Per-query energy has been measured for generative LLM inference~\cite{samsi2023words}, across task-specific and general-purpose models~\cite{luccioni2024power}, in benchmarks built on NVML energy counters~\cite{you2023zeus,chung2025mlenergy}, and at production scale with full-stack accounting~\cite{elsworth2025measuring}; serving systems lower it by reconfiguring clusters~\cite{stojkovic2024dynamollm}.
+Sampled power readings can miss much of a short run~\cite{yang2023parttime}, so we integrate the cumulative counter and report gross and idle-subtracted energy per decision.
+
+\textbf{Label errors and LLM relabeling.}
+Label errors are common in test sets and can change model rankings~\cite{northcutt2021pervasive}, including in LLM benchmarks~\cite{gema2025done,vendrow2025platinum}.
+LLMs can match or beat crowd workers as annotators~\cite{gilardi2023chatgpt}, but agreement with humans varies by task~\cite{zheng2023judging,bavaresco2025llms}, which is why we treat our LLM-corrected labels for the two vCache datasets as a limitation.

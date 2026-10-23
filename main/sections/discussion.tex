@@ -1,0 +1,40 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\textbf{Two conditions.}
+Across the three decision points, a standalone decider paid for its call only when both of the following held.
+
+\emph{The decision avoids a generation.}
+In agent control a generator runs after every decision, so the cheapest design lets that generator decide.
+At the cache guard and the router, one outcome of the decision skips the expensive call.
+
+\emph{The evidence is in the input.}
+Whether two queries ask the same thing can be read off the two queries.
+Whether a particular small model will answer a prompt correctly cannot be read off the prompt.
+
+The cache guard meets both conditions and is where the decision model wins.
+Agent control fails the first and routing the second.
+We expect the conditions to transfer to other decision points: input guardrails and intent classification meet both, while ``should the agent retry?'' sits in front of a generation and likely does not.
+
+\textbf{The decision must be much cheaper than what it saves.}
+A frontier LLM was the most accurate guard on GSM-Plus and still raised total cost above running without a cache.
+The relevant quantity is the price of a decision relative to the price of the generation it may avoid, weighted by how often it avoids one.
+
+\textbf{What the vendor claims amount to.}
+The price claim holds: \jev\ cost 22 to 48 times less per decision than the frontier model in our runs, and its latency was a steady 0.18\,s.
+The quality claim holds at the cache guard and partly for single agent decisions (7 points below the frontier model).
+The implied claim that it can replace an LLM at any decision does not hold: in the agent loop and at the router, a cheaper or better alternative existed.
+Its probabilities were the best calibrated of any decider we measured, which is what makes cascades around it work.
+
+\textbf{Open decision models.}
+\kev\ shows that the paradigm is reproducible but not uniformly: it matched \jev\ on judging whether two queries are the same request and collapsed on multi-step airline policy.
+On equal hardware its energy advantage over a same-size generative LLM making a constrained choice was about 20\%, not an order of magnitude.
+A constrained LLM call emits very few tokens, so most of the work in both cases is reading the input.
+
+\textbf{Limitations.}
+\jev\ is proprietary and versioned; our numbers describe version 1.13 through one gateway in one period.
+Agent control uses one domain, with labels and a generator from one frontier model.
+The corrected labels of the two vCache datasets come from an LLM and were not checked by hand.
+Hosted deciders have cost and latency measurements but no energy.
+RouterBench's models are from 2023; the router predicts those models' recorded correctness, so the structure of the result should hold, but the size of the gap may differ for current models.
+We did not fine-tune \kev\ or any LLM for a decision point; a tuned decision model might close the routing gap, at which point it is a trained classifier with a different architecture.

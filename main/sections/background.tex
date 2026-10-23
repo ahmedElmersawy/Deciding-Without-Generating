@@ -1,0 +1,37 @@
+\section{Background}
+\label{sec:background}
+
+\textbf{Decision models.}
+A decision model takes a \emph{state} (any text) and one or more typed \emph{questions}.
+The question type we use is a choice: a set of named options, each with a short description, plus instructions.
+The model returns the chosen option and a probability for every option.
+Nothing is generated token by token, so latency and cost depend on the input length only.
+
+\jev~\cite{typesafe2026jev} is proprietary and reachable only through an API; its weights, architecture and training data are not public.
+We pin version 1.13 and treat every vendor claim about it as a hypothesis to test.
+\kev~\cite{palmer2026kev} is a third-party, Apache-2.0 reproduction that accepts the same API requests as \jev, in 0.8B, 4B and 9B sizes.
+\kev\ is not \jev's weights: its results describe an open decision model run locally, not \jev\ itself.
+We include it for two reasons: it lets every experiment run without an API key, and it lets us measure model-only latency and GPU energy, which a hosted API hides.
+
+\textbf{Three decision points.}
+Table~\ref{tab:design} lists the three decision points we study and how they differ.
+What matters for the economics is the column ``decision replaces generation''.
+In routing and cache guarding, one outcome of the decision skips an expensive call.
+In agent control, a generative model must run after the decision whatever it is, because tool arguments and user-facing replies are free text.
+
+\begin{table*}[t]
+\caption{The three decision points. ``Cheap alternative'' is the baseline a decider must beat to justify its own call; for the router it is a classifier trained on the small model's record of right and wrong answers.}
+\label{tab:design}
+\centering
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lllll@{}}
+\toprule
+Decision point & Options & Benchmark (test size) & Replaces generation? & Cheap alternative \\
+\midrule
+Agent control & next tool, or reply & \taubench\ airline (1,076 states; 50 tasks) & No & generator's own call \\
+Cache guard & reuse / regenerate & GSM-Plus, LMArena, SearchQueries (2,000 each) & Yes & similarity threshold \\
+Router & small / large model & RouterBench (1,998 prompts) & Yes & trained classifier \\
+\bottomrule
+\end{tabular}
+\end{table*}
