@@ -12,7 +12,7 @@ At the cache guard and the router, one outcome of the decision skips the expensi
 Whether two queries ask the same thing can be read off the two queries.
 Whether a particular small model will answer a prompt correctly cannot be read off the prompt without that model's record.
 
-Agent control fails the first condition; the cache guard meets both and is where the decision model wins; routing fails the second.
+Agent control fails the first condition; the cache guard meets both and is where the decision model pays off; routing fails the second.
 We expect the conditions to transfer to other decision points: input guardrails and intent classification meet both, while ``should the agent retry?'' sits in front of a generation and likely does not.
 
 \textbf{The decision must be much cheaper than what it saves.}
@@ -27,7 +27,7 @@ Its probabilities were the best calibrated in the agent replay (ECE 0.029, Table
 
 \textbf{Open decision models.}
 \kev\ shows that the paradigm is reproducible but not uniformly: it came within a point of \jev\ on judging whether two traffic queries are the same request (5.2 points behind on GSM-Plus) and collapsed on multi-step airline policy (27--40\% replay accuracy).
-On equal hardware its energy advantage per decision over a same-size generative LLM making a constrained choice was about 20\%, not an order of magnitude.
+On equal hardware \kev-9B's energy advantage per decision over a same-size generative LLM making a constrained choice was about 20\%, not an order of magnitude.
 A constrained LLM call emits a median of 32 tokens against about 3,400 input tokens, so most of the work in both cases is likely reading the input.
 
 \textbf{Limitations.}

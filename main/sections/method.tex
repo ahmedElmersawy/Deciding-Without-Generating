@@ -14,7 +14,7 @@ An LLM decides through one constrained call: the options are the only permitted 
 
 \textbf{Baselines specific to a decision point.}
 For the cache guard: a threshold on the embedding similarity of the two queries; an off-the-shelf duplicate-question cross-encoder~\cite{reimers2019sbert}; vCache~\cite{schroeder2025vcache}, which learns a similarity threshold per cached prompt under a target error rate $\delta$; and a classifier fine-tuned on each dataset's dev split.
-For the router: a classifier fine-tuned on the cheap model's record of right and wrong answers, plus three fixed policies (always small, always large, and a random mix of the two).
+For the router: a classifier fine-tuned on the small model's record of right and wrong answers, plus three fixed policies (always small, always large, and a random mix of the two).
 
 \textbf{Cascades.} A cheap first stage answers when it is confident and escalates otherwise: \jev\ to \gbig\ (agent control), and similarity threshold to \jev\ (cache guard).
 Every cascade threshold or band is chosen on data the reported number does not use.

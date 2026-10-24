@@ -12,7 +12,7 @@ The small model scores 0.589 on the test set and the large one 0.792; 28\% of pr
 The trained baseline is a DistilRoBERTa classifier~\cite{sanh2019distilbert} fine-tuned on 20,000 prompts sampled from the training split to predict whether the small model is wrong and the large one right.
 
 \textbf{Metrics.} A decider's own choice gives one cost-quality point.
-Sweeping a threshold on its probability gives a curve, summarized by APGR, the average performance gap recovered~\cite{ong2024routellm}: the share of the small-to-large quality gap recovered, averaged over all shares of prompts sent to the large model. A random mix scores 0.5.
+Sweeping a threshold on its probability gives a curve, summarized by APGR, the average performance gap recovered~\cite{ong2024routellm}: the share of the small-to-large quality gap recovered, averaged over all shares of prompts sent to the large model.
 We also report one operating point fixed in advance: the threshold at the 70th percentile of each router's dev scores, applied unchanged to test.
 
 \begin{table}[t]
@@ -38,7 +38,7 @@ Random mix & 0.500 & -- & 0.0 \\
 
 \begin{figure}[t]
 \centering
-\resultfig{0.075}{\columnwidth}{fig17_router_pgr}
+\resultfig{0.067}{\columnwidth}{fig17_router_pgr}
 \caption{Share of the small-to-large quality gap recovered against the share of prompts sent to the large model. The dashed diagonal is a random mix. Markers show each decider's own choice.}
 \label{fig:router}
 \end{figure}

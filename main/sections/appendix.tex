@@ -2,7 +2,7 @@
 % follow page order (a figure* can only float to the page after the one it is written on).
 \makeatletter
 \twocolumn[{\centering
-\resultfig{0.13}{\textwidth}{fig16_cacheguard_accuracy}
+\resultfig{0.1}{\textwidth}{fig16_cacheguard_accuracy}
 \def\@captype{figure}\caption{Cache-guard accuracy per decider and dataset with 95\% CIs clustered by class. vCache as in Table~\ref{tab:cache}.}\label{fig:cacheacc}
 \vskip 1.5em}]
 \makeatother
@@ -49,28 +49,28 @@ Figure~\ref{fig:cacheacc} gives the cache-guard accuracies of Table~\ref{tab:cac
 
 \begin{figure}[H]
 \centering
-\resultfig{0.07}{\columnwidth}{fig1_pareto_accuracy_latency}
+\resultfig{0.06}{\columnwidth}{fig1_pareto_accuracy_latency}
 \caption{Decision-only replay: accuracy against mean latency per decision (log scale). Stars mark the accuracy--latency frontier; $^\dagger$ as in Table~\ref{tab:arm0}.}
 \label{fig:pareto}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\resultfig{0.08}{\columnwidth}{fig4_accuracy_vs_energy}
+\resultfig{0.09}{\columnwidth}{fig4_accuracy_vs_energy}
 \caption{Decision-only replay: accuracy against gross GPU energy per decision for the local deciders on one A100-80GB. Point labels give accuracy points per joule (\%/J).}
 \label{fig:energy}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\resultfig{0.075}{\columnwidth}{fig10_cascade_threshold_sweep}
-\caption{The \jev\ $\rightarrow$ \gbig\ cascade as its confidence threshold varies (escalate below it). Filled points are simulated from the standalone replays, outlined ones are on the accuracy--latency--cost frontier, the open ring is the live run at the chosen threshold of 0.65, and the dotted line marks that threshold.}
+\resultfig{0.12}{\columnwidth}{fig10_cascade_threshold_sweep}
+\caption{The \jev\ $\rightarrow$ \gbig\ cascade as its confidence threshold varies (escalate below it). Points are simulated from the standalone replays (latency and cost on log scales), the open ring is the live run at the chosen threshold of 0.65, and the dotted line marks that threshold.}
 \label{fig:cascade}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\resultfig{0.07}{\columnwidth}{fig13_inloop_pass_k}
+\resultfig{0.08}{\columnwidth}{fig13_inloop_pass_k}
 \caption{In-loop reliability: pass$^k$, the chance that $k$ trials of the same task all succeed, per arm.}
 \label{fig:passk}
 \end{figure}

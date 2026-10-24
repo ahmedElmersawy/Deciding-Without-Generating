@@ -40,13 +40,13 @@ A cascade that uses the free similarity score for clear cases and calls \jev\ on
 
 \textbf{Routing: a trained classifier wins.}
 RouterBench~\cite{hu2024routerbench} records which prompts a small, cheap model (Mixtral-8x7B) and a large, expensive one (GPT-4) answered correctly.
-Asked to send each prompt to one of the two, no general decider, frontier LLM included, routes from the prompt alone when asked directly, and as rankers they add at most 3.0 points of quality over a random mix.
-A small classifier trained on the cheap model's record of right and wrong answers beats all of them, and even it adds only 4.5.
+Asked directly to send each prompt to one of the two, no general decider, frontier LLM included, does better than a random mix from the prompt alone, and as rankers they add at most 3.0 points of quality over a random mix.
+A small classifier trained on the cheap model's record of right and wrong answers beats all of them, and even it adds only 4.5 points.
 
 \textbf{The pattern.}
 Across the three points, a standalone decider was worth its call only when two conditions held: the decision avoids a generation, and the evidence it needs is visible in its input.
 Agent control fails the first, cache guarding meets both, and routing fails the second.
 
 We make two contributions:
-(1) an independent measurement of the decision-model paradigm at three LLM decision points, with per-call cost and latency at the agent and cache points and GPU energy for self-hosted deciders, against open baselines that run without any API; and
-(2) a decider interface and harness that make a typed-output decision model interchangeable with chat LLMs and classifiers.
+(1) an independent measurement of decision models at three decision points, with per-call cost and latency at the agent and cache points and GPU energy for local deciders, against open baselines that need no API; and
+(2) a harness that makes a typed-output decision model interchangeable with LLMs and classifiers.

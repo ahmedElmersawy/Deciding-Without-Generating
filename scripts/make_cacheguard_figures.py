@@ -25,12 +25,14 @@ from collections import defaultdict
 from pathlib import Path
 
 import numpy as np
+from matplotlib.ticker import PercentFormatter
 
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import analyze_cacheguard as ac  # noqa: E402
+from paper_text import enlarge_text  # noqa: E402
 from dwg.runfiles import load_outcomes  # noqa: E402
 from dwg.stats import bootstrap_ci  # noqa: E402
 
@@ -146,7 +148,9 @@ def fig_curves(data, out_dir, plt):
                        color=color, edgecolor=BG, linewidth=1.2, zorder=4, label=label)
         ax.set_xlim(left=-0.005)
         ax.set_ylim(-0.02, 1.02)
-        _style(ax, xlabel="Wrong-reuse rate (wrong cached answer served)", ylabel="Reuse rate" if key == "gsmplus" else None)
+        ax.xaxis.set_major_formatter(PercentFormatter(xmax=1, decimals=0))  # % like Table 4
+        ax.yaxis.set_major_formatter(PercentFormatter(xmax=1, decimals=0))
+        _style(ax, xlabel="Wrong-reuse rate", ylabel="Reuse rate" if key == "gsmplus" else None)
         ax.set_title(title, loc="left", fontsize=11, color=INK)
     # One shared legend below the panels (labels next to clustered points collide).
     handles, labels = {}, {}
@@ -157,6 +161,7 @@ def fig_curves(data, out_dir, plt):
                bbox_to_anchor=(0.5, 0.0))
     fig.suptitle("Figure 15. Cache guard: reuse vs. wrong reuse (up and to the left is better)", x=0.01, ha="left",
                  fontsize=12, color=INK)
+    enlarge_text(fig)
     fig.tight_layout(rect=[0, 0.1, 1, 0.95])
     for ext in ("png", "pdf"):
         fig.savefig(out_dir / f"fig15_cacheguard_reuse_vs_error.{ext}", dpi=200, facecolor=BG,
@@ -180,9 +185,11 @@ def fig_accuracy(data, out_dir, plt):
         ax.set_yticks(ys, [POINT[n][0] for n in names])
         ax.invert_yaxis()
         ax.set_xlim(0, 1.12)
-        _style(ax, xlabel="Accuracy (reuse when right, regenerate when not)")
+        ax.xaxis.set_major_formatter(PercentFormatter(xmax=1, decimals=0))  # % like Table 4
+        _style(ax, xlabel="Accuracy")
         ax.set_title(title, loc="left", fontsize=11, color=INK)
     fig.suptitle("Figure 16. Cache-guard accuracy with 95% CI (clustered by class)", x=0.01, ha="left", fontsize=12, color=INK)
+    enlarge_text(fig)
     fig.tight_layout(rect=[0, 0, 1, 0.94])
     for ext in ("png", "pdf"):
         fig.savefig(out_dir / f"fig16_cacheguard_accuracy.{ext}", dpi=200, facecolor=BG,

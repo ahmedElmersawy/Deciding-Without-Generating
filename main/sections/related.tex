@@ -30,7 +30,7 @@ Following~\cite{kapoor2025agents}, we report agent results as cost against rewar
 \textbf{Getting a discrete decision from an LLM.}
 Constrained decoding makes generated choices well formed~\cite{willard2023efficient,zheng2024sglang,dong2025xgrammar}, but the model still prefills the full context and decodes, and format restrictions can cost accuracy~\cite{tam2024speak}.
 Fine-tuned small classifiers still beat zero-shot generative models on text classification~\cite{bucher2024finetuned}, and a classification head on an LLM backbone can replace generation for labels~\cite{li2023label}, the design \kev\ follows with a pointer head over a variable option set.
-\jev~\cite{typesafe2026jev} and \kev~\cite{palmer2026kev} package this as a general decision model; to our knowledge this is the first independent measurement of either across decision points with cost, latency and energy.
+\jev\ and \kev\ package this as a general decision model; to our knowledge this is the first independent measurement of either across decision points with cost, latency and energy.
 
 \textbf{Calibration of stated confidence.}
 LMs are fairly well calibrated in their token probabilities on multiple-choice questions~\cite{kadavath2022language}, and verbalized confidence can be trained~\cite{lin2022teaching} or elicited~\cite{tian2023just}, but off-the-shelf verbalized confidence is typically overconfident~\cite{xiong2024can} and good uncertainty tends to need training~\cite{kapoor2024large}.

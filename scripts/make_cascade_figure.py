@@ -131,7 +131,7 @@ def main() -> int:
 
     panels = [
         (axes[0], accs, "Accuracy (%)", None, None),
-        (axes[1], lats, "Mean latency per decision (ms)", "log", lambda v, _: f"{v:,.0f}"),
+        (axes[1], lats, "Mean latency (ms)", "log", lambda v, _: f"{v:,.0f}"),
         (axes[2], costs, "$ per decision", "log", lambda v, _: f"${v:.4f}".rstrip("0")),
     ]
     for ax, ys, ylabel, scale, fmt in panels:
@@ -164,14 +164,17 @@ def main() -> int:
     if not live:
         axes[0].annotate(f"recommended: t={marked:g}", (marked, best["blended_accuracy"] * 100),
                          xytext=(8, -14), textcoords="offset points", fontsize=9, color=INK)
-    axes[-1].set_xlabel(f"{spec['fast']} confidence threshold (escalate to {spec['target']} below this)",
+    axes[-1].set_xlabel(f"{spec['fast']} confidence threshold",
                         color=INK_2, fontsize=10)
     axes[0].set_title(
         f"{spec['fast']} → {spec['target']} cascade: accuracy / latency / cost vs. threshold\n"
         "filled = simulated from standalone replays (outlined = Pareto-optimal);\n"
         "open ring = live run; dotted line = threshold in use",
-        loc="left", fontsize=10.5, color=INK,
+        loc="left", fontsize=10.5, color=INK, pad=14,  # room for the paper to trim the title off
     )
+    from paper_text import enlarge_text
+
+    enlarge_text(fig, keep=[axes[0].title])  # the paper trims this title off
     fig.tight_layout(rect=[0, 0, 0.98, 1])
     fig.savefig(out / f"{spec['fig']}.png", dpi=200, facecolor=BG, metadata={"Software": None})
     fig.savefig(out / f"{spec['fig']}.pdf", facecolor=BG, metadata={"CreationDate": None, "Producer": None})

@@ -193,6 +193,9 @@ def _plain_log_ticks(axis) -> None:
 
 
 def _save(fig, out: Path, name: str) -> None:
+    from paper_text import enlarge_text
+
+    enlarge_text(fig)
     fig.tight_layout()
     fig.savefig(out / f"{name}.png", dpi=200, facecolor=BG, metadata={"Software": None})
     fig.savefig(out / f"{name}.pdf", facecolor=BG, metadata={"CreationDate": None, "Producer": None})
@@ -217,7 +220,7 @@ def fig1_pareto(metrics, out, plt) -> dict:
     ax.plot(fx, fy, color=INK_2, linewidth=1.2, linestyle="--", zorder=1, label="Pareto frontier")
     # Kev-4B and Kev-9B sit close together in both axes: alternate label offsets so the two
     # text boxes don't collide (a fixed (9, 7) offset for both overlapped in the first draft).
-    label_offset = {"kev-4b": (9, -14), "kev-9b": (-9, 9), "llm:local/qwen3-8b": (9, -14)}
+    label_offset = {"kev-0.8b": (9, -14), "kev-4b": (9, -14), "kev-9b": (-9, 9), "llm:local/qwen3-8b": (9, -14)}
     for d, (x, y) in pts.items():
         on = d in frontier_set
         ax.scatter([x], [y], s=170 if on else 100, color=COLOR[d],
@@ -229,7 +232,8 @@ def fig1_pareto(metrics, out, plt) -> dict:
     ax.set_xscale("log")
     _plain_log_ticks(ax.xaxis)
     _style(ax, xlabel="Mean latency per decision (log scale)", ylabel="Accuracy (%)")
-    ax.set_title("Figure 1. Accuracy vs. latency: the decision-cost Pareto frontier", loc="left", fontsize=12, color=INK)
+    ax.set_title("Figure 1. Accuracy vs. latency: the decision-cost Pareto frontier", loc="left", fontsize=12, color=INK,
+                 pad=14)  # room for the paper to trim the title off above the top tick
     ax.set_ylim(0, 100)
     _save(fig, out, "fig1_pareto_accuracy_latency")
     plt.close(fig)
@@ -307,10 +311,12 @@ def fig4_accuracy_vs_energy(metrics, out, plt) -> dict:
         e = m["energy_gross"]
         eff[d] = acc / e
         ax.scatter([e], [acc], s=170, color=COLOR[d], zorder=3)
-        # Kev-4B and Kev-9B sit close together: put one label above, the other beside.
-        ax.annotate(f"{DISPLAY[d]}: {acc/e:.3f} %/J", (e, acc),
-                    xytext=(12, -4) if d == "kev-9b" else (0, 14), textcoords="offset points",
-                    ha="left" if d == "kev-9b" else "center", fontsize=9.5, color=INK)
+        # Kev-9B and Qwen3-8B sit close together: Kev-9B is labelled on its left, Qwen3-8B (the
+        # highest energy) on its right; Kev-0.8B sits by the y axis, so its label goes right too.
+        off, ha = {"kev-9b": ((-12, -4), "right"), "llm:local/qwen3-8b": ((12, -4), "left"),
+                   "kev-0.8b": ((14, 4), "left")}.get(d, ((0, 14), "center"))
+        ax.annotate(f"{DISPLAY[d]}: {acc/e:.3f} %/J", (e, acc), xytext=off, textcoords="offset points",
+                    ha=ha, fontsize=9.5, color=INK)
     if eff:
         best = max(eff, key=eff.get)
         bx, by = have[best]["energy_gross"], have[best]["accuracy"][0] * 100
@@ -318,7 +324,7 @@ def fig4_accuracy_vs_energy(metrics, out, plt) -> dict:
         ax.annotate("best accuracy/J", (bx, by), xytext=(0, -22), textcoords="offset points",
                     ha="center", fontsize=8.5, color=INK_2, style="italic")
     excluded = [DISPLAY.get(d, d) for d in metrics if d not in have]
-    ax.annotate("no valid energy measurement: " + ", ".join(excluded), (0.5, -0.16), xycoords="axes fraction",
+    ax.annotate("no valid energy measurement: " + ", ".join(excluded), (0.5, -0.24), xycoords="axes fraction",
                 ha="center", fontsize=8, color=INK_2, style="italic")
     _style(ax, xlabel="Energy per decision (J, gross)", ylabel="Accuracy (%)")
     ax.set_title("Figure 4. Accuracy vs. energy: the efficiency frontier", loc="left", fontsize=12, color=INK)

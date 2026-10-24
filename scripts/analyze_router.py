@@ -243,10 +243,10 @@ def main() -> int:
 
     INK, INK_2, GRID, BG = "#0b0b0b", "#52514e", "#e4e3df", "#fcfcfb"
     fig, ax = plt.subplots(figsize=(7.5, 5.6))
-    ax.plot([0, 1], [0, 1], color="#8a8984", linestyle="--", linewidth=1.4, label="Random mix (APGR 0.5)", zorder=1)
+    ax.plot([0, 1], [0, 1], color="#8a8984", linestyle="--", linewidth=1.4, label="Random mix (APGR 0.500)", zorder=1)
     for d, (r_, pgr) in curves.items():
         ax.plot(r_, pgr, color=COLOR.get(d, INK_2), linewidth=1.8, zorder=2,
-                label=f"{LABEL.get(d, d)} (APGR {next(x['apgr'] for x in rows if x.get('key') == d):.2f})")
+                label=f"{LABEL.get(d, d)} (APGR {next(x['apgr'] for x in rows if x.get('key') == d):.3f})")
         own = next(x for x in rows if x.get("key") == d)
         ax.scatter([own["large"]], [(own["q"][0] - q_small) / (q_large - q_small)], marker=MARKER.get(d, "o"), s=80,
                    color=COLOR.get(d, INK_2), edgecolor=BG, linewidth=1.2, zorder=3)
@@ -254,12 +254,15 @@ def main() -> int:
         ax.spines[side].set_visible(False)
     ax.grid(True, color=GRID, linewidth=0.6, zorder=0)
     ax.set_xlabel("Share of prompts sent to the large model (cost)", color=INK_2)
-    ax.set_ylabel("Share of the small-to-large quality gap recovered", color=INK_2)
+    ax.set_ylabel("Quality gap recovered", color=INK_2)
     ax.set_xlim(0, 1)
     ax.set_ylim(-0.05, 1.05)
     ax.legend(frameon=False, fontsize=8.5, loc="lower right")
     ax.set_title("Figure 17. Router: quality recovered vs. large-model share (markers = own choice)", loc="left",
-                 fontsize=11, color=INK)
+                 fontsize=11, color=INK, pad=14)  # room for the paper to trim the title off
+    from paper_text import enlarge_text
+
+    enlarge_text(fig)
     fig.tight_layout()
     out = Path("results/replay/router-paper_figures")
     out.mkdir(parents=True, exist_ok=True)

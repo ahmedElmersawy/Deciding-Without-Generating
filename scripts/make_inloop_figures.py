@@ -48,6 +48,9 @@ def _style(ax, xlabel=None, ylabel=None):
 
 
 def _save(fig, out: Path, name: str) -> None:
+    from paper_text import enlarge_text
+
+    enlarge_text(fig)
     fig.tight_layout()
     fig.savefig(out / f"{name}.png", dpi=200, facecolor=BG, metadata={"Software": None})
     fig.savefig(out / f"{name}.pdf", facecolor=BG, metadata={"CreationDate": None, "Producer": None})
@@ -98,10 +101,12 @@ def fig_cost_vs_reward(summary, costs, out, plt) -> None:
         ax.errorbar([x], [m], yerr=[[m - lo], [hi - m]], fmt="none", ecolor=ARM_COLOR[arm], elinewidth=1.4,
                     capsize=3, zorder=2)
         ax.scatter([x], [m], s=150, color=ARM_COLOR[arm], edgecolor=BG, linewidth=2, zorder=3)
-        # D sits just left of A and below it: label D on its left so it clears A's error bar.
-        off, ha = ((-10, -14), "right") if arm == "D" else ((10, 6), "left")
+        # C, D and A sit close together: C and D are labelled on their left (the x axis is widened
+        # for this below), A and the rest on their right.
+        off, ha = ((-10, -14), "right") if arm == "D" else ((-10, 6), "right") if arm == "C" else ((10, 6), "left")
         ax.annotate(ARM_NAME[arm], (x, m), xytext=off, textcoords="offset points", ha=ha, fontsize=9, color=INK)
     ax.set_xscale("log")
+    ax.set_xlim(left=min(costs[a]["decision"] + costs[a]["execution"] for a in summary) / 3)
     from matplotlib.ticker import FuncFormatter, LogLocator, NullFormatter, PercentFormatter
 
     ax.xaxis.set_major_locator(LogLocator(base=10, subs=(1.0, 2.0, 5.0)))
@@ -130,7 +135,7 @@ def fig_pass_k(summary, out, plt) -> None:
     # minimum vertical gap, keeping each label's x at its own line end.
     ends.sort()
     for i in range(1, len(ends)):
-        ends[i][0] = max(ends[i][0], ends[i - 1][0] + 0.045)
+        ends[i][0] = max(ends[i][0], ends[i - 1][0] + 0.07)
     for y_label, k_end, arm in ends:
         y_line = summary[arm]["pass_k"][str(k_end)] if str(k_end) in summary[arm]["pass_k"] else summary[arm]["pass_k"][k_end]
         ax.annotate(ARM_NAME[arm], (k_end, y_line), xytext=(k_end + 0.12, y_label), textcoords="data",
@@ -140,8 +145,9 @@ def fig_pass_k(summary, out, plt) -> None:
 
     ax.yaxis.set_major_formatter(PercentFormatter(xmax=1, decimals=0))  # % like the paper's tables
     ax.set_xticks(range(1, max(len(s["pass_k"]) for s in summary.values()) + 1))
-    _style(ax, xlabel="k (trials of the same task that must all succeed)", ylabel="pass^k")
-    ax.set_title("Figure 13. Reliability: pass^k per arm", loc="left", fontsize=11, color=INK)
+    _style(ax, xlabel="k (trials of the same task that must all succeed)", ylabel="pass$^k$")
+    ax.set_title("Figure 13. Reliability: pass^k per arm", loc="left", fontsize=11, color=INK,
+                 pad=14)  # room for the paper to trim the title off above the top tick
     ax.margins(x=0.25)
     _save(fig, out, "fig13_inloop_pass_k")
     plt.close(fig)
