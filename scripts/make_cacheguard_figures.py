@@ -138,15 +138,18 @@ def fig_curves(data, out_dir, plt):
             xs, ys = zip(*sorted(pts))
             ax.plot(xs, ys, color=color, linestyle=ls, linewidth=1.6, label=label, zorder=2)
         ax.axhline(d["base_rate"], color=GRID, linewidth=1.2, linestyle=":", zorder=1)
-        ax.annotate(f"reusable: {d['base_rate']:.0%}", (0.98, d["base_rate"]), xycoords=("axes fraction", "data"),
-                    ha="right", va="bottom", fontsize=8, color=INK_2)
+        ax.annotate(f"reusable: {d['base_rate']:.0%}", (0.02, d["base_rate"]), xycoords=("axes fraction", "data"),
+                    ha="left", va="bottom", fontsize=8, color=INK_2)
         for name, p in d["points"].items():
             if name == "threshold":
                 continue  # drawn as the curve
             label, color = POINT[name]
             ax.scatter([p["wrong"]], [p["reuse"]], s=150 if MARKER[name] == "*" else 85, marker=MARKER[name],
-                       color=color, edgecolor=BG, linewidth=1.2, zorder=4, label=label)
-        ax.set_xlim(left=-0.005)
+                       color=color, edgecolor=BG, linewidth=1.2, label=label,
+                       # Jev above the other markers, the cascade's thin "+" above Jev (on GSM-Plus they coincide)
+                       zorder={"jev": 5, "cascade": 6}.get(name, 4))
+        # Crop to the deciders: past them the curves only climb to full reuse at error rates no guard would use.
+        ax.set_xlim(-0.003, 1.3 * max(p["wrong"] for p in d["points"].values()))
         ax.set_ylim(-0.02, 1.02)
         ax.xaxis.set_major_formatter(PercentFormatter(xmax=1, decimals=0))  # % like Table 4
         ax.yaxis.set_major_formatter(PercentFormatter(xmax=1, decimals=0))
