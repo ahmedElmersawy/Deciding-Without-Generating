@@ -1,0 +1,22 @@
+\section{Related Work}
+\label{sec:related}
+
+% TODO(authors): this section is a skeleton built from the works the experiments rely on.
+% Add a literature search before submission (semantic caching, routing, small-model agent planners).
+
+\textbf{Model routing and cascades.}
+FrugalGPT~\cite{chen2023frugalgpt} cascades models by a learned scorer; Hybrid LLM~\cite{ding2024hybrid} and RouteLLM~\cite{ong2024routellm} train routers on quality labels; AutoMix~\cite{aggarwal2023automix} lets a small model verify itself.
+RouterBench~\cite{hu2024routerbench} provides the recorded outputs we route over.
+We add general, untrained deciders to this comparison and find that none replaces a router trained on the target model's record.
+
+\textbf{Semantic caching.}
+GPTCache~\cite{bang2023gptcache} reuses answers above a similarity threshold.
+vCache~\cite{schroeder2025vcache} learns per-prompt thresholds with an error bound and introduced the two traffic benchmarks we use.
+We evaluate a judge that reads both queries in place of a similarity score, and we show that the benchmarks' class-based labels are unreliable for pairwise decisions.
+
+\textbf{Small models for agent decisions.}
+TinyAgent~\cite{erdogan2024tinyagent} and related work move tool selection to a small model with a larger model for execution.
+Our in-loop arms test this split with a frontier generator on \taubench~\cite{yao2024taubench,barres2025tau2} and find that it does not beat a single call.
+
+\textbf{Decision models.}
+\jev~\cite{typesafe2026jev} and \kev~\cite{palmer2026kev} are recent; to our knowledge this is the first independent measurement of either across decision points with dollar, latency and energy costs.

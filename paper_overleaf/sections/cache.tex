@@ -1,0 +1,120 @@
+\section{Cache Guard}
+\label{sec:cache}
+
+\textbf{Task.} A semantic cache has found the stored prompt nearest to a new query. Should it \emph{reuse} the stored answer or \emph{regenerate}?
+A correct reuse skips the model call; a wrong reuse serves a wrong answer.
+
+\textbf{Scope of the decision.} Deciders see the new query and the cached query, and never the cached answer or the similarity score.
+The decision is ``are these the same request?''.
+Whether the stored answer was right belongs to the model that wrote it and to the cache's expiry policy, and reading long answers would cost much of what the cache saves.
+An earlier version of our question asked deciders to check the stored answer; the frontier model then regenerated on 24\% of pairs whose two prompts were \emph{identical}, because it disagreed with the stored answer. We discarded those runs.
+
+\subsection{Data}
+
+We use three public sets and build nothing ourselves, so that we cannot choose the hard cases.
+Each is a stream: the cache holds every earlier prompt, and each query's candidate is its nearest cached neighbour under GTE-large embeddings~\cite{li2023gte}, the same embedding for every method.
+Each set is split by class into 600 dev queries (for tuning thresholds, bands and the trained classifier) and 2,000 test queries.
+
+\textbf{GSM-Plus}~\cite{li2024gsmplus}: perturbed variants of GSM8K questions~\cite{cobbe2021gsm8k}, with the original questions as the cache.
+Rephrasings keep the answer and number changes do not, so reuse is correct for 33.6\% of queries.
+Labels are exact numeric answers.
+Here wrong reuses are \emph{more} similar to their neighbour than correct ones (median cosine 0.966 against 0.955), so no threshold can separate them.
+
+\textbf{LMArena} and \textbf{SearchQueries}~\cite{schroeder2025vcache}: the standard semantic-caching benchmarks, built from chat prompts~\cite{chiang2024chatbotarena} and real search queries~\cite{craswell2020orcas}.
+Reuse is correct for 92.5\% and 58.2\% of queries after the label correction of Section~\ref{sec:labels}.
+
+\subsection{Results}
+
+\begin{table*}[t]
+\caption{Cache guard on 2,000 test queries per dataset. Acc.\ = share of correct decisions; WR = wrong-reuse rate (a wrong cached answer was served), both in \%. Thresholds are tuned for accuracy on dev. \$ and p50 latency are per decision, averaged over the three datasets. vCache runs unmodified as a whole system: it learns its thresholds online from the benchmark's original class labels and caches only the prompts it missed, so its row is a reference point and not a like-for-like decider.}
+\label{tab:cache}
+\centering
+\small
+\begin{tabular}{@{}lrrrrrrrr@{}}
+\toprule
+ & \multicolumn{2}{c}{GSM-Plus} & \multicolumn{2}{c}{LMArena} & \multicolumn{2}{c}{SearchQueries} & & \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+Decider & Acc. & WR & Acc. & WR & Acc. & WR & \$/decision & p50 \\
+\midrule
+\jev & 93.3 & 1.1 & 96.3 & 1.2 & 85.6 & 3.8 & $2.1\times10^{-5}$ & 0.18\,s \\
+Threshold $\rightarrow$ \jev & 93.3 & 1.1 & 97.4 & 2.5 & 85.7 & 3.8 & $\le 2.3\times10^{-5}$ & -- \\
+\gbig & 96.0 & 0.9 & 91.2 & 0.4 & 85.2 & 1.5 & $1.0\times10^{-3}$ & 1.25\,s \\
+\goss & 95.0 & 1.3 & 93.3 & 1.0 & 83.6 & 3.4 & $4.1\times10^{-5}$ & 1.31\,s \\
+\kev-4B (local) & 88.1 & 5.3 & 96.9 & 1.9 & 85.4 & 8.6 & local & 0.07\,s \\
+\qwen\ (local) & 86.3 & 2.5 & 95.7 & 1.8 & 84.8 & 6.5 & local & 0.39\,s \\
+Trained classifier & 81.7 & 2.9 & 95.7 & 2.5 & 77.1 & 12.6 & local & -- \\
+Similarity threshold & 66.1 & 0.3 & 96.9 & 2.9 & 81.2 & 14.4 & free & -- \\
+Cross-encoder & 66.3 & 0.3 & 96.5 & 3.3 & 78.4 & 17.1 & local & -- \\
+vCache ($\delta=0.05$) & 66.1 & 0.7 & 54.6 & 0.3 & 50.3 & 1.9 & free & -- \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{figure*}[t]
+\centering
+\resultfig{0.13}{\textwidth}{fig15_cacheguard_reuse_vs_error}
+\caption{Reuse rate against wrong-reuse rate. Lines sweep the similarity threshold and the cross-encoder score; each decider is one point; the dotted line is the share of queries for which reuse is correct. Up and to the left is better. On GSM-Plus every learned decider sits far above both curves.}
+\label{fig:cache}
+\end{figure*}
+
+Table~\ref{tab:cache} and Figure~\ref{fig:cache} give the results.
+
+\textbf{Where similarity is blind, the decision model wins by a wide margin.}
+On GSM-Plus the dev-tuned threshold, the cross-encoder and vCache all reuse almost nothing, because no cut-off gives acceptable precision; their accuracy is the regenerate-always rate.
+vCache keeps its error bound on every dataset, and pays for it on the two traffic sets by regenerating on 45--48\% of queries that could have been reused.
+\jev\ reaches 93.3\%, which is 27.2 points above the threshold [25.5, 29.1] and 11.7 points above a classifier trained on this dataset's own dev split [10.1, 13.3], with a 1.1\% wrong-reuse rate.
+\gbig\ is 2.6 points better [1.9, 3.4] at 48 times the price per decision.
+
+\textbf{Where similarity works, the decision model ties it.}
+On LMArena the threshold and \jev\ are statistically tied on accuracy ($+0.6$ for the threshold [$-0.4$, $+1.6$]), and \jev\ serves fewer wrong answers ($-1.7$ points [$-2.3$, $-1.2$]).
+On SearchQueries \jev\ is 4.4 points more accurate [2.3, 6.4] and cuts wrong reuses from 14.4\% to 3.8\%.
+\gbig\ is not better than \jev\ on either set; on LMArena it is the weakest LLM decider, because it regenerates on 8.4\% of queries that could have been reused.
+
+\textbf{A cascade gets the best of both.}
+Calling \jev\ only when the similarity falls in an ambiguous band chosen on dev (3\% of LMArena queries, 72\% of SearchQueries, all of GSM-Plus) is best or tied for best on every dataset, and on LMArena costs $6\times10^{-7}$ dollars per query.
+
+\textbf{The open decision model is competitive here.}
+Unlike in agent control, \kev-4B is within a point of \jev\ on the two traffic sets and 5.2 points behind on GSM-Plus, at 70\,ms per decision on a local GPU, though it serves 1.6 to 5 times as many wrong answers.
+
+\subsection{What the decision is worth}
+
+A guard only pays if its decision is much cheaper than the answer it saves.
+We measured the cost of regenerating with \gbig\ on 200 queries per dataset: \$0.0016 on GSM-Plus and \$0.0084 on LMArena.
+The expected cost of a query is then the decision's cost plus the regeneration cost times the share of queries regenerated.
+
+On GSM-Plus, where only a third of queries can be reused, \jev\ as the guard brings the cost to 72\% of running without a cache; the similarity methods stay at about 100\%.
+\gbig\ as the guard raises it to 138\%: the decision alone costs \$0.0011, two thirds of the answer it is deciding about.
+On LMArena, where most queries can be reused, the free threshold brings the cost to 5\% of no-cache, the cascade to 5\%, \jev\ on every query to 9\%, and \gbig\ to 28\%.
+These figures do not price a wrong answer; with any positive price for one, the comparison on LMArena and SearchQueries moves further toward \jev\ and the cascade, which serve fewer.
+
+\subsection{Label errors in semantic-caching benchmarks}
+\label{sec:labels}
+
+On our first run, every decider reached only 70--72\% on LMArena and SearchQueries, the frontier model included, while the same deciders reached 93--97\% on GSM-Plus.
+A frontier model failing ``is this the same request?'' on short queries pointed at the labels.
+Reading samples of the disagreements confirmed it: ``best workout plans for women'' and ``best workout plan for women'' were labelled different, while ``count blank cells'' and ``count non blank cells'' were labelled the same.
+
+The cause is structural.
+Both benchmarks assign each query a \emph{class} and call any two queries of a class a correct hit; neither judges the pair a cache actually meets.
+
+In SearchQueries, classes are transitive closures of pairwise LLM judgements within embedding clusters.
+That is valid only if ``same'' is a strict equivalence, and three things break it.
+(1) A cached answer is written for its own query: a general query may be judged close enough to two specific ones, but the answer stored for one specific query is wrong for the other.
+(2) Tolerance accumulates along a chain of individually acceptable links.
+(3) One mistaken link merges two whole classes, labelling pairs no model ever compared.
+
+In LMArena, a class is ``generated from the same seed prompt''.
+An LLM wrote the variants and nothing checked that a variant still asks the same thing; some reverse a premise or change an exam code or a number.
+In the other direction, identical prompts that came from different seeds are labelled different (37 such pairs in our sample).
+
+\textbf{Correction.} We label the pair directly: the new query and the cached query it would be served from.
+A written guideline, fixed in advance, defines the same request strictly (rewording is the same; any change of entity, number, direction, task, scope or output constraint is different).
+A frontier LLM (Claude Opus 5.5) judged all 5,200 dev and test pairs blind, seeing neither the original label nor the similarity nor any decider's output.
+Pairs where a confident verdict disagreed with the original label were judged again, blind, by a separate instance, and a label changed only when both agreed with high confidence.
+This changed 156 of 2,600 LMArena labels (6.0\%) and 409 of 2,600 SearchQueries labels (15.7\%).
+On the corrected labels SearchQueries accuracy rose by 11 to 14 points for every decider, and the similarity threshold improved as well.
+
+\textbf{Limits.} The corrector is an LLM, not a person, so the corrected labels may sit closer to an LLM decider's idea of the same request than human labels would.
+We reviewed every pair, not only disagreements, so that the correction could not steer toward any decider, and a human check of a random sample of changed and unchanged pairs is in progress.
+GSM-Plus labels are exact numeric answers and were not touched.
+We release both label sets and the reasons for every change.

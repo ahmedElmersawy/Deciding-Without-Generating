@@ -1,0 +1,75 @@
+% MLSys 2027 submission. Style: mlsys2025.sty (reused for 2027, per the call for research papers).
+% Anonymous by default. For a non-anonymous preprint build use \usepackage[accepted]{mlsys2025}.
+\documentclass{article}
+
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{adjustbox} % \adjincludegraphics: trims the baked-in "Figure N." titles off the result figures
+\usepackage{hyperref}
+
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+\usepackage{mlsys2025}
+
+\graphicspath{{figures/}}
+
+% Cuts the top strip (the title inside the graphic) off a result figure: #1 = fraction of height, #2 = width.
+\newcommand{\resultfig}[3]{\adjincludegraphics[trim={0 0 0 {#1\height}},clip,width=#2]{#3}}
+
+\newcommand{\jev}{Jev}
+\newcommand{\kev}{Kev}
+\newcommand{\gbig}{GPT-5.6}
+\newcommand{\goss}{GPT-OSS-20B}
+\newcommand{\qwen}{Qwen3-8B}
+\newcommand{\taubench}{$\tau^2$-bench}
+
+\mlsystitlerunning{Deciding Without Generating}
+
+\begin{document}
+
+\twocolumn[
+\mlsystitle{Deciding Without Generating: When Does a Standalone Decision Model Pay Off in LLM Systems?}
+
+\mlsyssetsymbol{equal}{*}
+
+% Placeholders: hidden in the anonymous build, fill in for the preprint.
+\begin{mlsysauthorlist}
+\mlsysauthor{First Author}{inst}
+\mlsysauthor{Second Author}{inst}
+\end{mlsysauthorlist}
+
+\mlsysaffiliation{inst}{Institution, City, Country}
+
+\mlsyscorrespondingauthor{First Author}{first.author@example.org}
+
+\mlsyskeywords{LLM systems, model routing, semantic caching, agents, efficiency, benchmarks}
+
+\vskip 0.3in
+
+\begin{abstract}
+\input{sections/abstract}
+\end{abstract}
+]
+
+\printAffiliationsAndNotice{}
+
+\input{sections/intro}
+\input{sections/background}
+\input{sections/method}
+\input{sections/agent}
+\input{sections/cache}
+\input{sections/router}
+\input{sections/discussion}
+\input{sections/related}
+\input{sections/conclusion}
+
+\bibliography{refs}
+\bibliographystyle{mlsys2025}
+
+\appendix
+\input{sections/appendix}
+
+\end{document}

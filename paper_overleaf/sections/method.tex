@@ -1,0 +1,41 @@
+\section{Harness and Method}
+\label{sec:method}
+
+\subsection{One interface, interchangeable deciders}
+
+A decider receives a rendered state, an instruction, and a set of options, and returns one option with a confidence.
+Every decider at a decision point sees the identical rendered state and the identical option descriptions.
+We evaluate the following deciders.
+
+\textbf{Decision models.} \jev\ 1.13 through its hosted API; \kev\ (4B by default, also 0.8B and 9B for agent control) served locally.
+
+\textbf{LLMs.} \gbig\ as the frontier ceiling; \goss\ as a small hosted LLM; \qwen~\cite{yang2025qwen3} served locally with vLLM~\cite{kwon2023vllm}, with thinking turned off.
+An LLM decides through one constrained call: the options are the only permitted outputs (a forced tool choice), and its confidence is the one it states.
+
+\textbf{Baselines specific to a decision point.} A similarity threshold, an off-the-shelf duplicate-question cross-encoder~\cite{reimers2019sbert}, the vCache method~\cite{schroeder2025vcache}, and a classifier fine-tuned on a dev split (cache guard); a classifier fine-tuned on the cheap model's recorded correctness, plus always-small, always-large and random-mix policies (router).
+
+\textbf{Cascades.} A cheap first stage answers when it is confident and escalates otherwise: \jev\ to \gbig\ (agent control), and similarity threshold to \jev\ (cache guard).
+Every cascade threshold or band is chosen on data the reported number does not use.
+
+\subsection{Measurement}
+
+\textbf{Repeats and intervals.} Stochastic deciders are called five times per item (\gbig\ three times at the cache guard and router, to bound cost).
+Repeats on one item are correlated, so all intervals are 95\% cluster bootstraps: over states or tasks for agent control, over classes for the cache guard, over prompts for the router.
+Comparisons between two deciders are paired on the same items.
+
+\textbf{Dollars.} For hosted models we record the cost the API gateway reports for each call, not a token count multiplied by a list price; the two differed by about $3\times$ for one model because of upstream provider selection.
+All hosted calls go through one gateway and one key.
+Calls from different deciders are interleaved so that network conditions affect them equally.
+
+\textbf{Latency.} Wall-clock time per call at the client.
+For local deciders we also record server-side model time, which isolates HTTP overhead (7--8\,ms).
+
+\textbf{Energy.} For local deciders we read the GPU's cumulative energy counter (NVML) around a contiguous block of calls on a dedicated A100-80GB, with one request in flight, prefix caching off, and warm-up calls discarded.
+We report gross joules per decision and the value net of the idle baseline.
+The counter is validated against the instantaneous power reading before each run; on one consumer GPU it failed that check, and we report no energy for that machine.
+Hosted deciders have no energy number.
+
+\textbf{Failures.} A call that fails for an infrastructure reason (billing, rate limit, provider error, network) is retried and never counted against the decider.
+A call in which the decider produces no valid choice is a decider failure, counted as wrong and never retried, so a stochastic decider cannot re-roll its own failures.
+
+\textbf{Calibration.} Expected calibration error (ECE)~\cite{guo2017calibration} over the probability of the chosen option.
