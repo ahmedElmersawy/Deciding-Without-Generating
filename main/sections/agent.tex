@@ -98,7 +98,7 @@ A's reward loss is close in size to \jev's 7.1-point accuracy gap in Table~\ref{
 Arm E fails: \kev-4B asks for user details before the user has given an identifier, and repeats the call until the episode is cut off.
 The same behaviour appears with a local \qwen\ as $G$ (reward 4.8\%), so it belongs to the decider and not to the generator.
 
-With a weak generator ($G$ = \qwen, all local), separating the decision appears to help: arm B reaches 30.8\% [19.6, 42.8] against 19.6\% [11.6, 28.4] for C.
+With a weak generator ($G$ = \qwen, all local), separating the decision helps: arm B reaches 30.8\% against 19.6\% for C, a paired gain of 11.2 points [3.2, 20.0].
 A split may help a weak generator structure its work; it does not help a frontier one.
 
 \textbf{Takeaway.} With a frontier generator after every decision, the decision is nearly free inside that generation (B costs 5 times as much per success as C), and every separate decider we ran added cost or lost reward.

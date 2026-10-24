@@ -9,6 +9,8 @@
 \usepackage{float} % [H]: appendix figures sit where they are written
 \usepackage{amsmath}
 \usepackage{adjustbox} % \adjincludegraphics: trims the baked-in "Figure N." titles off the result figures
+\usepackage{etoolbox}
+\AtBeginEnvironment{thebibliography}{\interlinepenalty=10000} % keep each reference entry in one column
 \usepackage{hyperref}
 
 \newcommand{\theHalgorithm}{\arabic{algorithm}}

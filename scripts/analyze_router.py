@@ -42,6 +42,9 @@ COLOR = {"jev": "#2a78d6", "llm:openrouter/openai/gpt-5.6-sol": "#c9a000", "llm:
          "llm:local/qwen3-8b": "#a8431c", "kev-4b": "#1baf7a", "floor": "#7d5fd6"}
 MARKER = {"jev": "o", "llm:openrouter/openai/gpt-5.6-sol": "D", "llm:openrouter/openai/gpt-oss-20b": "s",
           "llm:local/qwen3-8b": "v", "kev-4b": "^", "floor": "X"}
+# Dash patterns so the curves stay apart in grayscale; the two best rankers are solid.
+DASH = {"jev": "-", "llm:openrouter/openai/gpt-5.6-sol": (0, (8, 2.5)), "llm:openrouter/openai/gpt-oss-20b": (0, (3, 1.5, 1, 1.5, 1, 1.5)),
+        "llm:local/qwen3-8b": (0, (1, 1.2)), "kev-4b": (0, (5, 1.5, 1, 1.5)), "floor": "-"}
 
 
 def p_large(call: dict) -> float:
@@ -245,7 +248,7 @@ def main() -> int:
     fig, ax = plt.subplots(figsize=(7.5, 5.6))
     ax.plot([0, 1], [0, 1], color="#8a8984", linestyle="--", linewidth=1.4, label="Random mix (APGR 0.500)", zorder=1)
     for d, (r_, pgr) in curves.items():
-        ax.plot(r_, pgr, color=COLOR.get(d, INK_2), linewidth=1.8, zorder=2,
+        ax.plot(r_, pgr, color=COLOR.get(d, INK_2), linestyle=DASH.get(d, "-"), linewidth=2.8 if d == "floor" else 1.8, zorder=2,
                 label=f"{LABEL.get(d, d)} (APGR {next(x['apgr'] for x in rows if x.get('key') == d):.3f})")
         own = next(x for x in rows if x.get("key") == d)
         ax.scatter([own["large"]], [(own["q"][0] - q_small) / (q_large - q_small)], marker=MARKER.get(d, "o"), s=80,

@@ -9,3 +9,11 @@
 | B: G decides (constrained) + G | hosted_vllm/Qwen/Qwen3-8B | llm:hosted_vllm/Qwen/Qwen3-8B | 250 | 0 (+0 infra) | 0.308 [0.196, 0.428] | 0.308 | 0.258 | 0.230 | 0.212 | 0.200 | 0.0000 | n/a | 32.7% | 2.09 | 7.0 | 0.0% |
 | C: G alone (single call) | hosted_vllm/Qwen/Qwen3-8B | — | 250 | 0 (+0 infra) | 0.196 [0.116, 0.284] | 0.196 | 0.114 | 0.080 | 0.064 | 0.060 | 0.0000 | n/a | 0.0% | 1.43 | 11.5 | 0.0% |
 | E: Kev decides + G | hosted_vllm/Qwen/Qwen3-8B | kev-4b | 250 | 0 (+0 infra) | 0.048 [0.012, 0.092] | 0.048 | 0.020 | 0.006 | 0.000 | 0.000 | 0.0000 | n/a | 70.4% | 6.89 | 10.2 | 2.5% |
+
+## Paired arm differences (first arm minus second)
+
+Same (task, trial) and user seed in both arms; per-task mean difference, 95% bootstrap CI over tasks. Starred = CI excludes 0.
+
+| comparison | tasks (pairs) | reward diff [95% CI] | agent $/episode diff [95% CI] | wall s/episode diff [95% CI] |
+|---|---|---|---|---|
+| B-C | 50 (250) | +0.112* [+0.032, +0.200] | +0.0000 [+0.0000, +0.0000] | -1.0 [-4.7, +2.8] |
