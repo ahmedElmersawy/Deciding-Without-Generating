@@ -2,24 +2,29 @@
 \label{sec:background}
 
 \textbf{Decision models.}
-A decision model takes a \emph{state} (any text) and one or more typed \emph{questions}.
-The question type we use is a choice: a set of named options, each with a short description, plus instructions.
-Nothing is generated token by token, so there are no output tokens to pay for or wait on.
+A decision model maps a textual \emph{state} and an instruction over a finite set of typed questions to a structured decision.
+In this work, we focus on choice questions: each specifies a set of named options, a short description of each option, and instructions for selecting among them.
+Unlike a conventional language-model call that returns a generated textual response, a decision-model call returns a choice in a predefined format.
+This interface can avoid generating a free-form output, but it does not, by itself, guarantee lower end-to-end latency, cost, or energy: these depend on the model, serving configuration, and downstream computation.
 
-\jev~\cite{typesafe2026jev} is proprietary and reachable only through an API; its weights, architecture and training data are not public.
-We pin version 1.13 and treat every vendor claim about it as a hypothesis to test.
-\kev~\cite{palmer2026kev} is a third-party, Apache-2.0 reproduction that accepts the same API requests as \jev, in 0.8B, 4B and 9B sizes.
-\kev\ is not \jev's weights: its results describe an open decision model run locally, not \jev\ itself.
-We include it for two reasons: it lets every experiment run without an API key, and it lets us measure model-only latency and GPU energy, which a hosted API hides.
+\jev~\cite{typesafe2026jev} is a proprietary decision model accessible through an API; its weights, architecture, and training data are not publicly available.
+We evaluate version 1.13 and treat vendor claims about its performance as hypotheses to test empirically.
+\kev~\cite{palmer2026kev} is a third-party, Apache-2.0-licensed implementation of the decision-model interface, available in 0.8B, 4B, and 9B parameter sizes and accepting the same API request format as \jev.
+It does not use \jev's weights, and we do not assume that the two models are behaviorally equivalent.
+We include \kev\ for two complementary reasons: it provides an open model that can be evaluated without access to the proprietary API, and it enables local measurements of inference latency and GPU energy that are not directly observable through a hosted API.
+We therefore use \jev\ to evaluate the proprietary service and \kev\ to study the behavior and serving costs of an open, locally deployed alternative.
 
 \textbf{Three decision points.}
-Table~\ref{tab:design} lists the three decision points we study and how they differ.
-What matters for the economics is the column ``Replaces generation?''.
-In routing and cache guarding, one outcome of the decision skips an expensive call.
-In agent control, a generative model must run after the decision whatever it is, because tool arguments and user-facing replies are free text.
+We study three places where a standalone decision model could be inserted into an LLM system: agent control, semantic-cache guarding, and model routing (Table~\ref{tab:design}).
+These settings differ in a fundamental way: whether the decision can eliminate downstream generation or instead adds another inference call to the existing computation.
+For agent control, the decision selects whether to invoke a tool or respond to the user, but the system must still generate tool arguments or a free-form reply; the decider therefore adds a call without removing the subsequent generation.
+For cache guarding, the decision determines whether a cached answer can be reused or a new answer must be generated, so accepting a cache hit can avoid generation altogether.
+For model routing, the decision selects between a smaller and a larger model, allowing the system to avoid the larger model when the smaller model is sufficient.
+In the latter two settings, however, the decider must outperform a cheaper alternative---a similarity threshold for cache guarding or a trained classifier for routing---to justify its additional inference cost.
+These distinctions motivate our central question: when does the value of a standalone decision model outweigh the cost of invoking it?
 
 \begin{table*}[t]
-\caption{The three decision points. ``Cheap alternative'' is the baseline a decider must beat to justify its own call; for the router it is a classifier trained on the small model's record of right and wrong answers.}
+\caption{The three decision points studied in this work. ``Replaces generation?'' indicates whether a decision can avoid a subsequent generative-model call. ``Cheap alternative'' identifies the baseline against which the standalone decider must justify its additional cost.}
 \label{tab:design}
 \centering
 \small
@@ -34,3 +39,4 @@ Router & small / large model & RouterBench (1,998 prompts) & Yes & trained class
 \bottomrule
 \end{tabular}
 \end{table*}
+

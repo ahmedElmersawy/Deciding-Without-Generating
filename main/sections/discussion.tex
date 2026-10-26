@@ -2,38 +2,33 @@
 \label{sec:discussion}
 
 \textbf{Two conditions.}
-Across the three decision points, a standalone decider paid for its call only when both of the following held.
+Across our three decision points, a standalone decider paid for its call only when both of the following held.
 
 \emph{The decision avoids a generation.}
-In agent control a generator runs after every decision, so the cheapest design lets that generator decide.
+In agent control a generator runs after every decision, so letting that generator decide is the cheapest design in our experiments.
 At the cache guard and the router, one outcome of the decision skips the expensive call.
 
 \emph{The evidence is in the input.}
-Whether two queries ask the same thing can be read off the two queries.
-Whether a particular small model will answer a prompt correctly cannot be read off the prompt without that model's record.
+Whether two queries ask the same thing can often be judged from the queries.
+Whether a particular small model will answer a prompt correctly is harder to infer from the prompt alone.
 
-Agent control fails the first condition; the cache guard meets both and is where the decision model pays off; routing fails the second.
-We expect the conditions to transfer to other decision points: input guardrails and intent classification meet both, while ``should the agent retry?'' sits in front of a generation and likely does not.
+In our experiments, agent control fails the first condition; the cache guard meets both and is where the decision model pays off; routing remains difficult because correctness depends on model behavior. These conditions may also help reason about other decision points: input guardrails and intent classification can meet both, while ``should the agent retry?'' may not when it adds a call before generation.
 
 \textbf{The decision must be much cheaper than what it saves.}
 A frontier LLM was the most accurate guard on GSM-Plus and still raised total cost to 138\% of running without a cache.
-The relevant quantity is the cost of a decision relative to the cost of the generation it may avoid, weighted by how often it avoids one.
+The relevant quantity is the cost of a decision relative to the generation it may avoid, weighted by how often it avoids one.
 
 \textbf{What the vendor claims amount to.}
-The price claim holds: \jev\ cost 22 to 48 times less per decision than the frontier model in our runs, and its median latency was about 180\,ms.
-The quality claim holds at the cache guard and partly for single agent decisions (7.1 points below the frontier model).
-The implied claim that it can replace an LLM at any decision does not hold: in the agent loop and at the router, a cheaper or better alternative existed.
+In our runs, \jev\ cost 22 to 48 times less per decision than the frontier model, and its median latency was about 180\,ms.
+Its quality was competitive at the cache guard and lower than the frontier model for single agent decisions (7.1 points below).
+Our results do not establish that it can replace an LLM at every decision: in the agent loop and at the router, a cheaper or better alternative existed.
 Its probabilities were the best calibrated in the agent replay (ECE 0.029, Table~\ref{tab:arm0}), which the agent cascade relies on.
 
 \textbf{Open decision models.}
-\kev\ shows that the paradigm is reproducible but not uniformly: it came within a point of \jev\ on judging whether two traffic queries are the same request (5.2 points behind on GSM-Plus) and collapsed on multi-step airline policy (27--40\% replay accuracy).
-On equal hardware \kev-9B's energy advantage per decision over a same-size generative LLM making a constrained choice was about 20\%, not an order of magnitude.
-A constrained LLM call emits a median of 32 tokens against about 3,400 input tokens, so most of the work in both cases is likely reading the input.
+\kev\ shows that the paradigm is reproducible but not uniformly effective: it came within a point of \jev\ on judging whether two traffic queries are the same request (5.2 points behind on GSM-Plus) and reached 27--40\% replay accuracy on multi-step airline policy.
+On equal hardware, \kev-9B's energy advantage per decision over a same-size generative LLM making a constrained choice was about 20\%, not an order of magnitude.
+A constrained LLM call emits a median of 32 tokens against about 3,400 input tokens, so eliminating output generation alone may yield limited energy savings.
 
 \textbf{Limitations.}
-\jev\ is proprietary and versioned; our numbers describe version 1.13 through one gateway in September--October 2026.
-Agent control uses one domain, with labels and a generator from one frontier model.
-The corrected labels of the two vCache datasets come from an LLM and were not checked by hand.
-Hosted deciders have cost and latency measurements but no energy.
-RouterBench's models are from 2023; the router predicts those models' recorded correctness, so the result's structure should hold, but the gap may differ for current models.
-We did not fine-tune \kev\ or any LLM for a decision point; a tuned decision model might close the routing gap, at which point it becomes a trained classifier.
+\jev\ is proprietary and versioned; our numbers describe version 1.13 through one gateway in September–October 2026. Agent control uses one domain, with labels and a generator from one frontier model. The LLM-revised labels of the two vCache datasets were not checked by hand. Hosted deciders have cost and latency measurements but no energy. RouterBench’s models are from 2023, and the router predicts those models’ recorded correctness; results may differ for current models. We did not fine-tune Kev or any LLM for a decision point; a tuned decision model might close the routing gap, but would need comparison against a trained classifier.
+
