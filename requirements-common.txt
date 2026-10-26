@@ -41,7 +41,7 @@ tenacity==9.1.4
 deepdiff==9.1.0
 addict==2.4.0
 toml==0.10.2
-# The GPU stack pulls these in transitively on Gilbreth; a laptop install needs them
+# The GPU stack pulls these in transitively on the cluster; a laptop install needs them
 # explicitly or `import tau2` fails (found onboarding a no-GPU machine, 2026-09-23).
 fastapi==0.136.3
 uvicorn==0.53.0

@@ -46,13 +46,13 @@ def main() -> int:
 
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--data", type=Path,
-                        default=Path(f"/scratch/gilbreth/{os.environ.get('USER', 'user')}/dwg-data/router/routerbench_0shot.parquet"))
+                        default=Path(f"{os.environ.get('DWG_SCRATCH', os.path.expanduser('~/dwg-scratch'))}/dwg-data/router/routerbench_0shot.parquet"))
     parser.add_argument("--n-test", type=int, default=2000)
     parser.add_argument("--n-dev", type=int, default=600)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--out", type=Path, default=Path("results/states/router-routerbench.jsonl"))
     parser.add_argument("--train-out", type=Path,
-                        default=Path(f"/scratch/gilbreth/{os.environ.get('USER', 'user')}/dwg-data/router/router-train.jsonl"))
+                        default=Path(f"{os.environ.get('DWG_SCRATCH', os.path.expanduser('~/dwg-scratch'))}/dwg-data/router/router-train.jsonl"))
     args = parser.parse_args()
 
     df = pd.read_parquet(args.data)

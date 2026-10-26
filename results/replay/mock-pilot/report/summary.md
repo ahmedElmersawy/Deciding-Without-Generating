@@ -8,13 +8,13 @@
 
 | decider | model | repeats | concurrency | host | GPU energy |
 |---|---|---|---|---|---|
-| cascade-kev-4b-t0.9 | openrouter/openai/gpt-oss-20b | 5 | 4 | gilbreth-k043.rcac.purdue.edu | not measured: not measured live for the cascade run: the fast stage's GPU energy is reused post-hoc from that decider's own standalone replay, not re-metered here |
-| jev | — | 5 | 4 | amar-alazizy | n/a (hosted) |
-| kev-0.8b | — | 5 | 1 | amar-alazizy | not measured: energy counter implausible on NVIDIA GeForce RTX 3050 Ti Laptop GPU: 718 W implied under polling vs 9.3 W reported by NVML power usage |
-| kev-4b | — | 5 | 1 | gilbreth-k009.rcac.purdue.edu | NVIDIA A100 80GB PCIe, idle 67.0 W |
-| kev-9b | — | 5 | 1 | gilbreth-k002.rcac.purdue.edu | NVIDIA A100 80GB PCIe, idle 63.6 W |
-| llm:local/qwen3-8b | hosted_vllm/Qwen/Qwen3-8B | 5 | 1 | gilbreth-k015.rcac.purdue.edu | NVIDIA A100 80GB PCIe, idle 70.7 W |
-| llm:openrouter/openai/gpt-oss-20b | openrouter/openai/gpt-oss-20b | 5 | 4 | amar-alazizy | n/a (hosted) |
+| cascade-kev-4b-t0.9 | openrouter/openai/gpt-oss-20b | 5 | 4 | redacted | not measured: not measured live for the cascade run: the fast stage's GPU energy is reused post-hoc from that decider's own standalone replay, not re-metered here |
+| jev | — | 5 | 4 | redacted | n/a (hosted) |
+| kev-0.8b | — | 5 | 1 | redacted | not measured: energy counter implausible on NVIDIA GeForce RTX 3050 Ti Laptop GPU: 718 W implied under polling vs 9.3 W reported by NVML power usage |
+| kev-4b | — | 5 | 1 | redacted | NVIDIA A100 80GB PCIe, idle 67.0 W |
+| kev-9b | — | 5 | 1 | redacted | NVIDIA A100 80GB PCIe, idle 63.6 W |
+| llm:local/qwen3-8b | hosted_vllm/Qwen/Qwen3-8B | 5 | 1 | redacted | NVIDIA A100 80GB PCIe, idle 70.7 W |
+| llm:openrouter/openai/gpt-oss-20b | openrouter/openai/gpt-oss-20b | 5 | 4 | redacted | n/a (hosted) |
 
 ## Decision quality
 

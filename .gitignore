@@ -2,7 +2,7 @@
 results/*
 !results/.gitkeep
 # Benchmark states and replay runs are shared through git so collaborators (e.g. whoever runs
-# the Gilbreth Kev jobs) can add to the same run. Logs stay local.
+# the cluster Kev jobs) can add to the same run. Logs stay local.
 !results/states/
 !results/replay/
 !results/inloop/

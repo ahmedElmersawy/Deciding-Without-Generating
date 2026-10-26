@@ -9,7 +9,7 @@
   "repeats": 5,
   "workers": 1,
   "started": "20261008T192718Z",
-  "host": "gilbreth-i001.rcac.purdue.edu",
+  "host": "redacted",
   "kev_url": "http://127.0.0.1:8009",
   "kev_models": {
     "models": [

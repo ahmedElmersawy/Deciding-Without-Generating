@@ -4,7 +4,7 @@ streams. Our code only drives it; nothing of vCache's is copied (its code is CC 
 DECISIONS.md 2026-10-05).
 
 Runs in its own environment (vCache pins numpy/pandas/vllm versions that conflict with the
-project's): /scratch/gilbreth/$USER/dwg-data/vcache_env, with vCache installed from
+project's): $DWG_SCRATCH/dwg-data/vcache_env, with vCache installed from
 github.com/vcache-project/vCache @ 50694eeb (`pip install --no-deps -e`).
 
 Driven as vCache's own benchmark mode drives it: precomputed GTE embeddings and responses are
@@ -20,7 +20,7 @@ answer's id_set matches; a miss is a needless regeneration iff our label says re
 Output: <out>/scores-vcache.jsonl (state_id, split, reuse, served_correct).
 
 Usage (vCache env python):
-    /scratch/gilbreth/$USER/dwg-data/vcache_env/bin/python scripts/cacheguard_vcache.py \\
+    $DWG_SCRATCH/dwg-data/vcache_env/bin/python scripts/cacheguard_vcache.py \\
         --dataset gsmplus --out results/replay/cacheguard-gsmplus
 """
 
@@ -77,7 +77,7 @@ def main() -> int:
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--delta", type=float, default=DELTA)
     parser.add_argument("--data-dir", type=Path,
-                        default=Path(f"/scratch/gilbreth/{os.environ.get('USER', 'user')}/dwg-data/cacheguard"))
+                        default=Path(f"{os.environ.get('DWG_SCRATCH', os.path.expanduser('~/dwg-scratch'))}/dwg-data/cacheguard"))
     args = parser.parse_args()
 
     stream = [json.loads(line) for line in open(f"results/states/cacheguard-{args.dataset}.jsonl") if line.strip()]

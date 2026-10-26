@@ -8,7 +8,7 @@
   "repeats": 5,
   "workers": 1,
   "started": "20260926T015159Z",
-  "host": "gilbreth-k002.rcac.purdue.edu",
+  "host": "redacted",
   "kev_url": null,
   "llm_models": {
     "object": "list",

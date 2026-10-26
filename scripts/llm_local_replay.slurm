@@ -18,7 +18,6 @@
 # Submit from repo root, into the SAME run dir as the other deciders:
 #   sbatch --export=ALL,STATES=results/states/mock-pilot.jsonl,RUN=results/replay/mock-pilot scripts/llm_local_replay.slurm
 #SBATCH --job-name=dwg-llm-local-replay
-#SBATCH --account=davisjam
 #SBATCH --partition=a100-80gb
 #SBATCH --constraint=a100-80gb
 #SBATCH --gres=gpu:1

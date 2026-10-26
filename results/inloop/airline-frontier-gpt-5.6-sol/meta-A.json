@@ -15,7 +15,7 @@
   "workers": 4,
   "seed_base": 2000,
   "started": "20261004T202007Z",
-  "host": "gilbreth-k024.rcac.purdue.edu",
+  "host": "redacted",
   "previous_runs": [
     {
       "arm": "A",
@@ -34,7 +34,7 @@
       "workers": 4,
       "seed_base": 2000,
       "started": "20261004T080618Z",
-      "host": "gilbreth-i001.rcac.purdue.edu"
+      "host": "redacted"
     }
   ]
 }

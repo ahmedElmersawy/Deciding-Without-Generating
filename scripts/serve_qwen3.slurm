@@ -2,7 +2,6 @@
 # GPU-ONLY job: serves Qwen3 via vLLM's OpenAI-compatible server. No API/rollout work here.
 # Rollout jobs (run_rollouts.slurm) connect to it over the network; cancel this job when done.
 #SBATCH --job-name=dwg-serve-qwen3
-#SBATCH --account=davisjam
 #SBATCH --partition=a100-80gb
 #SBATCH --constraint=a100-80gb
 #SBATCH --gres=gpu:1

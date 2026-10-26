@@ -2,7 +2,6 @@
 # PLAN.md R3: floor router (fine-tuned on the RouterBench train split) scores dev + test, on one
 # A100. No API cost. Submit from repo root: sbatch scripts/cacheguard_crossencoder.slurm
 #SBATCH --job-name=dwg-router-floor
-#SBATCH --account=davisjam
 #SBATCH --partition=a100-80gb
 #SBATCH --constraint=a100-80gb
 #SBATCH --gres=gpu:1

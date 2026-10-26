@@ -2,7 +2,6 @@
 # CLEAN latency/energy measurement of LOCAL deciders (Qwen3, classifier). GPU-bound only:
 # --exclusive so no co-tenant perturbs latency or GPU power draw. No API calls in this job.
 #SBATCH --job-name=dwg-measure
-#SBATCH --account=davisjam
 #SBATCH --partition=a100-80gb
 #SBATCH --constraint=a100-80gb
 #SBATCH --gres=gpu:1

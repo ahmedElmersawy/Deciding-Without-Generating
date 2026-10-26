@@ -14,7 +14,6 @@
 #   sbatch --mem=32G --export=ALL,STATES=results/states/mock-pilot.jsonl,RUN=results/replay/mock-pilot,THRESHOLD=0.9 \
 #       scripts/kev_cascade_replay.slurm
 #SBATCH --job-name=dwg-cascade-replay
-#SBATCH --account=davisjam
 #SBATCH --partition=a100-80gb
 #SBATCH --constraint=a100-80gb
 #SBATCH --gres=gpu:1

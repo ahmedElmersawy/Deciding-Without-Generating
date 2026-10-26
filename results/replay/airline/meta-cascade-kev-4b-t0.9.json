@@ -8,7 +8,7 @@
   "repeats": 5,
   "workers": 4,
   "started": "20261002T064058Z",
-  "host": "gilbreth-k011.rcac.purdue.edu",
+  "host": "redacted",
   "kev_url": "http://127.0.0.1:8009",
   "kev_models": {
     "models": [
@@ -65,7 +65,7 @@
       "repeats": 5,
       "workers": 4,
       "started": "20260925T234933Z",
-      "host": "gilbreth-i003.rcac.purdue.edu",
+      "host": "redacted",
       "kev_url": "http://127.0.0.1:8009",
       "kev_models": {
         "models": [

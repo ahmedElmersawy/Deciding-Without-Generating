@@ -5,7 +5,7 @@
     <run>/meta-<decider>.json     that decider's run record: model, repeats, GPU, energy block
 
 Each decider owns its own files, so machines adding different deciders to the same run (the
-laptop adding API deciders, Gilbreth adding Kev) never edit the same file and never conflict
+laptop adding API deciders, the cluster adding Kev) never edit the same file and never conflict
 in git.
 """
 

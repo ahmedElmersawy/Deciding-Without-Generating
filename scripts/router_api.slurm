@@ -1,11 +1,10 @@
 #!/bin/bash
 # PLAN.md R5: the API deciders on the router stream's full test split: Jev and GPT-OSS-20B x 5,
-# GPT-5.6-sol x 3. API calls only; the GPU is held because every Gilbreth partition is a GPU one.
+# GPT-5.6-sol x 3. API calls only; the GPU is held because every cluster partition is a GPU one.
 # Resumes (the R4 pilot's calls are kept); each decider's $ is estimated from its pilot calls and
 # capped (MAX_*); the first 402 / key-limit refusal stops paid calls.
 # Submit from repo root: sbatch scripts/router_api.slurm
 #SBATCH --job-name=dwg-router-api
-#SBATCH --account=davisjam
 #SBATCH --partition=a100-80gb
 #SBATCH --constraint=a100-80gb
 #SBATCH --gres=gpu:1

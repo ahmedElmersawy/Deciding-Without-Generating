@@ -1,11 +1,11 @@
-# Pip CONSTRAINTS (not direct installs) for the Gilbreth GPU/vLLM stack.
+# Pip CONSTRAINTS (not direct installs) for the cluster GPU/vLLM stack.
 # Verbatim `pip freeze` from the working vLLM 0.29.0 / torch 2.13.0+cu130 / CUDA 13.0
 # combo recorded in dwg-working-freeze.txt (CHECKS.md #6), with two lines removed:
 #   - `packaging @ file:///home/conda/...` (a local conda build path, not pip-installable
 #     from a fresh env; left unconstrained so pip's resolver picks a compatible version)
 #   - the trailing `torch 2.13.0+cu130 | vllm 0.29.0 | cuda 13.0` summary line (not a spec)
 # Used as: pip install -c constraints-gpu.txt -r requirements-gpu.txt
-# Regenerate by re-running `pip freeze` on a verified working Gilbreth env and re-filtering.
+# Regenerate by re-running `pip freeze` on a verified working cluster env and re-filtering.
 agent-detector==2.0.0
 aiohappyeyeballs==2.7.1
 aiohttp==3.14.3

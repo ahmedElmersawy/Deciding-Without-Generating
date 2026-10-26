@@ -13,7 +13,6 @@
 # Submit from repo root (pilot: 4 tasks x 1 trial x 5 arms):
 #   sbatch --export=ALL,TASK_IDS="0 12 25 38",TRIALS=1 scripts/inloop_frontier.slurm
 #SBATCH --job-name=dwg-inloop-frontier
-#SBATCH --account=davisjam
 #SBATCH --partition=a100-80gb
 #SBATCH --constraint=a100-80gb
 #SBATCH --gres=gpu:1

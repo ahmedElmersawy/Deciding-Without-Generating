@@ -35,7 +35,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--states", type=Path, default=Path("results/states/router-routerbench.jsonl"))
     parser.add_argument("--train", type=Path,
-                        default=Path(f"/scratch/gilbreth/{os.environ.get('USER', 'user')}/dwg-data/router/router-train.jsonl"))
+                        default=Path(f"{os.environ.get('DWG_SCRATCH', os.path.expanduser('~/dwg-scratch'))}/dwg-data/router/router-train.jsonl"))
     parser.add_argument("--max-train", type=int, default=20000)
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()

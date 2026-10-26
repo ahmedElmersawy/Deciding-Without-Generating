@@ -6,7 +6,7 @@ before and after each call, which is exact over the call window, unlike ~10 Hz p
 
 What the number means, and doesn't:
 - It is WHOLE-GPU energy, not per-process: the local decider must be the only thing on the
-  GPU (Slurm `--exclusive` on Gilbreth), and its calls must be serialized — replay holds a
+  GPU (Slurm `--exclusive` on the cluster), and its calls must be serialized — replay holds a
   lock around every call to a decider that has an energy meter.
 - It is GROSS energy over the call window, idle draw included. `idle_watts()` measures the
   idle baseline so analysis can also report NET = gross - idle_W * latency.

@@ -1,7 +1,7 @@
 #!/bin/bash
 # PLAN.md CG5: the API deciders on one cache-guard dataset, full test split. Jev and GPT-OSS-20B
 # x 5 repeats, GPT-5.6-sol x 3 (it is ~90% of the cost), plus Jev x 5 on the dev split (tunes the
-# threshold -> Jev cascade's band). API calls only; the GPU is held because every Gilbreth
+# threshold -> Jev cascade's band). API calls only; the GPU is held because every cluster
 # partition is a GPU one. Resumes: the pilot's calls (repeat 0 of a 200-query subset) are kept.
 # Each decider's $ is estimated from its pilot calls and capped (MAX_*); the first 402 or key-limit
 # refusal stops paid calls.
@@ -9,7 +9,6 @@
 # Submit from repo root, one job per dataset:
 #   sbatch --export=ALL,DATASET=gsmplus scripts/cacheguard_api.slurm
 #SBATCH --job-name=dwg-cacheguard-api
-#SBATCH --account=davisjam
 #SBATCH --partition=a100-80gb
 #SBATCH --constraint=a100-80gb
 #SBATCH --gres=gpu:1
