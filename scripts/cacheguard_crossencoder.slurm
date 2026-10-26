@@ -2,7 +2,6 @@
 # PLAN.md CG3: cross-encoder baseline scores for every cache-guard stream row (dev + test), on one
 # A100. No API cost. Submit from repo root: sbatch scripts/cacheguard_crossencoder.slurm
 #SBATCH --job-name=dwg-cacheguard-xenc
-#SBATCH --account=davisjam
 #SBATCH --partition=a100-80gb
 #SBATCH --constraint=a100-80gb
 #SBATCH --gres=gpu:1

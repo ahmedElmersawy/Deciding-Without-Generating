@@ -8,15 +8,15 @@
 
 | decider | model | repeats | concurrency | host | GPU energy |
 |---|---|---|---|---|---|
-| cascade-jev-t0.65 | openrouter/openai/gpt-5.6-sol | 5 | 4 | gilbreth-i002.rcac.purdue.edu | not measured: hosted: both cascade stages are API calls |
-| cascade-kev-4b-t0.9 | openrouter/openai/gpt-oss-20b | 5 | 4 | gilbreth-k011.rcac.purdue.edu | not measured: not measured live for the cascade run: the fast stage's GPU energy is reused post-hoc from that decider's own standalone replay, not re-metered here |
-| jev | — | 5 | 4 | gilbreth-fe01.rcac.purdue.edu | n/a (hosted) |
-| kev-0.8b | — | 5 | 1 | gilbreth-k033.rcac.purdue.edu | NVIDIA A100 80GB PCIe, idle 71.6 W |
-| kev-4b | — | 5 | 1 | gilbreth-i003.rcac.purdue.edu | NVIDIA A100 80GB PCIe, idle 65.2 W |
-| kev-9b | — | 5 | 1 | gilbreth-k025.rcac.purdue.edu | NVIDIA A100 80GB PCIe, idle 64.1 W |
-| llm:local/qwen3-8b | hosted_vllm/Qwen/Qwen3-8B | 5 | 1 | gilbreth-k002.rcac.purdue.edu | NVIDIA A100 80GB PCIe, idle 61.0 W |
-| llm:openrouter/openai/gpt-5.6-sol | openrouter/openai/gpt-5.6-sol | 5 | 4 | amar-alazizy | n/a (hosted) |
-| llm:openrouter/openai/gpt-oss-20b | openrouter/openai/gpt-oss-20b | 5 | 4 | amar-alazizy | n/a (hosted) |
+| cascade-jev-t0.65 | openrouter/openai/gpt-5.6-sol | 5 | 4 | redacted | not measured: hosted: both cascade stages are API calls |
+| cascade-kev-4b-t0.9 | openrouter/openai/gpt-oss-20b | 5 | 4 | redacted | not measured: not measured live for the cascade run: the fast stage's GPU energy is reused post-hoc from that decider's own standalone replay, not re-metered here |
+| jev | — | 5 | 4 | redacted | n/a (hosted) |
+| kev-0.8b | — | 5 | 1 | redacted | NVIDIA A100 80GB PCIe, idle 71.6 W |
+| kev-4b | — | 5 | 1 | redacted | NVIDIA A100 80GB PCIe, idle 65.2 W |
+| kev-9b | — | 5 | 1 | redacted | NVIDIA A100 80GB PCIe, idle 64.1 W |
+| llm:local/qwen3-8b | hosted_vllm/Qwen/Qwen3-8B | 5 | 1 | redacted | NVIDIA A100 80GB PCIe, idle 61.0 W |
+| llm:openrouter/openai/gpt-5.6-sol | openrouter/openai/gpt-5.6-sol | 5 | 4 | redacted | n/a (hosted) |
+| llm:openrouter/openai/gpt-oss-20b | openrouter/openai/gpt-oss-20b | 5 | 4 | redacted | n/a (hosted) |
 
 ## Decision quality
 

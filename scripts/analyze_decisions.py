@@ -171,8 +171,8 @@ def write_summary_md(run: Path, meta: dict, dmetas: dict[str, dict], summary: di
         "",
         "## Deciders",
         "",
-        "| decider | model | repeats | concurrency | host | GPU energy |",
-        "|---|---|---|---|---|---|",
+        "| decider | model | repeats | concurrency | GPU energy |",
+        "|---|---|---|---|---|",
     ]
     for d in summary:
         dm = dmetas.get(d, {})
@@ -184,7 +184,7 @@ def write_summary_md(run: Path, meta: dict, dmetas: dict[str, dict], summary: di
             energy = "n/a (hosted)"
         lines.append(
             f"| {d} | {dm.get('model') or '—'} | {dm.get('repeats', '?')} | {dm.get('workers', '?')} | "
-            f"{dm.get('host', '?')} | {energy} |"
+            f"{energy} |"
         )
     lines += [
         "",

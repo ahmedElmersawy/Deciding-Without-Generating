@@ -2,7 +2,6 @@
 # Confirms the env setup.sh built actually works on a GPU node, before any harness code
 # is written on top of it. Run this once after setup.sh and check its output.
 #SBATCH --job-name=dwg-verify-env
-#SBATCH --account=davisjam
 #SBATCH --partition=a100-80gb
 #SBATCH --constraint=a100-80gb
 #SBATCH --gres=gpu:1

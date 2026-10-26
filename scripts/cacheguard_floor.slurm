@@ -2,7 +2,6 @@
 # PLAN.md CG3: floor classifier: fine-tune on each dataset's dev split, score its test split, on one
 # A100. No API cost. Submit from repo root: sbatch scripts/cacheguard_crossencoder.slurm
 #SBATCH --job-name=dwg-cacheguard-floor
-#SBATCH --account=davisjam
 #SBATCH --partition=a100-80gb
 #SBATCH --constraint=a100-80gb
 #SBATCH --gres=gpu:1

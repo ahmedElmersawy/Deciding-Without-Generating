@@ -15,7 +15,7 @@
   "workers": 4,
   "seed_base": 2000,
   "started": "20261004T213014Z",
-  "host": "gilbreth-k011.rcac.purdue.edu",
+  "host": "redacted",
   "previous_runs": [
     {
       "arm": "B",
@@ -34,7 +34,7 @@
       "workers": 4,
       "seed_base": 2000,
       "started": "20261004T080618Z",
-      "host": "gilbreth-i001.rcac.purdue.edu"
+      "host": "redacted"
     },
     {
       "arm": "B",
@@ -53,7 +53,7 @@
       "workers": 4,
       "seed_base": 2000,
       "started": "20261004T201915Z",
-      "host": "gilbreth-k021.rcac.purdue.edu"
+      "host": "redacted"
     },
     {
       "arm": "B",
@@ -72,7 +72,7 @@
       "workers": 4,
       "seed_base": 2000,
       "started": "20261004T212211Z",
-      "host": "gilbreth-k006.rcac.purdue.edu"
+      "host": "redacted"
     }
   ]
 }

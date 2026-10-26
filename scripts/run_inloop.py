@@ -30,7 +30,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import platform
 import sys
 import threading
 import time
@@ -255,7 +254,7 @@ def main() -> int:
             "small_model": args.small_model if arm == "D" else None,
             "kev_url": args.kev_url if arm == "E" else None,
             "trials": args.trials, "max_steps": args.max_steps, "max_tokens": args.max_tokens,
-            "workers": args.workers, "seed_base": SEED_BASE, "started": stamp, "host": platform.node(),
+            "workers": args.workers, "seed_base": SEED_BASE, "started": stamp,
         }
         if meta_path.exists():
             prev = json.loads(meta_path.read_text())

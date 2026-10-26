@@ -8,7 +8,6 @@
 # Submit from repo root:
 #   sbatch scripts/cacheguard_build.slurm
 #SBATCH --job-name=dwg-cacheguard-build
-#SBATCH --account=davisjam
 #SBATCH --partition=a100-80gb
 #SBATCH --constraint=a100-80gb
 #SBATCH --gres=gpu:1
@@ -19,7 +18,7 @@
 set -euo pipefail
 mkdir -p results/logs
 source scripts/env.sh
-export DWG_DATA_DIR="${DWG_DATA_DIR:-/scratch/gilbreth/$USER/dwg-data}"
+export DWG_DATA_DIR="${DWG_DATA_DIR:-${DWG_SCRATCH:-$HOME/dwg-scratch}/dwg-data}"
 
 # GSM-Plus is embedded by us; refuse to build it if our embeddings don't reproduce vCache's.
 rc=0; python scripts/build_cacheguard_streams.py --dataset lmarena --check-embeddings || rc=$?

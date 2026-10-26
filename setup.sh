@@ -1,5 +1,5 @@
 #!/bin/bash
-# Builds the pinned `dwg` conda env on Gilbreth. Run ONCE from a LOGIN node (needs network +
+# Builds the pinned `dwg` conda env on the cluster. Run ONCE from a LOGIN node (needs network +
 # scratch disk; do not run this inside a compute job). After it finishes, submit
 # scripts/verify_env.slurm on a GPU node to confirm the build before writing more code.
 #
@@ -10,7 +10,7 @@
 set -euo pipefail
 cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-USER_SCRATCH="/scratch/gilbreth/$USER"
+USER_SCRATCH="${DWG_SCRATCH:-$HOME/dwg-scratch}"
 DWG_ENV_PREFIX="${DWG_ENV_PREFIX:-$USER_SCRATCH/conda_envs/dwg}"
 export CONDA_PKGS_DIRS="$USER_SCRATCH/conda_pkgs"
 
@@ -60,7 +60,7 @@ fi
 
 echo "==> installing the pinned GPU/vLLM stack"
 echo "    TODO: VERIFY the cu130 wheel index is live — dwg-working-freeze.txt records a"
-echo "    working torch 2.13.0+cu130 (matches Gilbreth's CUDA 13.1 driver, CHECKS.md #6);"
+echo "    working torch 2.13.0+cu130 (matches the cluster's CUDA 13.1 driver, CHECKS.md #6);"
 echo "    the original plan text said cu128, this deviates on empirical grounds (see"
 echo "    DECISIONS.md). If this 404s, check https://download.pytorch.org/whl for the"
 echo "    live index name before falling back to cu128."

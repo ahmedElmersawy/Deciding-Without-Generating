@@ -7,7 +7,7 @@ latency, accuracy, consistency, and calibration of DECIDING only.
 
 Every call is one row in <out>/calls-<decider>.jsonl (errors included, so error rate is
 reportable); each decider also gets <out>/meta-<decider>.json. Per-decider files mean the laptop
-and Gilbreth can add different deciders to the same run without git conflicts (PLAN.md U0).
+and the cluster can add different deciders to the same run without git conflicts (PLAN.md U0).
 Re-running with the same --out resumes: (decider, state, repeat) rows already present are
 skipped.
 
@@ -35,7 +35,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import platform
 import random
 import sys
 import threading
@@ -301,7 +300,6 @@ def main() -> int:
             "repeats": args.repeats,
             "workers": args.workers,
             "started": stamp,
-            "host": platform.node(),
             "kev_url": args.kev_url if (provenance and uses_kev) else None,
             "kev_models": kev_info if (provenance and uses_kev) else None,
             "llm_models": llm_info if (isinstance(decider, LLMChoiceDecider) and not decider.hosted) else None,

@@ -9,7 +9,7 @@ datasets share), and a decider says `reuse` (serve the cached answer) or `regene
   as vCache's benchmark runs it (a cache that holds every earlier prompt). A query's candidate
   is its nearest earlier prompt; reuse is correct iff both share an id_set (vCache's own rule).
   The file is downloaded whole to --data-dir (2.4-6.6 GB, resumable; a ranged read of just
-  the columns timed out mid-stream on Gilbreth) and only the needed columns are kept, as a
+  the columns timed out mid-stream on the cluster) and only the needed columns are kept, as a
   small parquet next to it.
 - GSM-Plus: the cache holds the 1,319 GSM8K seed questions; queries are the perturbed
   variants; the candidate is the nearest seed. Reuse is correct iff the candidate's answer
@@ -252,7 +252,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--dataset", required=True, choices=["lmarena", "searchqueries", "gsmplus"])
     parser.add_argument("--data-dir", type=Path,
-                        default=Path(os.environ.get("DWG_DATA_DIR", f"/scratch/gilbreth/{os.environ.get('USER', 'user')}/dwg-data")) / "cacheguard")
+                        default=Path(os.environ.get("DWG_DATA_DIR", f"{os.environ.get('DWG_SCRATCH', os.path.expanduser('~/dwg-scratch'))}/dwg-data")) / "cacheguard")
     parser.add_argument("--n-test", type=int, default=2000)
     parser.add_argument("--n-dev", type=int, default=600)
     parser.add_argument("--dev-frac", type=float, default=0.3, help="share of classes held out for tuning")

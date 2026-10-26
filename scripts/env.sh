@@ -7,18 +7,18 @@
 # lacks CXXABI_1.3.15, which vLLM's compiled extensions require (CHECKS.md #7).
 set -uo pipefail  # no -e: safe to source into scripts that set their own error handling
 
-DWG_ENV_PREFIX="${DWG_ENV_PREFIX:-/scratch/gilbreth/$USER/conda_envs/dwg}"
+DWG_ENV_PREFIX="${DWG_ENV_PREFIX:-${DWG_SCRATCH:-$HOME/dwg-scratch}/conda_envs/dwg}"
 
 module load conda/2025.09 2>/dev/null || module load anaconda/2025.06-py313
 source activate "$DWG_ENV_PREFIX"
 
 export LD_LIBRARY_PATH="$CONDA_PREFIX/lib:${LD_LIBRARY_PATH:-}"
-export HF_HOME="/scratch/gilbreth/$USER/hf_cache"
-export VLLM_CACHE_ROOT="/scratch/gilbreth/$USER/vllm_cache"
+export HF_HOME="${DWG_SCRATCH:-$HOME/dwg-scratch}/hf_cache"
+export VLLM_CACHE_ROOT="${DWG_SCRATCH:-$HOME/dwg-scratch}/vllm_cache"
 export PYTHONNOUSERSITE=1
 # Job logs show progress live: redirected stdout is block-buffered otherwise, so a multi-hour
 # job's log stayed empty until exit (in-loop airline job 11823642).
 export PYTHONUNBUFFERED=1
 
-TAU2_REPO_PREFIX="${TAU2_REPO_PREFIX:-/scratch/gilbreth/$USER/repos/tau2-bench}"
+TAU2_REPO_PREFIX="${TAU2_REPO_PREFIX:-${DWG_SCRATCH:-$HOME/dwg-scratch}/repos/tau2-bench}"
 export TAU2_DATA_DIR="$TAU2_REPO_PREFIX/data"

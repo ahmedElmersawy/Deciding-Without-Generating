@@ -1,9 +1,9 @@
 #!/bin/bash
-# Arm E on Gilbreth: replay saved decision states through LOCAL Kev, one model size per job,
+# Arm E on the cluster: replay saved decision states through LOCAL Kev, one model size per job,
 # measuring latency (server + client) and GPU energy. Energy is whole-GPU, so the job must own
 # its allocated GPU exclusively — but NOT the whole node: `--exclusive` reserves every GRES on
 # the node (found 2026-09-23 live: a 2-GPU node handed both GPUs to a job that asked for 1,
-# burning 2 of the account's 3-GPU group cap and starving a labmate's job). `--gres=gpu:1` alone
+# burning 2 of the account's 3-GPU group cap and starving other users' jobs). `--gres=gpu:1` alone
 # already gives this job sole ownership of its one allocated GPU via SLURM's cgroup isolation,
 # which is all the energy counter needs.
 # The replay itself makes no API calls (only --deciders kev), so compute-node egress doesn't
@@ -13,7 +13,6 @@
 # analyze_decisions.py compares them side by side:
 #   sbatch --export=ALL,KEV_MODEL=kev-4b,STATES=results/states/mock-pilot.jsonl,RUN=results/replay/mock-pilot scripts/kev_replay.slurm
 #SBATCH --job-name=dwg-kev-replay
-#SBATCH --account=davisjam
 #SBATCH --partition=a100-80gb
 #SBATCH --constraint=a100-80gb
 #SBATCH --gres=gpu:1

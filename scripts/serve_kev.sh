@@ -5,7 +5,7 @@
 # Kev runs in ITS OWN uv environment, not the `dwg` env: it pins torch<2.9, while dwg pins
 # torch 2.13 for vLLM. The benchmark talks to it over HTTP only.
 #
-# One-time setup (laptop or Gilbreth login node):
+# One-time setup (laptop or cluster login node):
 #   git clone https://github.com/jaredpalmer/kev.git "$KEV_REPO"
 #   git -C "$KEV_REPO" checkout "$KEV_COMMIT"
 #   (cd "$KEV_REPO" && uv sync --frozen --extra serve)
@@ -20,9 +20,9 @@ set -euo pipefail
 
 MODEL="${1:-kev-4b}"
 KEV_COMMIT="557598fced1dada75dfbf36ed144dce309ac6ceb"   # pinned 2026-09-23; weights updated 2026-09-21
-if [ -d /scratch/gilbreth ]; then
-  KEV_REPO="${KEV_REPO:-/scratch/gilbreth/$USER/repos/kev}"
-  export HF_HOME="${HF_HOME:-/scratch/gilbreth/$USER/hf_cache}"
+if [ -n "${DWG_SCRATCH:-}" ]; then
+  KEV_REPO="${KEV_REPO:-$DWG_SCRATCH/repos/kev}"
+  export HF_HOME="${HF_HOME:-$DWG_SCRATCH/hf_cache}"
 else
   KEV_REPO="${KEV_REPO:-$HOME/kev}"
 fi

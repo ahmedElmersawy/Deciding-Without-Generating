@@ -14,7 +14,6 @@
 #   sbatch scripts/inloop_local.slurm
 #   sbatch --export=ALL,DOMAIN=airline,TRIALS=5,ARMS="B C E" scripts/inloop_local.slurm
 #SBATCH --job-name=dwg-inloop-local
-#SBATCH --account=davisjam
 #SBATCH --partition=a100-80gb
 #SBATCH --constraint=a100-80gb
 #SBATCH --gres=gpu:1

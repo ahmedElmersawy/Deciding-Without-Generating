@@ -1,6 +1,6 @@
 #!/bin/bash
 # Re-run every cache-guard decider with the query-only question on the corrected labels
-# (DECISIONS.md 2026-10-07; handoff #8). Submits, from the repo root on Gilbreth:
+# (DECISIONS.md 2026-10-07; handoff #8). Submits, from the repo root on the cluster:
 #   - API deciders (Jev x5 test + x5 dev, GPT-OSS-20B x5, GPT-5.6 x3), one job per dataset
 #   - Kev-4B x5 and Qwen3-8B x5 (local, A100, energy measured), one job each per dataset
 #   - the floor classifier, retrained on the corrected dev labels (all three datasets)
@@ -31,7 +31,7 @@ submit scripts/cacheguard_floor.slurm
 
 dep=$(IFS=:; echo "${jobs[*]}")
 echo "==> analysis after all of: $dep"
-sbatch --dependency=afterany:"$dep" --job-name=dwg-cacheguard-v2-analysis --account=davisjam \
+sbatch --dependency=afterany:"$dep" --job-name=dwg-cacheguard-v2-analysis \
   --partition=a100-80gb --constraint=a100-80gb --gres=gpu:1 --cpus-per-task=2 --mem=16G --time=00:30:00 \
   --output=results/logs/%x-%j.out --wrap "set -e; source scripts/env.sh; \
   for d in $DATASETS; do python scripts/analyze_cacheguard.py results/replay/cacheguard-\$d; done; \

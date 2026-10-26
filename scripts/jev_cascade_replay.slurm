@@ -2,8 +2,8 @@
 # Arm 0 cascade, Jev fast stage: replay saved decision states through a LIVE confidence-gated
 # cascade — Jev (OpenRouter API) decides first; below --cascade-threshold, escalates to
 # GPT-5.6-sol. Both stages are API calls on OPENROUTER_API_KEY from .env, so no model server
-# and no GPU work: the GPU is only requested because every Gilbreth partition is a GPU one
-# (one A100-80GB: davisjam's normal-QoS GPU cap is 0 for every other card type). Threshold
+# and no GPU work: the GPU is only requested because every cluster partition is a GPU one
+# (one A100-80GB: our account's normal-QoS GPU cap is 0 for every other card type). Threshold
 # 0.65 is the held-out pick from the simulated sweep (DECISIONS.md 2026-10-02). Runs on the cluster rather than the laptop so a sleeping laptop
 # can't interrupt it; an interrupted run resumes (re-submit, only missing calls are made).
 #
@@ -11,7 +11,6 @@
 #   sbatch --export=ALL,STATES=results/states/airline.jsonl,RUN=results/replay/airline \
 #       scripts/jev_cascade_replay.slurm
 #SBATCH --job-name=dwg-jev-cascade
-#SBATCH --account=davisjam
 #SBATCH --partition=a100-80gb
 #SBATCH --constraint=a100-80gb
 #SBATCH --gres=gpu:1
