@@ -9,6 +9,7 @@
 # freeze predates.
 set -euo pipefail
 cd "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+[ -f .env ] && { set -a; source .env; set +a; }  # DWG_SCRATCH, SBATCH_ACCOUNT, API keys
 
 USER_SCRATCH="${DWG_SCRATCH:-$HOME/dwg-scratch}"
 DWG_ENV_PREFIX="${DWG_ENV_PREFIX:-$USER_SCRATCH/conda_envs/dwg}"

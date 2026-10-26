@@ -26,13 +26,16 @@ cp .env.example .env    # set OPENROUTER_API_KEY (Jev and every hosted LLM go th
 
 For local models and energy measurement (Linux + NVIDIA GPU, conda), `setup.sh` builds the
 pinned environment (`environment.yml`, `constraints-gpu.txt`, `requirements-gpu.txt`) and
-`scripts/env.sh` activates it. Both read one variable:
+`scripts/env.sh` activates it. Set two variables in `.env` first (see `.env.example`):
 
 ```bash
-export DWG_SCRATCH=/path/to/large/disk   # conda env, HF cache, datasets, tau2-bench checkout
-export SBATCH_ACCOUNT=<your account>     # Slurm jobs take the account from the environment
-bash setup.sh
+DWG_SCRATCH=/path/to/large/disk   # conda env, HF cache, datasets, tau2-bench checkout
+SBATCH_ACCOUNT=<your account>     # Slurm account
 ```
+
+`setup.sh`, `scripts/env.sh` (sourced by every job) and the submit scripts load `.env`. A plain
+`sbatch scripts/<job>.slurm` reads the account before any of our code runs, so for that pass
+`-A <your account>` or export `SBATCH_ACCOUNT` in your shell.
 
 tau2-bench is installed from a checkout at `$DWG_SCRATCH/repos/tau2-bench` (override with
 `TAU2_REPO_PREFIX`). Kev runs in its own environment and is served over HTTP by

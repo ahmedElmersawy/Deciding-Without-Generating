@@ -6,6 +6,7 @@
 # The LD_LIBRARY_PATH export is mandatory, not cosmetic: CentOS 7's system libstdc++
 # lacks CXXABI_1.3.15, which vLLM's compiled extensions require (CHECKS.md #7).
 set -uo pipefail  # no -e: safe to source into scripts that set their own error handling
+[ -f .env ] && { set -a; source .env; set +a; }  # DWG_SCRATCH, SBATCH_ACCOUNT, API keys
 
 DWG_ENV_PREFIX="${DWG_ENV_PREFIX:-${DWG_SCRATCH:-$HOME/dwg-scratch}/conda_envs/dwg}"
 

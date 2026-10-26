@@ -12,6 +12,7 @@
 #        DATASETS="lmarena" bash scripts/cacheguard_v2_submit.sh
 set -euo pipefail
 cd "$(dirname "$0")/.."
+[ -f .env ] && { set -a; source .env; set +a; }  # DWG_SCRATCH, SBATCH_ACCOUNT, API keys
 : "${DATASETS:=lmarena searchqueries gsmplus}" "${LOCAL_TIME:=04:00:00}"
 mkdir -p results/logs
 jobs=()
