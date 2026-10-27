@@ -16,7 +16,7 @@ Sweeping a threshold on its probability gives a curve, summarized by APGR, the a
 We also report one operating point fixed in advance: the threshold at the 70th percentile of each router's dev scores, applied unchanged to test.
 
 \begin{table}[t]
-\caption{Routing on 1,998 RouterBench prompts. ``Own choice'' = share sent to the large model when the decider simply answers. Gain = quality over a random mix sending the same share, at the dev-tuned operating point (30\% of dev prompts sent to the large model; 23--30\% on test), in points.}
+\caption{Routing on 1,998 RouterBench prompts. ``Own choice'' = share sent to the large model when the decider simply answers. Gain = quality over a random mix sending the same share, at the dev-tuned operating point (30\% of dev prompts sent to the large model; 23--30\% on test), in points. \qwen\ and \gbig\ state few distinct confidences (the largest tie covers 1,061 and 1,404 prompts); the point estimate breaks ties in prompt order and the bootstrap at random, so their APGRs sit near an edge of the CI (random tie-breaking gives 0.516 and 0.537).}
 \label{tab:router}
 \centering
 \small
@@ -45,7 +45,7 @@ Random mix & 0.500 & -- & 0.0 \\
 
 \textbf{Results.} Table~\ref{tab:router} and Figure~\ref{fig:router} show three things.
 
-First, asked directly, no decider routes better than a random mix.
+First, asked directly, no general decider routes better than a random mix.
 \jev\ and \kev\ send nothing to the large model, and \gbig\ sends 2.3\%.
 At those points, quality is within 1.6 points of a random mix sending the same share.
 

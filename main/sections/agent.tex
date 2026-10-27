@@ -96,7 +96,7 @@ Replacing that decision with \jev\ (A) removes almost all of the added cost, so 
 A's reward loss is close in size to \jev's 7.1-point accuracy gap in Table~\ref{tab:arm0}, which suggests the single-decision gap carries into the loop.
 
 Arm E fails: \kev-4B asks for user details before the user has given an identifier, and repeats the call until the episode is cut off.
-The same behaviour appears with a local \qwen\ as $G$ (reward 4.8\%), so it belongs to the decider and not to the generator.
+The same behavior appears with a local \qwen\ as $G$ (reward 4.8\%), so it belongs to the decider and not to the generator.
 
 With a weak generator ($G$ = \qwen, all local), separating the decision helps: arm B reaches 30.8\% against 19.6\% for C, a paired gain of 11.2 points [3.2, 20.0].
 A split may help a weak generator structure its work; it does not help a frontier one.

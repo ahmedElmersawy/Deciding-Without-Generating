@@ -10,7 +10,7 @@ GPTCache~\cite{bang2023gptcache} serves a stored answer when the embedding simil
 Later systems improve the matcher: MeanCache~\cite{gill2025meancache} trains the similarity model with federated learning and tracks conversational context, LangCache-style embedders are fine-tuned on domain paraphrase pairs~\cite{gill2025advancing}, ensembles combine several embedding models~\cite{ghaffari2025ensemble}, and SCALM~\cite{li2024scalm} clusters real chat logs to decide what to cache.
 vCache~\cite{schroeder2025vcache} learns a threshold per cached prompt with a user-set error bound.
 All of these still decide a hit by similarity, which recent work shows is not the same as validity~\cite{zhang2026similarity}.
-Closest to our guard, Krites~\cite{singh2026asynchronous} sends near-miss neighbours to an LLM judge, off the serving path to hide its latency.
+Closest to our guard, Krites~\cite{singh2026asynchronous} sends near-miss neighbors to an LLM judge, off the serving path to hide its latency.
 We evaluate a judge that reads both queries inline and find that a non-generative decision model is cheap and fast enough for that role, while a frontier LLM can cost more than the answers it saves.
 
 \textbf{Model routing and cascades.}

@@ -13,9 +13,9 @@
 \label{app:labels}
 
 On our first run, every LLM decider reached only 70--72\% on SearchQueries, and \jev\ and the frontier model 71\% on LMArena, against 93--97\% for the hosted deciders on GSM-Plus.
-Samples of the disagreements put the fault in the labels: ``best workout plans for women'' and ``best workout plan for women'' were labelled different, while ``count blank cells'' and ``count non blank cells'' were labelled the same.
+Samples of the disagreements put the fault in the labels: ``best workout plans for women'' and ``best workout plan for women'' were labeled different, while ``count blank cells'' and ``count non blank cells'' were labeled the same.
 
-In SearchQueries, classes are transitive closures of pairwise LLM judgements within embedding clusters.
+In SearchQueries, classes are transitive closures of pairwise LLM judgments within embedding clusters.
 That is valid only if ``same'' is a strict equivalence, and three things break it.
 (1) A cached answer is written for its own query: a general query may be judged close enough to two specific ones, but the answer stored for one specific query is wrong for the other.
 (2) Tolerance accumulates along a chain of individually acceptable links.
@@ -23,7 +23,7 @@ That is valid only if ``same'' is a strict equivalence, and three things break i
 
 In LMArena, a class is ``generated from the same seed prompt''.
 An LLM wrote the variants and nothing checked that a variant still asks the same thing; some reverse a premise or change an exam code or a number.
-In the other direction, identical prompts that came from different seeds are labelled different (37 of the 2,600 pairs).
+In the other direction, identical prompts that came from different seeds are labeled different (37 of the 2,600 pairs).
 
 \textbf{Correction.} We label the pair directly: the new query and the cached query it would be served from.
 A written guideline, fixed in advance, defines the same request strictly (rewording is the same; any change of entity, number, direction, task, scope or output constraint is different).
@@ -38,11 +38,6 @@ GSM-Plus labels are exact numeric answers and were not touched.
 
 \section{Additional Results}
 \label{app:results}
-
-% TODO(authors): further candidates, all already in results/: latency distribution and error breakdown
-% (replay figs 7-8), in-loop cost breakdown (fig 14) and the local-G run, cache-guard paired-difference
-% tables, router dev-tuned operating points for every decider, mock-domain pilot (as a pilot only).
-% The replay calibration figure (fig 6) needs its bubble sizes fixed before it can go in.
 
 Figure~\ref{fig:cacheacc} gives the cache-guard accuracies of Table~\ref{tab:cache} with their confidence intervals, Figures~\ref{fig:pareto}--\ref{fig:cascade} add detail to the decision-only replay of Section~\ref{sec:agent}, and Figure~\ref{fig:passk} to the in-loop arms.
 

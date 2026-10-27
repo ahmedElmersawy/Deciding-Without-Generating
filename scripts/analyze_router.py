@@ -246,10 +246,10 @@ def main() -> int:
 
     INK, INK_2, GRID, BG = "#0b0b0b", "#52514e", "#e4e3df", "#fcfcfb"
     fig, ax = plt.subplots(figsize=(7.5, 5.6))
-    ax.plot([0, 1], [0, 1], color="#8a8984", linestyle="--", linewidth=1.4, label="Random mix (APGR 0.500)", zorder=1)
+    ax.plot([0, 1], [0, 1], color="#8a8984", linestyle="--", linewidth=1.4, label="Random mix", zorder=1)
     for d, (r_, pgr) in curves.items():
         ax.plot(r_, pgr, color=COLOR.get(d, INK_2), linestyle=DASH.get(d, "-"), linewidth=2.8 if d == "floor" else 1.8, zorder=2,
-                label=f"{LABEL.get(d, d)} (APGR {next(x['apgr'] for x in rows if x.get('key') == d):.3f})")
+                label=LABEL.get(d, d))
         own = next(x for x in rows if x.get("key") == d)
         ax.scatter([own["large"]], [(own["q"][0] - q_small) / (q_large - q_small)], marker=MARKER.get(d, "o"), s=80,
                    color=COLOR.get(d, INK_2), edgecolor=BG, linewidth=1.2, zorder=3)

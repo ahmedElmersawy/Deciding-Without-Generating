@@ -324,7 +324,7 @@ def fig4_accuracy_vs_energy(metrics, out, plt) -> dict:
         ax.annotate("best accuracy/J", (bx, by), xytext=(0, -22), textcoords="offset points",
                     ha="center", fontsize=8.5, color=INK_2, style="italic")
     excluded = [DISPLAY.get(d, d) for d in metrics if d not in have]
-    ax.annotate("no valid energy measurement: " + ", ".join(excluded), (0.5, -0.24), xycoords="axes fraction",
+    ax.annotate("hosted, no GPU energy: " + ", ".join(excluded), (0.5, -0.24), xycoords="axes fraction",
                 ha="center", fontsize=8, color=INK_2, style="italic")
     _style(ax, xlabel="Energy per decision (J, gross)", ylabel="Accuracy (%)")
     ax.set_title("Figure 4. Accuracy vs. energy: the efficiency frontier", loc="left", fontsize=12, color=INK)

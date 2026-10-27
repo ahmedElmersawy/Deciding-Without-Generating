@@ -37,13 +37,13 @@ An earlier version of our question asked deciders to check the stored answer; th
 \subsection{Data}
 
 We use three public datasets and build nothing ourselves, so that we cannot choose the hard cases.
-Each is a stream: the cache holds every earlier prompt, and each query's candidate is its nearest cached neighbour under GTE-large~\cite{li2023gte}, an open text-embedding model, the same for every method.
+Each is a stream: the cache holds every earlier prompt, and each query's candidate is its nearest cached neighbor under GTE-large~\cite{li2023gte}, an open text-embedding model, the same for every method.
 Each dataset is split by class into 600 dev queries (for tuning thresholds, bands and the trained classifier) and 2,000 test queries.
 
 \textbf{GSM-Plus}~\cite{li2024gsmplus}: variants of grade-school math questions from GSM8K~\cite{cobbe2021gsm8k}, for example a rewording, an added distractor, or a changed number; the original questions fill the cache.
 Reuse is correct for 33.6\% of queries.
 Labels are exact numeric answers.
-Here wrong reuses are \emph{more} similar to their neighbour than correct ones (median cosine 0.966 against 0.955), so no threshold can separate them.
+Here wrong reuses are \emph{more} similar to their neighbor than correct ones (median cosine 0.966 against 0.955), so no threshold can separate them.
 
 \textbf{LMArena} and \textbf{SearchQueries}: two datasets released with vCache~\cite{schroeder2025vcache}.
 LMArena takes user prompts from Chatbot Arena~\cite{chiang2024chatbotarena} and adds LLM-written rewordings of each; SearchQueries takes real web search queries from Bing's ORCAS log~\cite{craswell2020orcas} and groups those that ask the same thing.
@@ -88,6 +88,6 @@ The expected cost of a query is then the decision's cost plus the regeneration c
 On GSM-Plus, where only a third of queries can be reused, \jev\ as the guard brings the cost to 72\% of running without a cache; the similarity methods stay at about 100\%.
 \gbig\ as the guard raises it to 138\%: the decision alone costs \$0.0011, two thirds of the answer it is deciding about.
 On LMArena, where most queries can be reused, the free threshold brings the cost to 5\% of no-cache, the cascade to 5\%, \jev\ on every query to 9\%, and \gbig\ to 28\%.
-These figures assign no cost to a wrong answer; any positive cost for one favours \jev\ and the cascade further over the threshold, since on LMArena and SearchQueries they serve fewer.
+These figures assign no cost to a wrong answer; any positive cost for one favors \jev\ and the cascade further over the threshold, since on LMArena and SearchQueries they serve fewer.
 
 \textbf{Takeaway.} When one outcome of the decision skips a generation and the two queries hold all the evidence, a cheap decision model is the guard to use: it ties or beats similarity on every dataset, while a frontier model's decision can cost two thirds of the answer it may save.
