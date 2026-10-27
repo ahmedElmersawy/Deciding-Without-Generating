@@ -1,0 +1,30 @@
+% Appendix of the MLSys 2027 submission, built as a separate file: the call for papers asks for the
+% appendix to be uploaded separately after the main paper. Shares preamble.tex with main.tex.
+\documentclass{article}
+
+\usepackage{xr-hyper} % before hyperref: \ref across main.pdf and appendix.pdf
+\input{preamble}
+\externaldocument{main} % section, table and figure labels of the main paper
+
+% Prefix appendix floats so they cannot be confused with the main paper's Figure/Table N.
+\renewcommand{\thefigure}{A\arabic{figure}}
+\renewcommand{\thetable}{A\arabic{table}}
+
+\begin{document}
+
+% The wide figure is set at the top of the first page with the title, not floated, so figure numbers
+% follow page order (a figure* can only float to the page after the one it is written on).
+\makeatletter
+\twocolumn[
+\mlsystitle{Appendix to ``Deciding Without Generating: When Does a Standalone Decision Model Pay Off in LLM Systems?''}
+\vskip 0.2in
+{\centering
+\resultfig{0.1}{\textwidth}{fig16_cacheguard_accuracy}
+\def\@captype{figure}\caption{Cache-guard accuracy per decider and dataset with 95\% CIs clustered by class. vCache as in Table~\ref{tab:cache} of the main paper.}\label{fig:cacheacc}
+\vskip 1.5em}]
+\makeatother
+
+\appendix
+\input{sections/appendix}
+
+\end{document}

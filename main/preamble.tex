@@ -1,0 +1,29 @@
+% Packages and macros shared by main.tex and appendix.tex.
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{float} % [H]: appendix figures sit where they are written
+\usepackage{amsmath}
+\usepackage{adjustbox} % \adjincludegraphics: trims the baked-in "Figure N." titles off the result figures
+\usepackage{etoolbox}
+\AtBeginEnvironment{thebibliography}{\interlinepenalty=10000} % keep each reference entry in one column
+\usepackage{hyperref}
+
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+\usepackage{mlsys2025}
+
+\graphicspath{{figures/}}
+
+% Cuts the top strip (the title inside the graphic) off a result figure: #1 = fraction of height, #2 = width.
+\newcommand{\resultfig}[3]{\adjincludegraphics[trim={0 0 0 {#1\height}},clip,width=#2]{#3}}
+
+\newcommand{\jev}{Jev}
+\newcommand{\kev}{Kev}
+\newcommand{\gbig}{GPT-5.6}
+\newcommand{\goss}{GPT-OSS-20B}
+\newcommand{\qwen}{Qwen3-8B}
+\newcommand{\taubench}{$\tau^2$-bench}
+
+\mlsystitlerunning{Deciding Without Generating}
