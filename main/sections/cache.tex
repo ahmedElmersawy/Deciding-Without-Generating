@@ -48,7 +48,7 @@ Here wrong reuses are \emph{more} similar to their neighbor than correct ones (m
 \textbf{LMArena} and \textbf{SearchQueries}: two datasets released with vCache~\cite{schroeder2025vcache}.
 LMArena takes user prompts from Chatbot Arena~\cite{chiang2024chatbotarena} and adds LLM-written rewordings of each; SearchQueries takes real web search queries from Bing's ORCAS log~\cite{craswell2020orcas} and groups those that ask the same thing.
 Their labels assign each query a \emph{class} and count any two queries of a class as a correct reuse, so nobody judged the pair a cache actually meets.
-We relabeled each pair directly with an LLM (Claude Opus 5.5) under a written guideline fixed in advance, which changed 6.0\% of LMArena and 15.7\% of SearchQueries labels (Appendix~\ref{app:labels}).
+We relabeled each pair directly with an LLM (Claude Opus 5.5) under a written guideline fixed in advance, which changed 6.0\% of LMArena and 15.7\% of SearchQueries labels (Appendix~\ref*{app:labels}).
 On the corrected labels, which all results below use and which we release with the reason for each change, reuse is correct for 92.5\% and 58.2\% of queries.
 
 \subsection{Results}

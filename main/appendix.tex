@@ -5,6 +5,7 @@
 \usepackage{xr-hyper} % before hyperref: \ref across main.pdf and appendix.pdf
 \input{preamble}
 \externaldocument{main} % section, table and figure labels of the main paper
+% Cross-document references use \ref* (no link): the uploaded files are renamed, so file links would break.
 
 % Prefix appendix floats so they cannot be confused with the main paper's Figure/Table N.
 \renewcommand{\thefigure}{A\arabic{figure}}
@@ -20,9 +21,11 @@
 \vskip 0.2in
 {\centering
 \resultfig{0.1}{\textwidth}{fig16_cacheguard_accuracy}
-\def\@captype{figure}\caption{Cache-guard accuracy per decider and dataset with 95\% CIs clustered by class. vCache as in Table~\ref{tab:cache} of the main paper.}\label{fig:cacheacc}
+\def\@captype{figure}\caption{Cache-guard accuracy per decider and dataset with 95\% CIs clustered by class. vCache as in Table~\ref*{tab:cache} of the main paper.}\label{fig:cacheacc}
 \vskip 1.5em}]
 \makeatother
+% After \mlsystitle, which sets the PDF title from the LaTeX quotes.
+\hypersetup{pdftitle={Appendix to: Deciding Without Generating: When Does a Standalone Decision Model Pay Off in LLM Systems?}}
 
 \appendix
 \input{sections/appendix}
