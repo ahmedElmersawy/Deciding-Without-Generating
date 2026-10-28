@@ -9,7 +9,7 @@ This interface can avoid generating a free-form output, but it does not, by itse
 
 \jev~\cite{typesafe2026jev} is a proprietary decision model accessible through an API; its weights, architecture, and training data are not publicly available.
 We evaluate version 1.13 and treat vendor claims about its performance as hypotheses to test empirically.
-\kev~\cite{palmer2026kev} is a third-party, Apache-2.0-licensed implementation of the decision-model interface, available in 0.8B, 4B, and 9B parameter sizes and accepting the same API request format as \jev.
+\kev~\cite{palmer2026kev} is a third-party, Apache-2.0-licensed implementation of the decision-model interface, available in four sizes from 0.8B to 27B parameters (we use 0.8B, 4B and 9B) and accepting the same API request format as \jev.
 It does not use \jev's weights, and we do not assume that the two models are behaviorally equivalent.
 We include \kev\ for two complementary reasons: it provides an open model that can be evaluated without access to the proprietary API, and it enables local measurements of inference latency and GPU energy that are not directly observable through a hosted API.
 We therefore use \jev\ to evaluate the proprietary service and \kev\ to study the behavior and serving costs of an open, locally deployed alternative.
